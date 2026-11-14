@@ -55,56 +55,71 @@
   .hero-sub { margin-top: 20px; max-width: 580px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.35; opacity: .94; }
   .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
 
-  /* the workflow: the centrepiece of the hero */
-  .flowbox { margin-top: 44px; padding: 34px 20px 38px; border-radius: 36px; background: rgba(255,255,255,.12); }
+  /* the workflow: the centrepiece of the hero. Steps zig-zag up and down one path */
+  .flowbox { margin-top: 44px; padding: 34px 5% 40px; border-radius: 36px; background: rgba(255,255,255,.12); }
   .flow-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .85; text-align: center; }
-  .flow { list-style: none; padding: 0; margin: 30px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); }
-  .fstep { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 10px; text-align: center; }
-  .fic { position: relative; width: 84px; height: 84px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 3s - 15s); }
-  .fic > svg { display: block; height: 38px; width: auto; }
-  .fnum { position: absolute; top: -4px; right: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(255,255,255,.9); }
+  .fmap { position: relative; margin-top: 26px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: auto 200px auto; }
+  .fmap > ol, .fnode { display: contents; }
+  .fsvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .fpath { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 4; stroke-linecap: round; stroke-dasharray: .1 10; animation: fdash 1s linear infinite; }
+  @keyframes fdash { to { stroke-dashoffset: -10.1; } }
+  .fpkt { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
+  .fedge { position: absolute; transform: translate(-50%, -50%); font-size: 11.5px; font-weight: 700; white-space: nowrap; padding: 4px 11px; border-radius: 99px; background: #0B7A5C; box-shadow: 0 0 0 3px rgba(255,255,255,.14); }
+  .fedge.q { background: var(--accent); }
+  .fic { grid-row: 2; grid-column: var(--c); justify-self: center; align-self: start; margin-top: 4px; z-index: 1;
+    position: relative; width: 72px; height: 72px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 2.5s - 15s); }
+  .lo .fic { align-self: end; margin: 0 0 4px; }
+  .fic > svg { display: block; height: 32px; width: auto; }
+  .fnum { position: absolute; top: -4px; right: -4px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(255,255,255,.9); }
   @keyframes fic { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; }
-    2%, 17% { box-shadow: 0 0 0 10px rgba(255,255,255,.28); transform: scale(1.07); }
-    20%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
-  .fstep:not(:last-child)::before { content: ""; position: absolute; top: 41px; left: calc(50% + 54px); width: calc(100% - 108px); border-top: 3px dashed rgba(255,255,255,.45); }
-  .fstep:not(:last-child)::after { content: ""; position: absolute; top: 35px; left: calc(50% + 54px); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px 3px rgba(255,255,255,.85); opacity: 0;
-    animation: fdot 15s infinite; animation-delay: calc(var(--i) * 3s - 15s + 2.2s); }
-  @keyframes fdot { 0% { left: calc(50% + 54px); opacity: 0; } 1% { opacity: 1; } 7% { left: calc(150% - 68px); opacity: 1; } 8%, 100% { left: calc(150% - 68px); opacity: 0; } }
-  .fstep h4 { font-size: 19px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
-  .fstep p { font-size: 14px; opacity: .88; line-height: 1.35; max-width: 200px; }
+    2%, 15% { box-shadow: 0 0 0 10px rgba(255,255,255,.28); transform: scale(1.08); }
+    18%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
+  .ftxt { grid-row: 1; grid-column: var(--c); align-self: end; width: 150%; margin: 0 0 16px -25%; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .lo .ftxt { grid-row: 3; align-self: start; margin: 16px 0 0 -25%; }
+  .ftxt h4 { font-size: 19px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+  .ftxt p { font-size: 14px; opacity: .88; line-height: 1.35; max-width: 220px; }
   .mystery { font-size: 12px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 4px 11px; }
-  .vendors { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
-  .vm { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 8px; }
+  .vendors, .tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+  .vm, .tag { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 8px; }
+  .tag { letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 10px; }
   .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
   .vm:nth-child(3) { letter-spacing: .26em; font-weight: 500; }
   .vm:nth-child(4) { text-transform: lowercase; letter-spacing: -.02em; font-size: 13px; }
+  .fseg { display: inline-flex; gap: 2px; background: rgba(255,255,255,.15); border-radius: 99px; padding: 3px; }
+  .fseg span { font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 99px; animation: fseg 6s infinite; animation-delay: calc(var(--k) * 2s - 6s); }
+  @keyframes fseg { 0%, 30% { background-color: #fff; color: var(--main); } 34%, 100% { background-color: transparent; color: #fff; } }
 
-  /* inbox -> processed -> wardrobe */
-  .feed { margin-top: 36px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.22); }
-  .feed-head, .feed-row { display: grid; grid-template-columns: 1.3fr .6fr 1fr; gap: 18px; align-items: center; }
-  .feed-head { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .78; padding: 0 16px; margin-bottom: 10px; }
-  .feed-row { margin-bottom: 8px; }
-  .em, .it { display: flex; align-items: center; gap: 12px; border-radius: 18px; min-width: 0; }
-  .em { background: rgba(255,255,255,.15); padding: 10px 16px; min-height: 62px; animation: emIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .em svg { flex: none; width: 28px; height: 22px; }
-  .em div, .it div { min-width: 0; display: flex; flex-direction: column; }
-  .em b, .it b { font-size: 14.5px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .em span, .it div span { font-size: 12.5px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .st { position: relative; height: 30px; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; }
-  .st span { position: absolute; display: inline-flex; align-items: center; gap: 7px; border-radius: 99px; padding: 5px 12px; white-space: nowrap; }
-  .st .a { background: rgba(255,255,255,.18); animation: stA 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .st .b { background: #fff; color: var(--main); animation: stB 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  /* order emails in, wardrobe items out (same rhythm in steps 1 and 3) */
+  .mails { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 250px; }
+  .ml { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,.15); border-radius: 12px; padding: 7px 10px; text-align: left; animation: emIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .ml svg { flex: none; width: 18px; height: 14px; }
+  .ml div { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+  .ml b { font-size: 12.5px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ml div span { font-size: 11px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms { position: relative; flex: none; width: 20px; height: 20px; }
+  .ms i { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; font-style: normal; font-size: 11px; font-weight: 800; }
+  .ms .a { animation: stA 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .ms .b { background: #fff; color: var(--main); animation: stB 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
   .spin { width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .it { background: #fff; color: var(--ink); padding: 8px 14px 8px 8px; min-height: 62px; animation: itIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .it .th { position: relative; width: 46px; height: 46px; border-radius: 12px; overflow: hidden; flex: none; }
-  .it div span { color: var(--muted); opacity: 1; }
+  .fitems { display: flex; gap: 8px; justify-content: center; }
+  .fth { position: relative; width: 54px; height: 54px; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 3px #fff; animation: itIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
   @keyframes emIn { 0% { opacity: 0; transform: translateX(-22px); } 4%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateX(-22px); } }
   @keyframes stA { 0%, 4% { opacity: 0; } 6%, 15% { opacity: 1; } 17%, 100% { opacity: 0; } }
-  @keyframes stB { 0%, 16% { opacity: 0; transform: scale(.85); } 19%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-  @keyframes itIn { 0%, 17% { opacity: 0; transform: translateX(22px) scale(.97); } 21%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateX(22px) scale(.97); } }
-  @media (max-width: 860px) { .feed-head { display: none; } .feed-row { grid-template-columns: 1fr; gap: 6px; margin-bottom: 16px; } .st { height: 26px; justify-content: start; place-items: start; } .st span { position: static; } .st .b { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .em, .st .a, .st .b, .it { animation: none; opacity: 1; } .st .a { display: none; } .st .b { position: static; } }
+  @keyframes stB { 0%, 16% { opacity: 0; transform: scale(.6); } 19%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+  @keyframes itIn { 0%, 17% { opacity: 0; transform: translateY(12px) scale(.9); } 21%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateY(12px) scale(.9); } }
+
+  /* narrow screens: the same steps, one under another */
+  @media (max-width: 860px) {
+    .fmap { display: block; }
+    .fsvg, .fedge { display: none; }
+    .fnode { display: grid; grid-template-columns: 72px 1fr; column-gap: 18px; position: relative; padding-bottom: 26px; }
+    .fnode:not(:last-child)::before { content: ""; position: absolute; left: 35px; top: 84px; bottom: 8px; border-left: 3px dotted rgba(255,255,255,.5); }
+    .fic, .lo .fic { grid-row: 1; grid-column: 1; margin: 0; align-self: start; }
+    .ftxt, .lo .ftxt { grid-row: 1; grid-column: 2; width: auto; margin: 0; align-items: flex-start; text-align: left; }
+    .vendors, .tags, .fitems { justify-content: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ml, .ms .a, .ms .b, .fth, .fpath, .fseg span { animation: none; opacity: 1; } .ms .a, .fpkt { display: none; } }
 
   .stats { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; margin-top: 34px; }
   .stat { padding: 0 18px; border-left: 1px solid rgba(255,255,255,.2); }
@@ -135,10 +150,10 @@
   .tee.gone { pointer-events: none; }
   .tee.gone svg { transform: translateY(110px) rotate(var(--r)); opacity: 0; transition: transform .7s cubic-bezier(.55,0,.85,.4) var(--d), opacity .5s .2s; }
 
-  @media (max-width: 1000px) { .flow { grid-template-columns: repeat(3, 1fr); row-gap: 30px; } .fstep::before, .fstep::after { display: none; } .stats { grid-template-columns: repeat(3, 1fr); row-gap: 18px; } .stat:nth-child(4) { padding-left: 0; border-left: 0; } }
+  @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, 1fr); row-gap: 18px; } .stat:nth-child(4) { padding-left: 0; border-left: 0; } }
   @media (max-width: 860px) { .rack { overflow-x: auto; } .rack > * { min-width: 720px; } .tees-head .tees-btns { margin-left: 0; } }
-  @media (max-width: 620px) { .flow { grid-template-columns: 1fr 1fr; } .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(odd) { padding-left: 0; border-left: 0; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
-  @media (prefers-reduced-motion: reduce) { .fic, .tee.white svg, .fstep::after { animation: none; } .fstep::after { display: none; } }
+  @media (max-width: 620px) { .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(odd) { padding-left: 0; border-left: 0; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
+  @media (prefers-reduced-motion: reduce) { .fic, .tee.white svg { animation: none; } }
 
   section { padding: 88px 0 72px; }
   .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
@@ -399,16 +414,17 @@
 
     <div class="flowbox">
       <p class="flow-label">How Jop works</p>
-      <ol class="flow" id="flow">
-      <li class="fstep" style="--i:0"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><h4>Reads your Gmail</h4><p>Receipts and order emails, from your own export.</p></li>
-      <li class="fstep" style="--i:1"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">2</span></span><h4>Rebuilds your wardrobe</h4><p>Pieces, sizes, brands and taste.</p></li>
-      <li class="fstep" style="--i:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg><span class="fnum">3</span></span><h4>You confirm</h4><p>Still own it? Gone? Your call.</p></li>
-      <li class="fstep" style="--i:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">4</span></span><h4>Add your card</h4><p>Then you won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></li>
-      <li class="fstep" style="--i:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">5</span></span><h4>Black Friday</h4><p>Checks out at 00:00, from vendors you already use.</p><div class="vendors" id="fVendors"></div></li>
-      </ol>
-      <div class="feed" aria-label="Order emails from Gmail being processed into wardrobe items">
-        <div class="feed-head"><span>From your inbox</span><span></span><span>Added to your wardrobe</span></div>
-        <div id="feedRows"></div>
+      <div class="fmap" id="fmap">
+        <svg class="fsvg" aria-hidden="true"><path class="fpath" id="fpath"/><circle class="fpkt" r="7"><animateMotion dur="15s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;.83;1"><mpath href="#fpath"/></animateMotion></circle></svg>
+        <span class="fedge" id="fRcpt">receipts</span><span class="fedge">sizes · brands · taste</span><span class="fedge">a draft of you</span><span class="fedge">the truth, mostly</span><span class="fedge q">budget: ???</span>
+        <ol>
+        <li class="fnode" style="--i:0;--c:1"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><div class="ftxt"><h4>Reads your Gmail</h4><p>Every “your order is confirmed”, from your own export.</p><div class="mails" id="fMail" aria-label="Order emails being processed"></div></div></li>
+        <li class="fnode lo" style="--i:1;--c:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h12l6 6v16H5Z"/><path d="M17 3v6h6"/><path d="M9 14h10M9 18.5h6"/></svg><span class="fnum">2</span></span><div class="ftxt"><h4>Pulls out the details</h4><p>Line by line, receipt by receipt.</p><div class="tags"><span class="tag">Item</span><span class="tag">Size</span><span class="tag">Brand</span><span class="tag">Price</span><span class="tag">Date</span></div></div></li>
+        <li class="fnode" style="--i:2;--c:3"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">3</span></span><div class="ftxt"><h4>Rebuilds your wardrobe</h4><div class="fitems" id="fItems"></div><div class="tags" id="fTaste"></div></div></li>
+        <li class="fnode lo" style="--i:3;--c:4"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg><span class="fnum">4</span></span><div class="ftxt"><h4>You confirm</h4><p>Still own it? Gone? Never liked it?</p><div class="fseg" aria-hidden="true"><span style="--k:0">Keep</span><span style="--k:1">Meh</span><span style="--k:2">Gone</span></div></div></li>
+        <li class="fnode" style="--i:4;--c:5"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">5</span></span><div class="ftxt"><h4>Add your card</h4><p>Then you won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></div></li>
+        <li class="fnode lo" style="--i:5;--c:6"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">6</span></span><div class="ftxt"><h4>Black Friday, 00:00</h4><p>Checks out from vendors you already use. The receipts go back to step 1.</p><div class="vendors" id="fVendors"></div></div></li>
+        </ol>
       </div>
     </div>
 
@@ -1136,27 +1152,41 @@ rackEl.addEventListener("click", e => { const t = e.target.closest(".tee.black:n
 $("#teeOne").onclick = () => { const left = [...rackEl.querySelectorAll(".tee.black:not(.gone)")]; if (left.length) { left[Math.floor(Math.random() * left.length)].classList.add("gone"); updateTees(); } };
 $("#teeReset").onclick = () => { rackEl.querySelectorAll(".tee.gone").forEach(t => t.classList.remove("gone")); updateTees(); };
 
-// ---------- hero: how jop works (vendors come from your data) ----------
+// ---------- hero: how jop works (vendors, receipts and taste come from your data) ----------
 function renderFlow() {
   const counts = {}; items.forEach(i => { if (i.brand) counts[i.brand] = (counts[i.brand] || 0) + 1; });
   const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
   $("#fVendors").innerHTML = top.map(b => `<span class="vm">${esc(b)}</span>`).join("");
+  $("#fRcpt").textContent = `${items.length} receipts`;
 
-  // order emails turning into wardrobe items: one row per recent vendor, from your real items
+  // what step 3 learned about you
+  const mode = list => Object.entries(list.filter(Boolean).reduce((c, v) => (c[v] = (c[v] || 0) + 1, c), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const kept = items.filter(i => !isGone(i)), size = cat => mode(kept.filter(i => i.cat === cat).map(i => i.size));
+  $("#fTaste").innerHTML = [...["Tops", "Bottoms", "Shoes"].map(c => size(c) && `${c} ${size(c)}`), top[0] && `loyal to ${top[0]}`].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join("");
+
+  // order emails (step 1) turning into wardrobe items (step 3): one per recent vendor, from your real items
   const SUBJECTS = ["Your order is confirmed", "Order confirmation", "Thanks for your order"], seen = new Set(), feed = [];
   for (const i of [...items].sort((a, b) => b.date.localeCompare(a.date))) {
     const k = i.store || i.brand; if (!k || seen.has(k)) continue;
     seen.add(k); feed.push(i); if (feed.length === 3) break;
   }
-  $("#feedRows").innerHTML = feed.map((i, n) => {
+  $("#fMail").innerHTML = feed.map((i, n) => {
     const from = "orders@" + (i.store || i.brand).toLowerCase().replace(/[^a-z0-9]/g, "") + ".com";
-    return `<div class="feed-row" style="--i:${n}">
-      <div class="em"><svg viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><div><b>${SUBJECTS[n % 3]}</b><span>${esc(from)} · ${esc(i.name)} × 1 · ${fmt(i.price)}</span></div></div>
-      <div class="st"><span class="a" style="--i:${n}"><i class="spin"></i>Processing…</span><span class="b" style="--i:${n}">✓ Processed</span></div>
-      <div class="it"><span class="th pic" style="${picBg(i)}">${pic(i)}</span><div><b>${esc(i.name)}</b><span>${esc(i.brand || "")}${i.size ? " · " + esc(i.size) : ""} · ${i.cat} · ${fmt(i.price)}</span></div></div>
-    </div>`;
+    return `<div class="ml" style="--i:${n}"><svg viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><div><b>${SUBJECTS[n % 3]}</b><span>${esc(from)} · ${fmt(i.price)}</span></div><span class="ms"><i class="a"><span class="spin"></span></i><i class="b">✓</i></span></div>`;
   }).join("");
+  $("#fItems").innerHTML = feed.map((i, n) => `<span class="fth pic" style="--i:${n};${picBg(i)}" title="${esc(i.name)}">${pic(i)}</span>`).join("");
+  drawFlow();
 }
+
+// the zig-zag path runs through the centre of each step's circle
+function drawFlow() {
+  const map = $("#fmap"), pts = [...map.querySelectorAll(".fic")].map(e => [e.offsetLeft + e.offsetWidth / 2, e.offsetTop + e.offsetHeight / 2]);
+  let d = `M${pts[0]}`;
+  pts.slice(1).forEach(([x, y], k) => { const [px, py] = pts[k], h = (x - px) / 2; d += ` C${px + h},${py} ${x - h},${y} ${x},${y}`; });
+  $("#fpath").setAttribute("d", d);
+  map.querySelectorAll(".fedge").forEach((e, k) => { e.style.left = (pts[k][0] + pts[k + 1][0]) / 2 + "px"; e.style.top = (pts[k][1] + pts[k + 1][1]) / 2 + "px"; });
+}
+new ResizeObserver(drawFlow).observe($("#fmap"));
 
 function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); renderFlow(); }
 load().catch(() => { $("#offline").hidden = false; });
