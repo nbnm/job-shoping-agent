@@ -1,0 +1,5 @@
+# local database and uploaded photos
+data/
+node_modules/
+.DS_Store
+.env*

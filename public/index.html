@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jop · your closet, audited</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%2310a37f'/%3E%3Cpath d='M10 13H22L22.7 20C22.7 24 20.2 26 18 25.3C17 25 16.3 24.3 16 23.5C15.7 24.3 15 25 14 25.3C11.8 26 9.3 24 9.3 20Z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --main: #10a37f;
+    --main-d: #0c8466;
+    --accent: #6D4AFF;
+    --ink: #0A1F18;
+    --muted: #5B7A6F;
+    --line: #D9EEE6;
+    --lav: #EDF8F3;
+    --lav2: #D3EBE1;
+    --bg: #FFFFFF;
+    --font: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.5; font-size: 16px; }
+  button, input, select { font: inherit; color: inherit; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.86); backdrop-filter: blur(16px); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 22px; letter-spacing: -.06em; color: var(--ink); text-decoration: none; }
+  .logo svg { display: block; }
+  nav ul { display: flex; gap: 6px; list-style: none; padding: 0; font-size: 15px; font-weight: 500; }
+  nav ul a { color: var(--ink); text-decoration: none; padding: 8px 16px; border-radius: 999px; transition: background .2s; }
+  nav ul a:hover { background: var(--lav); }
+
+  .btn { border: 0; cursor: pointer; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; transition: transform .15s, background .2s, box-shadow .2s; }
+  .btn:active { transform: scale(.96); }
+  .btn.primary { background: var(--main); color: #fff; }
+  .btn.primary:hover { background: var(--main-d); }
+  .btn.lime { background: var(--accent); color: #fff; }
+  .btn.lime:hover { box-shadow: 0 0 0 4px rgba(109,74,255,.3); }
+  .btn.ghost { background: transparent; border: 1.5px solid var(--line); color: var(--ink); }
+  .btn.ghost:hover { background: var(--lav); }
+  .btn.onpurple { background: rgba(255,255,255,.14); color: #fff; }
+  .btn.onpurple:hover { background: rgba(255,255,255,.24); }
+  .btn.sm { padding: 9px 16px; font-size: 14px; }
+
+  /* hero */
+  .hero { position: relative; overflow: hidden; border-radius: 44px; color: #fff; padding: 56px 56px 40px; margin-top: 8px;
+    background: radial-gradient(120% 120% at 100% 0%, #3DD9AE 0%, var(--main) 45%, #08694F 100%); }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--accent); color: #fff; }
+  .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
+  @keyframes pulse { 50% { transform: scale(1.7); opacity: .4; } }
+  .total { margin-top: 28px; font-size: clamp(72px, 12vw, 164px); font-weight: 800; letter-spacing: -.07em; line-height: .9; font-variant-numeric: tabular-nums; }
+  .total sup { font-size: .4em; vertical-align: top; position: relative; top: .12em; margin-right: 4px; font-weight: 700; color: #B8FFE6; }
+  #range { margin-top: 18px; font-size: 19px; font-weight: 500; letter-spacing: -.02em; opacity: .92; max-width: 460px; }
+  .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .hero-img { position: relative; aspect-ratio: 4/5; border-radius: 32px; overflow: hidden; transform: rotate(2.5deg); background: #5433EB url("assets/hero.jpg") 97% 50%/cover; box-shadow: 0 30px 60px -20px rgba(10,0,60,.6); }
+  .sticker { position: absolute; left: -6px; bottom: 22px; transform: rotate(-6deg); background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; letter-spacing: -.01em; padding: 10px 16px; border-radius: 14px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.4); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 44px; }
+  .stat { background: rgba(255,255,255,.12); border-radius: 22px; padding: 18px 22px; }
+  .stat small { display: block; font-size: 13px; opacity: .8; margin-bottom: 6px; font-weight: 500; }
+  .stat b { font-weight: 700; font-size: 32px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+
+  section { padding: 88px 0 72px; }
+  .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+  h2 { font-weight: 800; font-size: clamp(36px, 5vw, 56px); letter-spacing: -.055em; line-height: 1; }
+  .sec-head p { color: var(--muted); margin-top: 12px; font-size: 18px; letter-spacing: -.015em; }
+
+  .seg { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--lav); }
+  .seg button { border: 0; background: none; padding: 8px 18px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
+  .seg button.on { background: var(--main); color: #fff; }
+
+  /* chart */
+  .card { background: var(--lav); border-radius: 36px; padding: 36px; }
+  #chart { width: 100%; height: 260px; display: block; overflow: visible; }
+  #chart .bar { fill: var(--main); opacity: .18; transition: opacity .2s, fill .2s; }
+  #chart .bar.has { opacity: 1; }
+  #chart g:hover .bar { fill: var(--ink); opacity: 1; }
+  #chart text { fill: var(--muted); font-size: 11px; font-family: var(--font); font-weight: 500; }
+  #chart .tip { opacity: 0; transition: opacity .15s; fill: var(--ink) !important; font-size: 13px; font-weight: 700; }
+  #chart g:hover .tip { opacity: 1; }
+  #chart .cum { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 2 7; }
+  .legend { display: flex; gap: 22px; margin-top: 18px; font-size: 14px; font-weight: 500; color: var(--muted); }
+  .legend span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; background: var(--main); }
+  .legend span:last-child::before { background: var(--ink); }
+
+  .cats { margin-top: 32px; padding-top: 28px; border-top: 1.5px solid var(--lav2); display: grid; gap: 14px; }
+  .cat-row { display: grid; grid-template-columns: 120px 1fr 90px; gap: 16px; align-items: center; font-size: 15px; font-weight: 600; }
+  .cat-row .track { height: 12px; background: #fff; border-radius: 99px; overflow: hidden; }
+  .cat-row .fill { height: 100%; background: var(--main); border-radius: 99px; transition: width .6s cubic-bezier(.2,.8,.2,1); }
+  .cat-row:first-child .fill { background: var(--ink); }
+  .cat-row em { font-style: normal; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* timeline */
+  .tl-tools { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { border: 0; background: var(--lav); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink); transition: all .2s; }
+  .chip:hover { background: var(--lav2); }
+  .chip.on { background: var(--main); color: #fff; }
+  .zoom { display: flex; align-items: center; gap: 8px; }
+  .zoom button { height: 40px; min-width: 40px; border-radius: 999px; border: 0; background: var(--lav); cursor: pointer; font-size: 20px; font-weight: 600; line-height: 1; transition: background .2s; }
+  .zoom button:hover { background: var(--lav2); }
+  .zoom .fit { font-size: 14px; padding: 0 16px; }
+  .zoom input[type=range] { width: 140px; margin: 0; padding: 0; border: 0; accent-color: var(--main); }
+  .hint { color: var(--muted); font-size: 14px; margin-top: 16px; text-align: center; }
+  .tl-scroll { position: relative; overflow-x: auto; overflow-y: hidden; cursor: grab; user-select: none; -webkit-user-select: none; scrollbar-width: thin; scrollbar-color: var(--main) transparent; background: var(--lav); }
+  .tl-scroll.drag { cursor: grabbing; }
+  .tl-in { position: relative; }
+  .axis { position: absolute; left: 0; right: 0; height: 3px; border-radius: 3px; background: var(--main); }
+  .tick { position: absolute; width: 2px; background: var(--main); opacity: .35; }
+  .tlabel { position: absolute; font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+  .tlabel.yr { color: var(--main); font-weight: 800; font-size: 14px; }
+  .tlabel.day { font-size: 10px; opacity: .8; }
+  .today { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px dashed var(--ink); opacity: .5; pointer-events: none; }
+  .today span { position: absolute; top: 12px; left: 8px; font-size: 12px; font-weight: 700; white-space: nowrap; background: var(--accent); color: #fff; padding: 4px 12px; border-radius: 99px; }
+  .conn { position: absolute; width: 2px; background: var(--main); opacity: .25; }
+  .conn.h { height: 2px; }
+  .dot { position: absolute; width: 13px; height: 13px; border-radius: 50%; background: #fff; border: 3.5px solid var(--main); }
+  .tcard { position: absolute; padding: 7px; background: #fff; border-radius: 24px; cursor: pointer; transition: box-shadow .25s, transform .25s; overflow: hidden; box-shadow: 0 2px 0 var(--lav2); }
+  .tcard:hover { box-shadow: 0 18px 40px -14px rgba(16,163,127,.5); transform: translateY(-4px); z-index: 3; }
+  .pic { position: relative; width: 100%; aspect-ratio: 1; border-radius: 18px; overflow: hidden; }
+  .pic img, .pic svg, .big img, .big svg, .sug-pic img, .sug-pic svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none; }
+  .tcard .info { height: 44px; padding: 9px 6px 0; }
+  .tcard h4 { font-weight: 700; font-size: 13px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tcard .meta { color: var(--muted); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .big { position: relative; aspect-ratio: 1; border-radius: 24px; overflow: hidden; margin-bottom: 22px; }
+  .dm { color: var(--muted); font-size: 15px; margin-top: -12px; font-weight: 500; }
+  .drow { display: flex; align-items: baseline; gap: 14px; margin: 18px 0 8px; flex-wrap: wrap; }
+  .drow b { font-weight: 800; font-size: 40px; letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
+  .drow span { color: var(--muted); font-size: 14px; }
+  .facts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 16px 0 4px; }
+  .facts span { background: var(--lav); padding: 7px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; }
+  #offline { position: fixed; z-index: 90; inset: 0 0 auto 0; background: var(--accent); color: #fff; text-align: center; padding: 12px 20px; font-weight: 600; }
+  #offline[hidden] { display: none; }
+  .snark { background: var(--lav); border-radius: 16px; padding: 12px 16px; font-size: 14px; margin-bottom: 20px; }
+  .snark::before { content: "Jop Agent: "; font-weight: 700; color: var(--accent); }
+
+  /* agent / suggestions */
+  .suggest { background: var(--ink); color: #fff; border-radius: 44px; margin: 0 16px; position: relative; overflow: hidden; }
+  .suggest::before { content: ""; position: absolute; width: 700px; height: 700px; right: -200px; top: -300px; border-radius: 50%; background: radial-gradient(circle, rgba(16,163,127,.5), transparent 65%); pointer-events: none; }
+  .suggest .wrap { position: relative; }
+  .suggest h2 { color: #fff; }
+  .suggest .sec-head p { color: #9FD6C3; }
+  .agent { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; flex-wrap: wrap; }
+  .avatar { width: 84px; height: 84px; border-radius: 28px; background: var(--main) url("assets/agent.jpg") center/cover; flex: none; box-shadow: 0 0 0 4px rgba(255,255,255,.1); }
+  .bubble { position: relative; background: #fff; color: var(--ink); padding: 16px 22px; border-radius: 22px 22px 22px 6px; font-weight: 600; letter-spacing: -.02em; font-size: 17px; max-width: 420px; }
+  .auto { margin-left: auto; display: flex; align-items: center; gap: 14px; border: 0; cursor: pointer; background: rgba(255,255,255,.08); border-radius: 22px; padding: 12px 18px 12px 14px; color: #fff; text-align: left; }
+  .auto .knob { width: 46px; height: 28px; border-radius: 99px; background: #2c4a40; position: relative; flex: none; transition: background .25s; }
+  .auto .knob::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform .25s; }
+  .auto.on .knob { background: var(--accent); }
+  .auto.on .knob::after { transform: translateX(18px); background: #fff; }
+  .auto b { display: block; font-size: 15px; letter-spacing: -.02em; }
+  .auto small { font-size: 12px; color: #9FD6C3; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .sug { background: #fff; color: var(--ink); border-radius: 32px; padding: 10px 10px 22px; display: flex; flex-direction: column; gap: 10px; transition: transform .25s; animation: rise .5s both; }
+  .sug:hover { transform: translateY(-5px) rotate(-.5deg); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  .sug-pic { position: relative; aspect-ratio: 5/4; border-radius: 24px; overflow: hidden; margin-bottom: 8px; }
+  .sug-pic .hot { position: absolute; top: 12px; left: 12px; z-index: 2; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 99px; }
+  .sug .body { padding: 0 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .sug .tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--main); }
+  .sug h3 { font-weight: 800; font-size: 26px; letter-spacing: -.05em; line-height: 1.05; }
+  .sug p { color: var(--muted); font-size: 14px; flex: 1; letter-spacing: -.005em; }
+  .meter { height: 6px; background: var(--lav); border-radius: 99px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--main); border-radius: 99px; }
+  .sug .foot { display: flex; justify-content: space-between; align-items: baseline; font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .sug .foot b { font-size: 22px; font-weight: 800; letter-spacing: -.04em; }
+  .sug .foot small { color: var(--muted); font-size: 12px; }
+  .sug .btns { display: flex; gap: 8px; margin-top: 10px; }
+  .sug .btns .btn:first-child { flex: 1; }
+  .empty { color: #9FD6C3; font-size: 18px; }
+
+  /* item status on the timeline */
+  .tcard .badge { position: absolute; top: 13px; left: 13px; z-index: 2; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; color: #fff; background: var(--ink); }
+  .tcard.st-disliked .badge { background: var(--accent); }
+  .tcard.st-unavailable .badge { background: #C77B0B; }
+  .tcard.st-disposed { background: transparent; box-shadow: none; outline: 1.5px dashed var(--muted); outline-offset: -1.5px; }
+  .tcard.st-disposed .pic { filter: grayscale(1); opacity: .4; }
+  .tcard.st-unavailable .pic { filter: grayscale(.7); opacity: .55; }
+  .tcard.st-disposed h4 { text-decoration: line-through; color: var(--muted); }
+  .dot.gone { border-color: var(--muted); background: var(--lav2); }
+  .status-box { display: grid; gap: 10px; margin: 4px 0 20px; }
+  .status-box .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .seg2 { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg2 button { border: 0; background: var(--lav); padding: 8px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .seg2 button:hover { background: var(--lav2); }
+  .seg2 button.on { background: var(--main); color: #fff; }
+  .seg2 button.on[data-status=disliked] { background: var(--accent); }
+  .seg2 button.on[data-status=unavailable] { background: #C77B0B; }
+  .seg2 button.on[data-status=disposed] { background: var(--ink); }
+  .status-box input { margin: 0; }
+  .chip.toggle { background: transparent; box-shadow: inset 0 0 0 1.5px var(--lav2); }
+  .chip.toggle.on { background: var(--ink); color: #fff; box-shadow: none; }
+
+  /* black friday */
+  #blackfriday { padding-top: 24px; }
+  .bf-banner { position: relative; overflow: hidden; color: #fff; border-radius: 44px; padding: 52px 56px; display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap;
+    background: radial-gradient(120% 150% at 0% 0%, #8A6CFF, var(--accent) 50%, #4A2BD8); }
+  .bf-tag { display: inline-block; background: rgba(255,255,255,.18); padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px; }
+  .bf-banner h2 { color: #fff; }
+  .bf-banner p { margin-top: 14px; font-size: 18px; opacity: .92; max-width: 470px; letter-spacing: -.015em; }
+  .bf-count { display: flex; gap: 10px; }
+  .bf-count div { background: rgba(255,255,255,.16); border-radius: 22px; padding: 14px 20px; text-align: center; min-width: 88px; }
+  .bf-count b { display: block; font-size: 46px; font-weight: 800; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .bf-count small { font-size: 12px; opacity: .85; }
+  .bf-grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; margin-top: 20px; align-items: start; }
+  .bf-side { position: sticky; top: 88px; display: grid; gap: 16px; }
+  .bf-card { background: var(--lav); border-radius: 32px; padding: 26px; }
+  .bf-card h3 { font-size: 20px; font-weight: 800; letter-spacing: -.045em; }
+  .bf-big { font-size: 58px; font-weight: 800; letter-spacing: -.07em; line-height: 1; margin: 14px 0 6px; font-variant-numeric: tabular-nums; }
+  .bf-card input[type=range] { width: 100%; padding: 0; margin: 8px 0 0; background: none; accent-color: var(--accent); outline: none; }
+  .bf-meter { height: 10px; background: #fff; border-radius: 99px; overflow: hidden; margin: 16px 0 10px; }
+  .bf-meter i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s; }
+  .bf-meter.over i { background: #D6402F; }
+  .bf-line { display: flex; justify-content: space-between; font-size: 14px; margin-top: 7px; color: var(--muted); }
+  .bf-line b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .bf-line b.bad { color: #D6402F; }
+  .bf-card .btn { width: 100%; margin-top: 16px; }
+  .bf-card .btn + .btn { margin-top: 8px; }
+  .rv-row { display: grid; grid-template-columns: 96px 1fr 40px; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; margin-top: 12px; }
+  .rv-dots { display: flex; gap: 4px; }
+  .rv-dots i { flex: 1; height: 8px; border-radius: 99px; background: #fff; }
+  .rv-dots i.on { background: var(--main); }
+  .rv-dots i.gap { background: var(--accent); opacity: .4; }
+  .rv-row em { font-style: normal; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .rv-note { margin-top: 18px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .bf-main h3 { font-size: 26px; font-weight: 800; letter-spacing: -.05em; }
+  .bf-main .sub { color: var(--muted); margin: 4px 0 18px; }
+  .deals { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .deal { background: #fff; border: 1.5px solid var(--line); border-radius: 28px; padding: 10px 10px 18px; display: flex; flex-direction: column; gap: 8px; transition: transform .25s, border-color .2s, box-shadow .2s; }
+  .deal:hover { transform: translateY(-3px); }
+  .deal.in { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(109,74,255,.14); }
+  .deal .sug-pic .hot.buy { background: var(--main); }
+  .deal .sug-pic .hot.maybe { background: #C77B0B; }
+  .deal .sug-pic .hot.over { background: #D6402F; }
+  .deal .body { padding: 0 12px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+  .deal .store { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .deal h4 { font-size: 20px; font-weight: 800; letter-spacing: -.045em; line-height: 1.1; }
+  .deal .brand { font-size: 13px; color: var(--muted); margin-top: -3px; }
+  .price-row { display: flex; align-items: baseline; gap: 10px; }
+  .price-row b { font-size: 28px; font-weight: 800; letter-spacing: -.05em; }
+  .price-row s { color: var(--muted); font-size: 14px; }
+  .price-row .off { background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+  .deal p { font-size: 14px; color: var(--muted); flex: 1; }
+  .deal .cpw { font-size: 13px; font-weight: 600; }
+  .deal .btn { margin-top: 8px; }
+  .deal .btn.in { background: var(--accent); color: #fff; }
+  .shield { margin-top: 36px; }
+  .shield-row { display: grid; grid-template-columns: 38px 1fr auto; gap: 14px; align-items: center; padding: 14px 18px; border-radius: 22px; background: var(--lav); margin-top: 8px; }
+  .shield-row .ic { width: 38px; height: 38px; border-radius: 13px; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .shield-row b { font-weight: 700; letter-spacing: -.02em; }
+  .shield-row small { display: block; color: var(--muted); font-size: 13px; }
+  .fine { color: var(--muted); font-size: 12px; margin-top: 24px; }
+  @media (max-width: 860px) {
+    .bf-grid { grid-template-columns: 1fr; }
+    .bf-side { position: static; }
+    .bf-banner { padding: 32px 24px; border-radius: 32px; }
+  }
+
+  footer { padding: 72px 0 96px; color: var(--muted); font-size: 14px; text-align: center; }
+  footer .logo { justify-content: center; margin-bottom: 14px; font-size: 40px; }
+  footer a { color: var(--main); font-weight: 600; }
+
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 30px); opacity: 0; pointer-events: none; background: var(--ink); color: #fff; padding: 14px 22px; border-radius: 99px; font-weight: 600; font-size: 15px; letter-spacing: -.01em; z-index: 60; transition: all .3s cubic-bezier(.2,.8,.2,1); box-shadow: 0 20px 40px -10px rgba(18,11,51,.5); }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #toast::before { content: "●"; color: var(--accent); margin-right: 10px; }
+
+  /* modal */
+  dialog { border: 0; border-radius: 36px; padding: 32px; width: min(460px, 92vw); background: #fff; color: var(--ink); margin: auto; box-shadow: 0 40px 100px -20px rgba(18,11,51,.5); }
+  dialog::backdrop { background: rgba(18,11,51,.55); backdrop-filter: blur(6px); }
+  dialog h3 { font-weight: 800; font-size: 32px; letter-spacing: -.055em; line-height: 1.05; margin-bottom: 22px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
+  input, select { width: 100%; margin-top: 6px; padding: 13px 16px; border-radius: 16px; border: 0; background: var(--lav); outline: 2px solid transparent; transition: outline .2s; font-weight: 500; }
+  input:focus, select:focus { outline-color: var(--main); }
+  input[type=color] { padding: 4px; height: 46px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    nav ul { display: none; }
+    .hero { padding: 32px 24px; border-radius: 32px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-img { aspect-ratio: 16/10; transform: none; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .zoom input[type=range] { width: 90px; }
+    .auto { margin-left: 0; }
+    .card { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+<div id="offline" hidden>Can't reach the Jop backend. In the wardrobe folder run <code>npm start</code>, then open <a href="http://127.0.0.1:3000" style="color:#fff">127.0.0.1:3000</a>.</div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#"><svg width="26" height="26" viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#10a37f"/><path d="M10 13H22L22.7 20C22.7 24 20.2 26 18 25.3C17 25 16.3 24.3 16 23.5C15.7 24.3 15 25 14 25.3C11.8 26 9.3 24 9.3 20Z" fill="#fff"/><path d="M16 17.5V23" stroke="#10a37f" stroke-opacity=".16" stroke-width="1" stroke-linecap="round"/><path d="M13 13v-1.5a3 3 0 0 1 6 0V13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>jop</a>
+    <ul>
+      <li><a href="#spending">The damage</a></li>
+      <li><a href="#timeline">The fits</a></li>
+      <li><a href="#blackfriday">Black Friday</a></li>
+      <li><a href="#next">Jop Agent</a></li>
+    </ul>
+    <button class="btn primary" id="openAdd">+ Add a purchase</button>
+  </div>
+</nav>
+
+<header class="wrap">
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="pill">Jop Agent is online and has opinions</span>
+        <div class="total"><sup>$</sup><span id="total">0</span></div>
+        <p id="range">—</p>
+        <div class="hero-cta">
+          <button class="btn lime" id="heroAdd">Log another “essential”</button>
+          <a class="btn onpurple" href="#timeline" style="text-decoration:none">Review the evidence</a>
+        </div>
+      </div>
+      <div class="hero-img"><div class="sticker">30 black tees. Normal.</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><small>Pieces owned</small><b id="sCount">0</b></div>
+      <div class="stat"><small>Avg. per “it was a steal”</small><b id="sAvg">0</b></div>
+      <div class="stat"><small>Last 90 days · recent damage</small><b id="s90">0</b></div>
+      <div class="stat"><small>Regret fund · bought, then bailed</small><b id="sMax">0</b></div>
+    </div>
+  </div>
+</header>
+
+<section id="spending">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><h2>Where it all went</h2><p>A monthly reenactment of “just one more thing.”</p></div>
+      <div class="seg" id="yearSeg"></div>
+    </div>
+    <div class="card">
+      <svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none"></svg>
+      <div class="legend"><span>Monthly damage</span><span>Running total (sorry)</span></div>
+      <div class="cats" id="cats"></div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline" style="padding-top: 24px; padding-bottom: 72px">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom: 24px">
+      <div><h2>The fit timeline</h2><p>Every purchase, immortalized. Zoom in for evidence.</p></div>
+    </div>
+    <div class="tl-tools">
+      <div class="chips" id="chips"></div>
+      <div class="zoom">
+        <button id="zOut" title="Zoom out">−</button>
+        <input type="range" id="zoom" min="0" max="1000" value="300" aria-label="Zoom">
+        <button id="zIn" title="Zoom in">+</button>
+        <button class="fit" id="zFit">Fit all</button>
+      </div>
+    </div>
+  </div>
+  <div class="tl-scroll" id="tl"></div>
+  <p class="hint">Drag to pan · ⌘/Ctrl + scroll or pinch to zoom · tap a piece to relive the purchase</p>
+</section>
+
+<section id="blackfriday">
+  <div class="wrap">
+    <div class="bf-banner">
+      <div>
+        <span class="bf-tag">Black Friday · Nov 27</span>
+        <h2>Black Friday,<br>supervised.</h2>
+        <p>Jop helps you save money by spending it more carefully. It has read your wardrobe. All of it.</p>
+      </div>
+      <div class="bf-count" aria-label="Countdown to Black Friday">
+        <div><b id="bfD">0</b><small>days</small></div>
+        <div><b id="bfH">0</b><small>hours</small></div>
+        <div><b id="bfM">0</b><small>min</small></div>
+      </div>
+    </div>
+
+    <div class="bf-grid">
+      <aside class="bf-side">
+        <div class="bf-card">
+          <h3>Your budget</h3>
+          <div class="bf-big" id="bfBig">$0</div>
+          <input type="range" id="bfBudget" min="0" max="2000" step="25" aria-label="Black Friday budget">
+          <div class="bf-meter" id="bfMeter"><i></i></div>
+          <div class="bf-line"><span id="bfInLbl">In basket</span><b id="bfIn">$0</b></div>
+          <div class="bf-line"><span id="bfLeftLbl">Left to spend</span><b id="bfLeft">$0</b></div>
+          <div class="bf-line"><span>Saved vs. full price</span><b id="bfSaved">$0</b></div>
+          <div class="bf-line"><span>Impulse Shield blocked</span><b id="bfBlocked">$0</b></div>
+          <button class="btn primary" id="bfQueue">Queue with Jop Agent</button>
+          <button class="btn ghost" id="bfReset" hidden>Back to Jop's picks</button>
+        </div>
+        <div class="bf-card">
+          <h3>Wardrobe review</h3>
+          <div id="bfReview"></div>
+          <p class="rv-note" id="bfReviewNote"></p>
+        </div>
+      </aside>
+
+      <div class="bf-main">
+        <h3>Jop's picks</h3>
+        <p class="sub" id="bfSub"></p>
+        <div class="deals" id="deals"></div>
+        <div class="shield">
+          <h3>Blocked by the Impulse Shield</h3>
+          <p class="sub">Great prices on things that would not improve your life.</p>
+          <div id="shield"></div>
+        </div>
+        <p class="fine">Mock deals: products, prices and retailers are invented for this mockup. No retailer feeds are connected, and everything here runs in your browser.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="suggest" id="next">
+  <div class="wrap">
+    <section>
+      <div class="sec-head" style="margin-bottom: 28px">
+        <div><h2>Jop Agent<br>has thoughts.</h2><p id="sugNote"></p></div>
+      </div>
+      <div class="agent">
+        <div class="avatar"></div>
+        <div class="bubble">I’ve reviewed your wardrobe. We need to talk.</div>
+        <button class="auto on" id="auto"><span class="knob"></span><span><b>Autopilot checkout</b><small id="autoNote">ON · Jop may spend your money</small></span></button>
+      </div>
+      <div class="grid" id="sug"></div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">jop</div>
+    <p>Pay in 4 installments of regret. Not affiliated with Shop. Just a fan with a closet problem.</p>
+    <p style="margin-top:8px">Everything lives in a local SQLite file on your machine. <a href="#" id="reset">Reset sample data</a></p>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<dialog id="dlg">
+  <form method="dialog" id="form">
+    <h3 id="formTitle">What did you buy this time?</h3>
+    <label>Name<input name="name" required maxlength="120" placeholder="A very necessary jacket"></label>
+    <div class="row">
+      <label>Brand<input name="brand" maxlength="80" placeholder="COS"></label>
+      <label>Size<input name="size" maxlength="40" placeholder="M · EU 43 · 32/32"></label>
+    </div>
+    <div class="row">
+      <label>Category<select name="cat"></select></label>
+      <label>Price ($)<input name="price" type="number" min="0" step="0.01" required placeholder="180"></label>
+    </div>
+    <div class="row">
+      <label>Date<input name="date" type="date" required></label>
+      <label>Store<input name="store" maxlength="80" placeholder="Where it happened"></label>
+    </div>
+    <label>Material<input name="material" maxlength="80" placeholder="100% wool"></label>
+    <label>Notes<input name="notes" maxlength="300" placeholder="Runs small. Like most promises."></label>
+    <div class="row">
+      <label>Photo<input name="photo" type="file" accept="image/*"></label>
+      <label>Placeholder colour<input name="color" type="color" value="#2b2d33"></label>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="cancel">Never mind</button>
+      <button class="btn primary" id="formSave">Add it. No judgment.</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="detail">
+  <div id="detBody"></div>
+  <div class="actions">
+    <button class="btn ghost" id="detDel">Deny it ever happened</button>
+    <button class="btn ghost" id="detEdit">Edit</button>
+    <button class="btn ghost" id="detPhoto">Change photo</button>
+    <button class="btn primary" id="detClose">Close</button>
+  </div>
+  <input type="file" id="photoIn" accept="image/*" hidden>
+</dialog>
+
+<script>
+const CATS = ["Outerwear","Tops","Knitwear","Bottoms","Shoes","Accessories"];
+// ideal capsule wardrobe size per category
+const TARGET = { Outerwear:3, Tops:7, Knitwear:3, Bottoms:4, Shoes:4, Accessories:3 };
+const WINTER = ["Outerwear","Knitwear","Accessories"];
+const IDEAS = {
+  Outerwear:["Wool overcoat","Technical rain shell","Lightweight bomber"],
+  Tops:["Heavyweight white tee","Oxford shirt","Merino long sleeve","Linen shirt"],
+  Knitwear:["Merino crewneck","Cashmere cardigan","Chunky roll-neck"],
+  Bottoms:["Straight dark denim","Pleated wool trousers","Tapered chinos"],
+  Shoes:["Leather chelsea boots","Minimal white sneakers","Suede loafers"],
+  Accessories:["Wool scarf","Leather belt","Minimal watch"]
+};
+const QUIPS = {
+  Outerwear: "Weather is a recurring event.",
+  Tops: "Laundry day is not a personality.",
+  Knitwear: "Sweaters: the adult security blanket.",
+  Bottoms: "Pants are, regrettably, mandatory.",
+  Shoes: "Your feet have filed a complaint.",
+  Accessories: "Every outfit needs a plot twist."
+};
+const STATUSES = [["active","Active"],["disliked","Not feeling it"],["unavailable","Not available"],["disposed","Disposed"]];
+const STATUS_LABEL = Object.fromEntries(STATUSES), STATUS_SHORT = { disliked: "Meh", unavailable: "N/A", disposed: "Gone" };
+const isGone = i => i.status !== "active";
+const PALETTE = ["#3b3f46","#7a8b7c","#a9c1de","#8a6f5a","#566149","#b9b2a6","#44474d","#1d2b3a"];
+
+let items = [], year = "All", filter = "All", showGone = true;
+const $ = s => document.querySelector(s);
+const fmt = n => "$" + Math.round(n).toLocaleString("en-US");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const monthKey = d => d.slice(0,7);
+const monthName = k => new Date(k+"-01T00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});
+const today = () => new Date().toISOString().slice(0,10);
+
+// ---------- backend ----------
+async function api(path, { method = "GET", json, body, type } = {}) {
+  const headers = json !== undefined ? { "Content-Type": "application/json" } : type ? { "Content-Type": type } : {};
+  const r = await fetch("/api" + path, { method, headers, body: json !== undefined ? JSON.stringify(json) : body });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.statusText);
+  return r.status === 204 ? null : r.json();
+}
+async function load() { items = await api("/items"); render(); }
+// run an async handler, surface failures as a toast
+const guard = fn => async (...a) => { try { await fn(...a); } catch (e) { toast(e.message || "Something broke."); } };
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 3400);
+}
+
+// ---------- hero + chart ----------
+function renderHero() {
+  const total = items.reduce((a,i)=>a+i.price,0);
+  const dates = items.map(i=>i.date).sort();
+  $("#total").textContent = Math.round(total).toLocaleString("en-US");
+  $("#range").textContent = items.length ? `spent on clothes since ${monthName(monthKey(dates[0]))}. All of it necessary, obviously.` : "Nothing yet. Suspicious.";
+  $("#sCount").textContent = items.filter(i => i.status !== "disposed" && i.status !== "unavailable").length;
+  $("#sAvg").textContent = fmt(items.length ? total/items.length : 0);
+  const cutoff = new Date(Date.now() - 90*864e5).toISOString().slice(0,10);
+  $("#s90").textContent = fmt(items.filter(i=>i.date>=cutoff).reduce((a,i)=>a+i.price,0));
+  $("#sMax").textContent = fmt(items.filter(isGone).reduce((a,i)=>a+i.price,0));
+}
+
+function renderChart() {
+  const years = ["All", ...[...new Set(items.map(i=>i.date.slice(0,4)))].sort()];
+  if (!years.includes(year)) year = "All";
+  $("#yearSeg").innerHTML = years.map(y=>`<button class="${y===year?"on":""}" data-y="${y}">${y}</button>`).join("");
+  const list = items.filter(i => year==="All" || i.date.startsWith(year));
+  const svg = $("#chart");
+  if (!list.length) { svg.innerHTML = ""; $("#cats").innerHTML = ""; return; }
+  const keys = list.map(i=>monthKey(i.date)).sort();
+  const months = [];
+  let [y,m] = keys[0].split("-").map(Number);
+  const [ey,em] = keys[keys.length-1].split("-").map(Number);
+  while (y<ey || (y===ey && m<=em)) { months.push(`${y}-${String(m).padStart(2,"0")}`); if (++m>12) { m=1; y++; } }
+  const sums = months.map(k => list.filter(i=>monthKey(i.date)===k).reduce((a,i)=>a+i.price,0));
+  const max = Math.max(...sums), total = sums.reduce((a,b)=>a+b,0);
+  const W=1000, H=230, bw = W/months.length;
+  let run = 0, pts = [];
+  const bars = months.map((k,i)=>{
+    const h = sums[i] ? Math.max(4, sums[i]/max*(H-30)) : 3;
+    run += sums[i]; pts.push(`${(i*bw+bw/2).toFixed(1)},${(H - run/total*(H-30)).toFixed(1)}`);
+    const x = i*bw + bw*.18, w = bw*.64;
+    const label = months.length>14 ? (i%3===0 ? k.slice(2) : "") : k.slice(2);
+    return `<g><rect class="bar ${sums[i]?"has":""}" x="${x}" y="${H-h}" width="${w}" height="${h}" rx="4"/>
+      ${sums[i]?`<text class="tip" x="${x+w/2}" y="${H-h-8}" text-anchor="middle">${fmt(sums[i])}</text>`:""}
+      <text x="${x+w/2}" y="${H+18}" text-anchor="middle">${label}</text></g>`;
+  }).join("");
+  svg.innerHTML = bars + `<polyline class="cum" points="${pts.join(" ")}" vector-effect="non-scaling-stroke"/>`;
+
+  const byCat = CATS.map(c=>[c, list.filter(i=>i.cat===c).reduce((a,i)=>a+i.price,0)]).sort((a,b)=>b[1]-a[1]);
+  $("#cats").innerHTML = byCat.map(([c,v])=>`<div class="cat-row"><span>${c}</span>
+    <div class="track"><div class="fill" style="width:${v/byCat[0][1]*100}%"></div></div><em>${fmt(v)}</em></div>`).join("");
+}
+
+// ---------- jop agent ----------
+let sugs = [], dismissed = new Set(), auto = true;
+function renderSuggestions() {
+  const month = new Date().getMonth();
+  const winter = [10,11,0,1,2].includes(month);
+  const avgAll = items.length ? items.reduce((a,i)=>a+i.price,0)/items.length : 100;
+  const yearSpend = items.filter(i=>i.date >= new Date(Date.now()-365*864e5).toISOString().slice(0,10)).reduce((a,i)=>a+i.price,0) || 1;
+  sugs = CATS.map(c => {
+    const own = items.filter(i=>i.cat===c && i.status==="active"); // pieces you no longer wear do not count
+    const gap = (TARGET[c]-own.length)/TARGET[c];
+    const seasonal = winter && WINTER.includes(c);
+    const ideas = IDEAS[c], idea = ideas[own.length % ideas.length];
+    return { c, own: own.length, gap, seasonal, idea, key: c + idea, score: gap + (seasonal ? .25 : 0),
+      price: own.length ? own.reduce((a,i)=>a+i.price,0)/own.length : avgAll };
+  }).filter(s => s.score > 0 && !dismissed.has(s.key)).sort((a,b)=>b.score-a.score).slice(0,4);
+  $("#sugNote").textContent = `${winter ? "It's cold out." : "It's warm out."} Jop compared you to a ${Object.values(TARGET).reduce((a,b)=>a+b)}-piece capsule wardrobe and found gaps. Many gaps.`;
+  $("#sug").innerHTML = sugs.length ? sugs.map((s, n) => {
+    const reason = s.gap <= 0 ? `You own ${s.own}. Technically complete. But it's cold, and Jop has feelings about that.`
+      : (s.own === 0 ? `You own zero ${s.c.toLowerCase()}. Bold strategy.` : `You own ${s.own} of ${TARGET[s.c]}. ${QUIPS[s.c]}`)
+        + (s.seasonal ? " Also it's getting cold. Physics agrees." : "");
+    return `<div class="sug" style="animation-delay:${n*70}ms">
+      <div class="sug-pic" style="background:color-mix(in srgb, ${PALETTE[n]} 16%, #EFEBFF)">${art(s.c, PALETTE[n])}${s.seasonal ? '<span class="hot">In season</span>' : ""}</div>
+      <div class="body">
+        <div class="tag">${s.c}</div>
+        <h3>${s.idea}</h3>
+        <p>${reason}</p>
+        <div class="meter"><i style="width:${Math.min(1,1-s.gap)*100}%"></i></div>
+        <div class="foot"><b>~${fmt(s.price)}</b><small>+${(s.price/yearSpend*100).toFixed(0)}% of your yearly spend</small></div>
+        <div class="btns"><button class="btn primary sm" data-buy="${n}">Let Jop buy it</button><button class="btn ghost sm" data-nah="${n}">Nah</button></div>
+      </div></div>`;
+  }).join("") : `<p class="empty">Wardrobe complete. Jop has nothing left to judge. Suspicious.</p>`;
+}
+
+// ---------- timeline ----------
+const dayNum = s => { const [y,m,d] = s.split("-").map(Number); return Date.UTC(y,m-1,d)/864e5; };
+const SHAPES = {
+  Tops: "M30 20L42 14Q50 22 58 14L70 20L84 36L74 44L68 38V86H32V38L26 44L16 36Z",
+  Outerwear: "M28 14L42 10L50 30L58 10L72 14L88 40L78 50L72 44V92H28V44L22 50L12 40Z",
+  Knitwear: "M32 16Q50 24 68 16L88 60L76 64L68 42V86H32V42L24 64L12 60Z",
+  Bottoms: "M32 12H68L72 90H54L50 36L46 90H28Z",
+  Shoes: "M12 64V36Q12 32 17 32H33Q36 50 54 54L82 60Q90 62 90 70V76H12Z",
+  Accessories: "M40 8H60L62 34H38ZM38 66H62L60 92H40ZM32 50A18 18 0 1 0 68 50A18 18 0 1 0 32 50Z"
+};
+const art = (cat, color) => `<svg viewBox="0 0 100 100"><g transform="translate(10 10) scale(.8)">
+  <path d="${SHAPES[cat]}" fill="${esc(color)}" stroke="rgba(0,0,0,.28)" stroke-width="1.2" stroke-linejoin="round"/>
+  ${cat==="Outerwear" ? '<path d="M50 30V92" stroke="rgba(0,0,0,.28)" stroke-width="1.2"/>' : ""}
+  ${cat==="Knitwear" ? '<path d="M32 80H68" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/>' : ""}</g></svg>`;
+// the drawn silhouette sits underneath; a real photo covers it, and removes itself if it fails to load
+const pic = i => art(i.cat, i.color) + (i.photo ? `<img src="${esc(i.photo)}" alt="" draggable="false" onerror="this.remove()">` : "");
+const picBg = i => `background:color-mix(in srgb, ${esc(i.color)} 16%, #EFEBFF)`;
+
+const scroller = $("#tl");
+let tz = 0.3, firstTl = true;       // zoom 0 (fit all) .. 1 (day level)
+
+function extent() {
+  const ds = items.map(i => dayNum(i.date)).concat(dayNum(today()));
+  const start = Math.min(...ds) - 30, end = Math.max(...ds) + 30, span = end - start;
+  const min = Math.max(320, scroller.clientWidth - 160) / span, max = Math.max(14, min * 3);
+  return { start, end, span, ppd: min * Math.pow(max/min, tz) };
+}
+
+function renderTimeline() {
+  $("#chips").innerHTML = ["All",...CATS].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${c}">${c}</button>`).join("")
+    + `<button class="chip toggle ${showGone?"":"on"}" data-gone="1">${showGone?"Hide the shame":"Show the shame"}</button>`;
+  $("#zoom").value = Math.round(tz * 1000);
+  const keep = scroller.scrollLeft, g = extent(), ppd = g.ppd;
+  const list = items.filter(i => (filter==="All" || i.cat===filter) && (showGone || !isGone(i))).sort((a,b) => a.date.localeCompare(b.date));
+
+  const cw = Math.round(64 + tz * 176), info = tz >= .3, ch = cw + (info ? 44 : 0), laneH = ch + 18;
+  // purchases made on the same day sit side by side, centred on their date
+  const GAP = 8, byDate = new Map();
+  list.forEach(i => { if (!byDate.has(i.date)) byDate.set(i.date, []); byDate.get(i.date).push(i); });
+  const lanes = [];
+  const placed = [...byDate].map(([date, group]) => {
+    const x = (dayNum(date) - g.start) * ppd, sw = group.length * cw + (group.length - 1) * GAP, left = x - sw / 2;
+    let k = lanes.findIndex(end => end + 10 <= left);
+    if (k < 0) { k = lanes.length; lanes.push(0); }
+    lanes[k] = left + sw;
+    return { group, x, left, k };
+  });
+  const aboveN = Math.max(1, ...placed.filter(p => p.k%2===0).map(p => (p.k>>1)+1));
+  const belowN = Math.max(0, ...placed.filter(p => p.k%2===1).map(p => (p.k>>1)+1));
+  const axisY = 28 + aboveN*laneH + 14, H = axisY + 44 + belowN*laneH + 16, W = Math.ceil(g.span * ppd);
+
+  let ticks = "";
+  const sd = new Date(g.start * 864e5);
+  let y = sd.getUTCFullYear(), m = sd.getUTCMonth();
+  for (;;) {
+    const d = Date.UTC(y, m, 1) / 864e5;
+    if (d > g.end) break;
+    if (d >= g.start) {
+      const x = (d - g.start) * ppd;
+      const name = m===0 ? y : new Date(Date.UTC(y,m,1)).toLocaleDateString("en-US",{month:"short",timeZone:"UTC"});
+      ticks += `<div class="tick" style="left:${x}px;top:${axisY-(m===0?10:6)}px;height:${m===0?20:12}px"></div>`;
+      if (m===0 || ppd >= 1.8 || m%3===0) ticks += `<div class="tlabel ${m===0?"yr":""}" style="left:${x+5}px;top:${axisY+6}px">${name}</div>`;
+    }
+    if (++m > 11) { m = 0; y++; }
+  }
+  if (ppd >= 4) for (let d = Math.ceil(g.start/7)*7; d <= g.end; d += 7) {
+    const x = (d - g.start) * ppd, dom = new Date(d * 864e5).getUTCDate();
+    ticks += `<div class="tick" style="left:${x}px;top:${axisY-3}px;height:6px"></div>`;
+    if (ppd >= 9) ticks += `<div class="tlabel day" style="left:${x-5}px;top:${axisY+22}px">${dom}</div>`;
+  }
+  const tx = (dayNum(today()) - g.start) * ppd;
+  ticks += `<div class="today" style="left:${tx}px"><span>You are here (shopping)</span></div>`;
+
+  let conns = "", dots = "", cards = "";
+  placed.forEach(({group, x, left, k}) => {
+    const above = k%2===0, lvl = k>>1;
+    const top = above ? axisY - 26 - lvl*laneH - ch : axisY + 34 + lvl*laneH;
+    const by = above ? top + ch + 12 : top - 12;                       // the bracket joining a day's cards to the axis
+    const cxs = group.map((_, n) => left + n * (cw + GAP) + cw / 2);
+    conns += above ? `<div class="conn" style="left:${x}px;top:${by}px;height:${axisY-by}px"></div>`
+                   : `<div class="conn" style="left:${x}px;top:${axisY}px;height:${by-axisY}px"></div>`;
+    if (group.length > 1) conns += `<div class="conn h" style="left:${cxs[0]}px;width:${cxs[cxs.length-1]-cxs[0]+2}px;top:${by}px"></div>`;
+    dots += `<div class="dot ${group.every(isGone) ? "gone" : ""}" style="left:${x-5}px;top:${axisY-4}px"></div>`;
+    group.forEach((i, n) => {
+      conns += `<div class="conn" style="left:${cxs[n]}px;top:${above ? top + ch : by}px;height:12px"></div>`;
+      const dl = new Date(i.date+"T00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
+      const badge = isGone(i) ? `<span class="badge">${cw >= 120 ? STATUS_LABEL[i.status] : STATUS_SHORT[i.status]}</span>` : "";
+      cards += `<div class="tcard st-${i.status}" data-id="${i.id}" title="${esc(i.name)} · ${fmt(i.price)}${isGone(i) ? " · " + STATUS_LABEL[i.status] : ""}" style="left:${left + n * (cw + GAP)}px;top:${top}px;width:${cw}px;height:${ch}px">
+        ${badge}<div class="pic" style="${picBg(i)}">${pic(i)}</div>
+        ${info ? `<div class="info"><h4>${esc(i.name)}</h4><div class="meta">${fmt(i.price)} · ${dl}</div></div>` : ""}</div>`;
+    });
+  });
+  scroller.innerHTML = `<div class="tl-in" style="width:${W}px;height:${H}px">${ticks}<div class="axis" style="top:${axisY}px"></div>${conns}${dots}${cards}</div>`;
+  scroller.scrollLeft = firstTl ? W : keep;
+  if (items.length) firstTl = false;
+}
+
+function setZoom(t, anchorX = scroller.clientWidth / 2) {
+  const day = (scroller.scrollLeft + anchorX) / extent().ppd;
+  tz = Math.min(1, Math.max(0, t));
+  renderTimeline();
+  scroller.scrollLeft = day * extent().ppd - anchorX;
+}
+$("#zoom").oninput = e => setZoom(e.target.value / 1000);
+$("#zIn").onclick = () => setZoom(tz + .12);
+$("#zOut").onclick = () => setZoom(tz - .12);
+$("#zFit").onclick = () => { setZoom(0); scroller.scrollLeft = 0; };
+scroller.addEventListener("wheel", e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  e.preventDefault();
+  setZoom(tz - e.deltaY * .006, e.clientX - scroller.getBoundingClientRect().left);
+}, { passive: false });
+window.addEventListener("resize", () => renderTimeline());
+
+let drag = null, moved = false;
+scroller.addEventListener("pointerdown", e => { if (e.button === 0) { drag = { x: e.clientX, s: scroller.scrollLeft }; moved = false; } });
+window.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x;
+  if (Math.abs(dx) > 4) { moved = true; scroller.classList.add("drag"); }
+  if (moved) scroller.scrollLeft = drag.s - dx;
+});
+window.addEventListener("pointerup", () => { drag = null; scroller.classList.remove("drag"); });
+scroller.addEventListener("click", e => {
+  if (moved) { moved = false; return; }
+  const c = e.target.closest(".tcard");
+  if (c) openDetail(+c.dataset.id);
+});
+
+// ---------- photos, detail, add/edit ----------
+// square-crop to 480px JPEG before upload
+function toPhoto(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(img.width, img.height), c = document.createElement("canvas");
+      c.width = c.height = 480;
+      c.getContext("2d").drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, 480, 480);
+      URL.revokeObjectURL(url); c.toBlob(b => b ? res(b) : rej(new Error("Could not read that image.")), "image/jpeg", .82);
+    };
+    img.onerror = () => rej(new Error("Could not read that image.")); img.src = url;
+  });
+}
+const uploadPhoto = (id, blob) => api(`/items/${id}/photo`, { method: "POST", body: blob, type: "image/jpeg" });
+
+const snark = i => i.status === "disposed" ? `Gone, but the ${fmt(i.price)} is not coming back.`
+  : i.status === "unavailable" ? `Not available anymore. ${fmt(i.price)} of "where did it go?"`
+  : i.status === "disliked" ? `You don't like it anymore. Jop has filed ${fmt(i.price)} under "lessons."`
+  : i.wears === 0 ? "Worn 0× so far. The tags are still on, aren't they?"
+  : i.wears < 5 ? `Worn ${i.wears}×, that's ${fmt(i.price / i.wears)} per wear. "Investment piece" status: pending.`
+  : `Worn ${i.wears}×, ${fmt(i.price / i.wears)} per wear. Okay, Jop respects this one.`;
+
+const det = $("#detail"); let detId = null;
+function openDetail(id) {
+  const i = items.find(x => x.id === id); if (!i) return;
+  detId = id;
+  const total = items.reduce((a,x) => a + x.price, 0);
+  const date = new Date(i.date+"T00:00").toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"});
+  const facts = [i.size && `Size ${i.size}`, i.material, i.store && `From ${i.store}`, `Worn ${i.wears}×`].filter(Boolean);
+  $("#detBody").innerHTML = `<div class="big" style="${picBg(i)}">${pic(i)}</div>
+    <h3>${esc(i.name)}</h3><p class="dm">${esc(i.brand||"—")} · ${i.cat} · ${date}</p>
+    <div class="facts">${facts.map(f => `<span>${esc(f)}</span>`).join("")}<button class="btn ghost sm" id="detWore">+1 wear</button></div>
+    <div class="drow"><b>${fmt(i.price)}</b><span>${(i.price/total*100).toFixed(1)}% of everything you've spent</span></div>
+    <div class="snark">${snark(i)}</div>
+    <div class="status-box"><span class="lbl">Still in your life?</span>
+      <div class="seg2">${STATUSES.map(([k,l]) => `<button class="${i.status===k?"on":""}" data-status="${k}">${l}</button>`).join("")}</div>
+      <input id="statusNote" maxlength="120" placeholder="What happened? (optional)" value="${esc(i.statusNote || "")}" ${i.status==="active" ? "hidden" : ""}></div>
+    ${i.notes ? `<p class="dm" style="margin:-8px 0 20px">“${esc(i.notes)}”</p>` : ""}`;
+  if (!det.open) det.showModal();
+}
+$("#detClose").onclick = () => det.close();
+$("#detDel").onclick = guard(async () => {
+  if (!confirm("Deny it ever happened?")) return;
+  await api(`/items/${detId}`, { method: "DELETE" });
+  det.close(); await load();
+});
+$("#detEdit").onclick = () => { det.close(); openForm(items.find(i => i.id === detId)); };
+$("#detPhoto").onclick = () => $("#photoIn").click();
+$("#photoIn").onchange = guard(async e => {
+  const f = e.target.files[0]; if (!f) return;
+  await uploadPhoto(detId, await toPhoto(f));
+  e.target.value = ""; await load(); openDetail(detId);
+});
+document.addEventListener("click", guard(async e => {
+  if (e.target.closest("#detWore")) { await api(`/items/${detId}/wear`, { method: "POST", json: {} }); await load(); openDetail(detId); }
+}));
+
+const dlg = $("#dlg"), form = $("#form");
+form.elements.cat.innerHTML = CATS.map(c=>`<option>${c}</option>`).join("");
+let editId = null, pending = null;
+function openForm(it) {
+  editId = it ? it.id : null; pending = null;
+  form.reset();
+  $("#formTitle").textContent = it ? "Edit this “essential”" : "What did you buy this time?";
+  $("#formSave").textContent = it ? "Save changes" : "Add it. No judgment.";
+  if (it) for (const k of ["name","brand","size","cat","price","date","store","material","notes","color"]) form.elements[k].value = it[k] ?? "";
+  else form.elements.date.value = today();
+  dlg.showModal();
+}
+$("#openAdd").onclick = () => openForm();
+$("#heroAdd").onclick = () => openForm();
+$("#cancel").onclick = () => dlg.close();
+form.elements.photo.onchange = guard(async () => { const f = form.elements.photo.files[0]; pending = f ? await toPhoto(f) : null; });
+form.addEventListener("submit", guard(async e => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(form));
+  const body = { name: f.name, brand: f.brand, size: f.size, cat: f.cat, price: +f.price, date: f.date,
+    store: f.store, material: f.material, notes: f.notes, color: f.color };
+  const saved = editId ? await api(`/items/${editId}`, { method: "PUT", json: body }) : await api("/items", { method: "POST", json: body });
+  if (pending) await uploadPhoto(saved.id, pending);
+  dlg.close(); await load();
+  if (editId) openDetail(saved.id);
+}));
+
+// ---------- agent actions ----------
+$("#auto").onclick = () => {
+  auto = !auto;
+  $("#auto").classList.toggle("on", auto);
+  $("#autoNote").textContent = auto ? "ON · Jop may spend your money" : "OFF · Jop will ask first. How quaint.";
+};
+document.addEventListener("click", guard(async e => {
+  const b = e.target.closest("[data-buy]"), n = e.target.closest("[data-nah]");
+  if (b) {
+    const s = sugs[+b.dataset.buy]; if (!s) return;
+    if (!auto && !confirm(`Jop Agent would like to spend ${fmt(s.price)} on "${s.idea}". Allow?`)) return;
+    await api("/items", { method: "POST", json: { name: s.idea, brand: "Picked by Jop Agent", cat: s.c, price: Math.round(s.price),
+      date: today(), color: PALETTE[+b.dataset.buy % PALETTE.length] } });
+    toast(auto ? `Jop bought "${s.idea}". You were not consulted.` : `Fine. Bought "${s.idea}". Receipt sent to future you.`);
+    await load();
+  }
+  if (n) {
+    const s = sugs[+n.dataset.nah]; if (!s) return;
+    dismissed.add(s.key); toast("Noted. Jop will ask again in 3 weeks."); renderSuggestions();
+  }
+}));
+
+document.addEventListener("click", guard(async e => {
+  const b = e.target.closest("[data-status]");
+  if (!b) return;
+  const status = b.dataset.status, cur = items.find(i => i.id === detId);
+  await api(`/items/${detId}`, { method: "PUT", json: { status, statusNote: status === "active" ? "" : cur.statusNote } });
+  await load(); openDetail(detId);
+}));
+document.addEventListener("change", guard(async e => {
+  if (e.target.id !== "statusNote") return;
+  await api(`/items/${detId}`, { method: "PUT", json: { statusNote: e.target.value } });
+  await load(); openDetail(detId);
+}));
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.dataset.gone) { showGone = !showGone; renderTimeline(); }
+  if (t.dataset.y) { year = t.dataset.y; renderChart(); }
+  if (t.dataset.c) { filter = t.dataset.c; renderTimeline(); }
+});
+$("#reset").onclick = guard(async e => {
+  e.preventDefault();
+  if (!confirm("Wipe everything and restore the sample wardrobe?")) return;
+  await api("/reset", { method: "POST", json: {} });
+  year = filter = "All"; await load();
+});
+
+// ---------- black friday (client-side only, mock deals) ----------
+const BF_DATE = "2026-11-27";
+const DEALS = [
+  { id:"rain-shell", name:"Torrentshell 3L rain jacket", brand:"Patagonia", store:"REI", cat:"Outerwear", was:179, now:125, color:"#1d3a4a", match:/shell|rain|parka/i },
+  { id:"overcoat", name:"Double-breasted wool coat", brand:"Massimo Dutti", store:"Massimo Dutti", cat:"Outerwear", was:329, now:197, color:"#4a4f57", match:/coat/i },
+  { id:"puffer", name:"Ultra-light down jacket", brand:"Uniqlo", store:"Uniqlo", cat:"Outerwear", was:129, now:99, color:"#2d3a2f", match:/puffer|down/i },
+  { id:"tee-pack", name:"Crew neck tee, 3-pack", brand:"Uniqlo", store:"Uniqlo", cat:"Tops", was:60, now:39, color:"#17181a", match:/tee|t-shirt/i, max:2 },
+  { id:"overshirt", name:"Brushed cotton overshirt", brand:"Arket", store:"Arket", cat:"Tops", was:119, now:83, color:"#6b7a4f", match:/overshirt/i },
+  { id:"cashmere", name:"Cashmere crewneck", brand:"Everlane", store:"Everlane", cat:"Knitwear", was:128, now:89, color:"#8a6f5a", match:/cashmere/i },
+  { id:"chinos", name:"Tapered stretch chinos", brand:"Bonobos", store:"Bonobos", cat:"Bottoms", was:99, now:59, color:"#b8a98c", match:/chino/i },
+  { id:"denim", name:"Selvedge slim denim", brand:"A.P.C.", store:"A.P.C.", cat:"Bottoms", was:280, now:196, color:"#1c2430", match:/denim/i, max:2 },
+  { id:"desert", name:"Suede desert boots", brand:"Clarks", store:"Clarks", cat:"Shoes", was:150, now:105, color:"#a8845a", match:/desert/i },
+  { id:"scarf", name:"Lambswool scarf", brand:"Uniqlo", store:"Uniqlo", cat:"Accessories", was:29, now:19, color:"#7a2f3a" },
+  { id:"beanie", name:"Merino beanie", brand:"Icebreaker", store:"Icebreaker", cat:"Accessories", was:45, now:29, color:"#2b2d33" },
+  { id:"belt", name:"Reversible leather belt", brand:"Anson", store:"Anson", cat:"Accessories", was:65, now:39, color:"#4a3326", match:/belt/i },
+  { id:"sequin", name:"Metallic puffer jacket", brand:"Zara", store:"Zara", cat:"Outerwear", was:199, now:99, color:"#b9b9d6", trap:true, trapWhy:"50% off something you'd wear exactly once. To a party you haven't been invited to." },
+  { id:"mystery", name:"Mystery box of 5 tees", brand:"Fast Fashion Co.", store:"Fast Fashion Co.", cat:"Tops", was:120, now:35, color:"#999999", trap:true, trapWhy:"Five items you would never choose. Preventing exactly this is Jop's job." },
+  { id:"cargo", name:"Cargo shorts", brand:"Old Navy", store:"Old Navy", cat:"Bottoms", was:70, now:25, color:"#a8a07a", trap:true, trapWhy:"It's November. Jop checked." },
+];
+let bfBudget = Number(localStorage.getItem("jop.bf.budget")) || 300;
+let bfManual = null;      // Set of deal ids once you touch the basket; null = Jop's picks
+let bfAuto = new Set();
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+
+// how many times you'd probably wear a new piece: your average for the category, at least 5
+const wearsGuess = cat => {
+  const xs = items.filter(i => i.cat === cat && i.status === "active" && i.wears > 0).map(i => i.wears);
+  return xs.length ? Math.max(5, Math.round(xs.reduce((a,b) => a + b) / xs.length)) : 10;
+};
+
+function analyseDeals() {
+  const winter = [10,11,0,1,2].includes(new Date().getMonth());
+  const act = items.filter(i => i.status === "active");
+  const res = DEALS.map(d => {
+    const ownedCat = act.filter(i => i.cat === d.cat).length;
+    const goneCat = items.filter(i => i.cat === d.cat && i.status !== "active").length;
+    const dupes = d.match ? act.filter(i => d.match.test(i.name)).length : 0;
+    const need = Math.max(0, (TARGET[d.cat] - ownedCat) / TARGET[d.cat]);
+    const prices = items.filter(i => i.cat === d.cat).map(i => i.price);
+    const avg = prices.length ? prices.reduce((a,b) => a + b) / prices.length : d.now;
+    const disc = 1 - d.now / d.was;
+    // gaps matter most, then replacing what you gave up on, then the actual discount
+    const score = need * 50 + Math.min(goneCat, 2) * 8 + disc * 30 + (d.now <= avg * 1.15 ? 8 : 0) + (winter && WINTER.includes(d.cat) ? 10 : 0);
+    const verdict = d.trap ? "skip" : dupes >= (d.max || 1) ? "blocked" : score >= 45 ? "buy" : score >= 28 ? "maybe" : "skip";
+    return { ...d, ownedCat, goneCat, dupes, need, disc, score, verdict, cpw: d.now / wearsGuess(d.cat) };
+  }).sort((a, b) => b.score - a.score);
+  const picked = new Set();                       // one "buy" per category, the rest are backups
+  res.forEach(d => { if (d.verdict === "buy") { if (picked.has(d.cat)) { d.verdict = "maybe"; d.backup = true; } else picked.add(d.cat); } });
+  return res;
+}
+function dealWhy(d) {
+  if (d.trap) return d.trapWhy;
+  if (d.verdict === "blocked") return `You already own ${d.dupes}. Jop is not your enabler.`;
+  if (d.verdict === "skip") return "You don't need it. The discount is doing all the talking.";
+  const bits = [];
+  if (d.goneCat) bits.push(`You gave up on ${plural(d.goneCat, d.cat.toLowerCase() + " piece")}. This is the replacement.`);
+  if (d.need > 0) bits.push(`${d.ownedCat} of ${TARGET[d.cat]} ${d.cat.toLowerCase()} in rotation.`);
+  if (d.backup) bits.push("Backup: Jop already picked a better one here.");
+  if (d.disc >= .35) bits.push("Actually a good deal. Rare.");
+  return bits.join(" ");
+}
+
+function renderBF() {
+  const deals = analyseDeals();
+  // Jop's basket: best "buy" picks that fit the budget
+  bfAuto = new Set(); let run = 0;
+  deals.filter(d => d.verdict === "buy").forEach(d => { if (run + d.now <= bfBudget) { bfAuto.add(d.id); run += d.now; } });
+  const cart = bfManual ?? bfAuto;
+  const inCart = deals.filter(d => cart.has(d.id));
+  const committed = inCart.reduce((a,d) => a + d.now, 0), left = bfBudget - committed;
+
+  $("#bfBig").textContent = fmt(bfBudget);
+  $("#bfBudget").value = bfBudget;
+  $("#bfMeter").classList.toggle("over", left < 0);
+  $("#bfMeter i").style.width = Math.min(100, bfBudget ? committed / bfBudget * 100 : 100) + "%";
+  $("#bfInLbl").textContent = `In basket (${inCart.length})`;
+  $("#bfIn").textContent = fmt(committed);
+  $("#bfLeftLbl").textContent = left < 0 ? "Over budget. Jop is disappointed." : "Left to spend";
+  $("#bfLeft").textContent = (left < 0 ? "+" : "") + fmt(Math.abs(left));
+  $("#bfLeft").classList.toggle("bad", left < 0);
+  $("#bfSaved").textContent = fmt(inCart.reduce((a,d) => a + (d.was - d.now), 0));
+  $("#bfBlocked").textContent = fmt(deals.filter(d => d.verdict === "blocked" || d.verdict === "skip").reduce((a,d) => a + d.now, 0));
+  $("#bfReset").hidden = !bfManual;
+
+  // wardrobe review
+  const act = items.filter(i => i.status === "active");
+  $("#bfReview").innerHTML = CATS.map(c => {
+    const n = act.filter(i => i.cat === c).length, t = TARGET[c];
+    return `<div class="rv-row"><span>${c}</span><div class="rv-dots">${Array.from({ length: t }, (_, k) => `<i class="${k < n ? "on" : "gap"}"></i>`).join("")}</div><em>${Math.min(n, t)}/${t}</em></div>`;
+  }).join("");
+  const dead = items.filter(isGone);
+  const weakest = CATS.map(c => [c, (TARGET[c] - act.filter(i => i.cat === c).length) / TARGET[c]]).sort((a, b) => b[1] - a[1])[0];
+  $("#bfReviewNote").textContent = (weakest[1] > 0 ? `Biggest gap: ${weakest[0].toLowerCase()}. ` : "No gaps. Suspicious. ")
+    + (dead.length ? `${plural(dead.length, "piece")} (${fmt(dead.reduce((a,i) => a + i.price, 0))}) no longer in rotation. Jop would like them replaced, not repeated.` : "Nothing you've given up on. Yet.");
+
+  // picks and shield
+  const picks = deals.filter(d => d.verdict === "buy" || d.verdict === "maybe");
+  $("#bfSub").textContent = picks.length ? `${plural(picks.filter(d => d.verdict === "buy").length, "thing")} worth buying, ${plural(picks.filter(d => d.verdict === "maybe").length, "maybe")}. Ranked by how much your wardrobe needs them.` : "Nothing worth buying. Go outside.";
+  $("#deals").innerHTML = picks.map(d => {
+    const on = cart.has(d.id), over = d.verdict === "buy" && !on && !bfManual;
+    return `<div class="deal ${on ? "in" : ""}">
+      <div class="sug-pic" style="background:color-mix(in srgb, ${d.color} 16%, #EDF8F3)">${art(d.cat, d.color)}<span class="hot ${over ? "over" : d.verdict}">${over ? "Over budget" : d.verdict === "buy" ? "Jop approves" : "Jop is thinking"}</span></div>
+      <div class="body">
+        <div class="store">${d.store}</div><h4>${d.name}</h4><div class="brand">${d.brand} · ${d.cat}</div>
+        <div class="price-row"><b>${fmt(d.now)}</b><s>${fmt(d.was)}</s><span class="off">−${Math.round(d.disc * 100)}%</span></div>
+        <p>${dealWhy(d)}</p>
+        <div class="cpw">≈ ${fmt(d.cpw)} per wear, at ${wearsGuess(d.cat)} wears</div>
+        <button class="btn ${on ? "in" : "primary"} sm" data-deal="${d.id}">${on ? "In basket ✓" : "Add to basket"}</button>
+      </div></div>`;
+  }).join("");
+  const blocked = deals.filter(d => d.verdict === "blocked" || d.verdict === "skip");
+  $("#shield").innerHTML = blocked.map(d => `<div class="shield-row"><span class="ic">✕</span>
+    <div><b>${d.name}</b> <span style="color:var(--muted)">· ${d.brand} · ${fmt(d.now)} <s>${fmt(d.was)}</s></span><small>${dealWhy(d)}</small></div>
+    <button class="btn ghost sm" data-deal="${d.id}">${cart.has(d.id) ? "Fine, it's in" : "Add anyway"}</button></div>`).join("");
+}
+
+function tickBF() {
+  const t = Math.max(0, new Date(BF_DATE + "T00:00:00") - Date.now());
+  $("#bfD").textContent = Math.floor(t / 864e5);
+  $("#bfH").textContent = Math.floor(t % 864e5 / 36e5);
+  $("#bfM").textContent = Math.floor(t % 36e5 / 6e4);
+}
+setInterval(tickBF, 30000); tickBF();
+
+$("#bfBudget").oninput = e => { bfBudget = +e.target.value; localStorage.setItem("jop.bf.budget", bfBudget); renderBF(); };
+$("#bfReset").onclick = () => { bfManual = null; renderBF(); };
+$("#bfQueue").onclick = () => {
+  const cart = bfManual ?? bfAuto, chosen = DEALS.filter(d => cart.has(d.id));
+  if (!chosen.length) return toast("Empty basket. Jop is genuinely proud of you.");
+  const sum = chosen.reduce((a, d) => a + d.now, 0);
+  toast(auto ? `Queued ${plural(chosen.length, "item")} (${fmt(sum)}). Jop checks out at 00:00 on Friday. You'll be told afterwards.`
+             : `Queued ${plural(chosen.length, "item")} (${fmt(sum)}). Jop will ask before every purchase. How quaint.`);
+};
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-deal]"); if (!b) return;
+  const next = new Set(bfManual ?? bfAuto), id = b.dataset.deal;
+  if (next.has(id)) next.delete(id);
+  else { next.add(id); const d = DEALS.find(x => x.id === id); if (d.trap || b.closest(".shield-row")) toast("Jop has noted this. Jop will say “I told you so” later."); }
+  bfManual = next; renderBF();
+});
+
+function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); }
+load().catch(() => { $("#offline").hidden = false; });
+</script>
+</body>
+</html>

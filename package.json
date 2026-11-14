@@ -1,0 +1,13 @@
+{
+  "name": "jop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "JOP \u2014 a wardrobe timeline with an opinionated agent. Node + SQLite, zero dependencies.",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js"
+  }
+}
