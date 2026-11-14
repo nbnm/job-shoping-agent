@@ -45,94 +45,94 @@
   .btn.onpurple:hover { background: rgba(255,255,255,.24); }
   .btn.sm { padding: 9px 16px; font-size: 14px; }
 
-  /* hero */
-  .hero { position: relative; overflow: hidden; border-radius: 44px; color: #fff; padding: 56px 56px 36px; margin-top: 8px;
+  /* hero: a compact banner, 40% of the screen. Title on the left, the workflow on the right */
+  .hero { position: relative; overflow: hidden; border-radius: 40px; color: #fff; padding: 26px 26px 26px 48px; margin-top: 8px;
+    height: 40vh; min-height: 340px; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.4fr); gap: 32px; align-items: center;
     background: radial-gradient(120% 120% at 100% 0%, #3DD9AE 0%, var(--main) 45%, #08694F 100%); }
-  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--accent); color: #fff; }
-  .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; padding: 5px 12px 5px 10px; border-radius: 999px; background: var(--accent); color: #fff; }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { transform: scale(1.7); opacity: .4; } }
-  .hero h1 { margin-top: 24px; font-size: clamp(44px, 7vw, 88px); font-weight: 800; letter-spacing: -.07em; line-height: .92; }
-  .hero-sub { margin-top: 20px; max-width: 580px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.35; opacity: .94; }
-  .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .hero h1 { margin-top: 14px; font-size: clamp(38px, min(5.4vw, 8.5vh), 84px); font-weight: 800; letter-spacing: -.07em; line-height: .92; }
+  .hero-sub { margin-top: 12px; font-size: clamp(16px, 2.4vh, 21px); font-weight: 600; letter-spacing: -.02em; line-height: 1.3; opacity: .94; }
+  .hero-cta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 
-  /* the workflow: the centrepiece of the hero. Steps zig-zag up and down one path */
-  .flowbox { margin-top: 44px; padding: 34px 5% 40px; border-radius: 36px; background: rgba(255,255,255,.12); }
-  .flow-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .85; text-align: center; }
-  .fmap { position: relative; margin-top: 26px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: auto 200px auto; }
+  /* the workflow: four steps zig-zag up and down one path */
+  .flowbox { height: 100%; padding: 12px 18px; border-radius: 30px; background: rgba(255,255,255,.12); }
+  .fmap { position: relative; height: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto minmax(84px, 1fr) auto; }
   .fmap > ol, .fnode { display: contents; }
   .fsvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .fpath { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 4; stroke-linecap: round; stroke-dasharray: .1 10; animation: fdash 1s linear infinite; }
   @keyframes fdash { to { stroke-dashoffset: -10.1; } }
   .fpkt { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
-  .fedge { position: absolute; transform: translate(-50%, -50%); font-size: 11.5px; font-weight: 700; white-space: nowrap; padding: 4px 11px; border-radius: 99px; background: #0B7A5C; box-shadow: 0 0 0 3px rgba(255,255,255,.14); }
+  .fedge { position: absolute; transform: translate(-50%, -50%); font-size: 10.5px; font-weight: 700; white-space: nowrap; padding: 3px 9px; border-radius: 99px; background: #0B7A5C; box-shadow: 0 0 0 3px rgba(255,255,255,.14); }
   .fedge.q { background: var(--accent); }
-  .fic { grid-row: 2; grid-column: var(--c); justify-self: center; align-self: start; margin-top: 4px; z-index: 1;
-    position: relative; width: 72px; height: 72px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 2.5s - 15s); }
-  .lo .fic { align-self: end; margin: 0 0 4px; }
-  .fic > svg { display: block; height: 32px; width: auto; }
-  .fnum { position: absolute; top: -4px; right: -4px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(255,255,255,.9); }
+  .fic { grid-row: 2; grid-column: var(--c); justify-self: center; align-self: start; z-index: 1;
+    position: relative; width: 50px; height: 50px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 12s infinite; animation-delay: calc(var(--i) * 3s - 12s); }
+  .lo .fic { align-self: end; }
+  .fic > svg { display: block; height: 23px; width: auto; }
+  .fnum { position: absolute; top: -5px; right: -5px; width: 19px; height: 19px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10.5px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(255,255,255,.9); }
   @keyframes fic { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; }
-    2%, 15% { box-shadow: 0 0 0 10px rgba(255,255,255,.28); transform: scale(1.08); }
-    18%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
-  .ftxt { grid-row: 1; grid-column: var(--c); align-self: end; width: 150%; margin: 0 0 16px -25%; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .lo .ftxt { grid-row: 3; align-self: start; margin: 16px 0 0 -25%; }
-  .ftxt h4 { font-size: 19px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
-  .ftxt p { font-size: 14px; opacity: .88; line-height: 1.35; max-width: 220px; }
-  .mystery { font-size: 12px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 4px 11px; }
-  .vendors, .tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
-  .vm, .tag { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 8px; }
-  .tag { letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 10px; }
-  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
+    2%, 19% { box-shadow: 0 0 0 8px rgba(255,255,255,.28); transform: scale(1.08); }
+    23%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
+  .ftxt { grid-row: 1; grid-column: var(--c); align-self: end; width: 160%; margin: 0 0 10px -30%; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; }
+  .lo .ftxt { grid-row: 3; align-self: start; margin: 10px 0 0 -30%; }
+  .fnode:first-child .ftxt { width: 130%; margin-left: 0; align-items: flex-start; text-align: left; }
+  .fnode:last-child .ftxt { width: 130%; margin-left: -30%; align-items: flex-end; text-align: right; }
+  .ftxt h4 { font-size: 15px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1; }
+  .ftxt p { font-size: 12px; opacity: .88; line-height: 1.3; }
+  .mystery { font-size: 11px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 3px 10px; }
+  .vendors { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .fnode:last-child .vendors { justify-content: flex-end; }
+  .vm { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 7px; }
+  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 12px; }
   .vm:nth-child(3) { letter-spacing: .26em; font-weight: 500; }
-  .vm:nth-child(4) { text-transform: lowercase; letter-spacing: -.02em; font-size: 13px; }
-  .fseg { display: inline-flex; gap: 2px; background: rgba(255,255,255,.15); border-radius: 99px; padding: 3px; }
-  .fseg span { font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 99px; animation: fseg 6s infinite; animation-delay: calc(var(--k) * 2s - 6s); }
-  @keyframes fseg { 0%, 30% { background-color: #fff; color: var(--main); } 34%, 100% { background-color: transparent; color: #fff; } }
 
-  /* order emails in, wardrobe items out (same rhythm in steps 1 and 3) */
-  .mails { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 250px; }
-  .ml { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,.15); border-radius: 12px; padding: 7px 10px; text-align: left; animation: emIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .ml svg { flex: none; width: 18px; height: 14px; }
-  .ml div { min-width: 0; flex: 1; display: flex; flex-direction: column; }
-  .ml b { font-size: 12.5px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ml div span { font-size: 11px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ms { position: relative; flex: none; width: 20px; height: 20px; }
-  .ms i { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; font-style: normal; font-size: 11px; font-weight: 800; }
-  .ms .a { animation: stA 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .ms .b { background: #fff; color: var(--main); animation: stB 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  .spin { width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; animation: spin .7s linear infinite; }
+  /* one order email at a time: in, processed, out. Its item pops in step 2 */
+  .mails { position: relative; width: 100%; max-width: 230px; height: 38px; }
+  .ml { position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.15); border-radius: 11px; padding: 0 9px; text-align: left; animation: ml 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
+  .ml svg { flex: none; width: 16px; height: 12px; }
+  .ml div { min-width: 0; flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
+  .ml b { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ml div span { font-size: 10px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms { position: relative; flex: none; width: 18px; height: 18px; }
+  .ms i { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; font-style: normal; font-size: 10px; font-weight: 800; }
+  .ms .a { animation: msA 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
+  .ms .b { background: #fff; color: var(--main); animation: msB 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
+  .spin { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .fitems { display: flex; gap: 8px; justify-content: center; }
-  .fth { position: relative; width: 54px; height: 54px; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 3px #fff; animation: itIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
-  @keyframes emIn { 0% { opacity: 0; transform: translateX(-22px); } 4%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateX(-22px); } }
-  @keyframes stA { 0%, 4% { opacity: 0; } 6%, 15% { opacity: 1; } 17%, 100% { opacity: 0; } }
-  @keyframes stB { 0%, 16% { opacity: 0; transform: scale(.6); } 19%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
-  @keyframes itIn { 0%, 17% { opacity: 0; transform: translateY(12px) scale(.9); } 21%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateY(12px) scale(.9); } }
+  @keyframes ml { 0% { opacity: 0; transform: translateY(8px); } 3%, 30% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; transform: translateY(-8px); } }
+  @keyframes msA { 0%, 3% { opacity: 0; } 4%, 13% { opacity: 1; } 14%, 100% { opacity: 0; } }
+  @keyframes msB { 0%, 13% { opacity: 0; transform: scale(.6); } 15%, 30% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; } }
+  .fitems { display: flex; gap: 6px; justify-content: center; }
+  .fth { position: relative; width: 34px; height: 34px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 2px #fff; animation: fth 12s infinite; animation-delay: calc(var(--i) * 4s - 12s); }
+  @keyframes fth { 0%, 13% { transform: none; } 16% { transform: scale(1.22); } 21%, 100% { transform: none; } }
 
   /* narrow screens: the same steps, one under another */
   @media (max-width: 860px) {
+    .hero { height: auto; min-height: 0; grid-template-columns: 1fr; gap: 24px; padding: 30px 22px 24px; }
     .fmap { display: block; }
     .fsvg, .fedge { display: none; }
-    .fnode { display: grid; grid-template-columns: 72px 1fr; column-gap: 18px; position: relative; padding-bottom: 26px; }
-    .fnode:not(:last-child)::before { content: ""; position: absolute; left: 35px; top: 84px; bottom: 8px; border-left: 3px dotted rgba(255,255,255,.5); }
-    .fic, .lo .fic { grid-row: 1; grid-column: 1; margin: 0; align-self: start; }
-    .ftxt, .lo .ftxt { grid-row: 1; grid-column: 2; width: auto; margin: 0; align-items: flex-start; text-align: left; }
-    .vendors, .tags, .fitems { justify-content: flex-start; }
+    .fnode { display: grid; grid-template-columns: 50px 1fr; column-gap: 16px; position: relative; padding-bottom: 20px; }
+    .fnode:not(:last-child)::before { content: ""; position: absolute; left: 24px; top: 58px; bottom: 6px; border-left: 3px dotted rgba(255,255,255,.5); }
+    .fic, .lo .fic { grid-row: 1; grid-column: 1; align-self: start; }
+    .ftxt, .lo .ftxt, .fnode:first-child .ftxt, .fnode:last-child .ftxt { grid-row: 1; grid-column: 2; width: auto; margin: 0; align-items: flex-start; text-align: left; }
+    .vendors, .fitems, .fnode:last-child .vendors { justify-content: flex-start; }
   }
-  @media (prefers-reduced-motion: reduce) { .ml, .ms .a, .ms .b, .fth, .fpath, .fseg span { animation: none; opacity: 1; } .ms .a, .fpkt { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .ml, .ms .a, .ms .b, .fth, .fpath { animation: none; opacity: 1; } .ms .a, .fpkt, .ml:not(:first-child) { display: none; } }
 
-  .stats { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; margin-top: 34px; }
-  .stat { padding: 0 18px; border-left: 1px solid rgba(255,255,255,.2); }
+  /* under the banner: the numbers, then a small extra */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; margin-top: 28px; padding: 0 8px; }
+  .stat { padding: 0 18px; border-left: 1px solid var(--line); }
   .stat:first-child { padding-left: 0; border-left: 0; }
-  .stat small { display: block; font-size: 13px; opacity: .78; margin-bottom: 4px; font-weight: 500; }
+  .stat small { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
   .stat b { font-weight: 700; font-size: 28px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
 
   /* a small extra: 30 black tees you can discard */
-  .tees { margin-top: 30px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22); }
+  .tees { margin-top: 26px; padding: 18px 8px 0; border-top: 1px solid var(--line); }
   .tees-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 15px; }
   .tees-head b { font-size: 26px; font-weight: 800; letter-spacing: -.05em; font-variant-numeric: tabular-nums; min-width: 1.2em; }
   .tees-head span { font-weight: 700; letter-spacing: -.02em; }
-  .tees-head small { opacity: .75; font-size: 13px; }
+  .tees-head small { color: var(--muted); font-size: 13px; }
   .tees-head .tees-btns { margin-left: auto; display: flex; gap: 6px; }
   .tees-head .btn { white-space: nowrap; }
   .rack { margin-top: 10px; }
@@ -186,6 +186,8 @@
   .cat-row em { font-style: normal; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
 
   /* timeline */
+  #timeline { scroll-margin-top: 72px; }
+  .tl-sources { display: flex; gap: 8px; margin-bottom: 16px; }
   .tl-tools { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
   .chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .chip { border: 0; background: var(--lav); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink); transition: all .2s; }
@@ -196,9 +198,27 @@
   .zoom button:hover { background: var(--lav2); }
   .zoom .fit { font-size: 14px; padding: 0 16px; }
   .zoom input[type=range] { width: 140px; margin: 0; padding: 0; border: 0; accent-color: var(--main); }
+  #purchaseYear { width: auto; margin: 0; padding: 8px 12px; border-radius: 12px; font-size: 14px; }
+  #purchaseYear[hidden], #timelineZoom[hidden] { display: none; }
   .hint { color: var(--muted); font-size: 14px; margin-top: 16px; text-align: center; }
   .tl-scroll { position: relative; overflow-x: auto; overflow-y: hidden; cursor: grab; user-select: none; -webkit-user-select: none; scrollbar-width: thin; scrollbar-color: var(--main) transparent; background: var(--lav); }
   .tl-scroll.drag { cursor: grabbing; }
+  .tl-scroll.purchase-list { width: calc(100% - 56px); max-width: 1104px; margin-inline: auto; max-height: min(560px, 64vh); overflow: auto; cursor: auto; user-select: auto; -webkit-user-select: auto; background: #fff; border-block: 1px solid var(--line); }
+  .purchase-month h3 { position: sticky; top: 0; z-index: 2; padding: 9px 14px; font-size: 14px; font-weight: 700; background: var(--lav); }
+  .purchase-row { width: 100%; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; border: 0; border-bottom: 1px solid var(--line); background: #fff; padding: 10px 14px; text-align: left; cursor: pointer; scroll-margin-block-start: 42px; }
+  .purchase-row:hover { background: #f7fbf9; }
+  .purchase-row:focus-visible, .tcard:focus-visible { outline: 2px solid var(--main-d); outline-offset: -2px; }
+  .purchase-day, .purchase-meta { font-size: 13px; color: var(--muted); }
+  .purchase-name { display: block; font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
+  .purchase-meta { display: block; margin-top: 3px; }
+  .purchase-end { display: grid; justify-items: end; gap: 5px; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .return-flag { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; line-height: 1.4; color: #713b19; background: #f9eadc; text-align: right; }
+  .return-flag.confirmed { color: #56284b; background: #f2e5f0; }
+  .timeline-state { padding: 20px 14px; color: var(--muted); }
+  .timeline-state .btn { margin-left: 8px; }
+  .purchase-facts { display: grid; grid-template-columns: max-content minmax(0,1fr); gap: 8px 16px; margin: 20px 0; font-size: 14px; }
+  .purchase-facts dt { color: var(--muted); }
+  .purchase-facts dd { overflow-wrap: anywhere; }
   .tl-in { position: relative; }
   .axis { position: absolute; left: 0; right: 0; height: 3px; border-radius: 3px; background: var(--main); }
   .tick { position: absolute; width: 2px; background: var(--main); opacity: .35; }
@@ -372,10 +392,15 @@
 
   @media (max-width: 860px) {
     nav ul { display: none; }
-    .hero { padding: 32px 22px 28px; border-radius: 32px; }
+    .hero { border-radius: 32px; }
     .zoom input[type=range] { width: 90px; }
     .auto { margin-left: 0; }
     .card { padding: 22px; }
+  }
+  @media (max-width: 520px) {
+    .tl-scroll.purchase-list { width: calc(100% - 32px); }
+    .purchase-row { grid-template-columns: 26px minmax(0, 1fr) minmax(68px, auto); gap: 8px; padding-inline: 10px; }
+    .purchase-end { max-width: 106px; }
   }
 </style>
 </head>
@@ -404,29 +429,29 @@
 
 <header class="wrap">
   <div class="hero">
-    <span class="pill">Jop Agent is online and has opinions</span>
-    <h1>Hand Jop<br>your card.</h1>
-    <p class="hero-sub">It reads your receipts, rebuilds your wardrobe, then does your Black Friday shopping. You won't know what it buys.</p>
-    <div class="hero-cta">
-      <button class="btn lime" id="heroAdd">Log another “essential”</button>
-      <a class="btn onpurple" href="#timeline" style="text-decoration:none">Review the evidence</a>
+    <div>
+      <span class="pill">Jop Agent is online and has opinions</span>
+      <h1>Hand Jop<br>your card.</h1>
+      <p class="hero-sub">Trust the agent to be your jopper.</p>
+      <div class="hero-cta">
+        <button class="btn lime sm" id="heroAdd">Log another “essential”</button>
+        <a class="btn onpurple sm" href="#timeline" style="text-decoration:none">Review the evidence</a>
+      </div>
     </div>
 
-    <div class="flowbox">
-      <p class="flow-label">How Jop works</p>
+    <div class="flowbox" aria-label="How Jop works">
       <div class="fmap" id="fmap">
-        <svg class="fsvg" aria-hidden="true"><path class="fpath" id="fpath"/><circle class="fpkt" r="7"><animateMotion dur="15s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;.83;1"><mpath href="#fpath"/></animateMotion></circle></svg>
-        <span class="fedge" id="fRcpt">receipts</span><span class="fedge">sizes · brands · taste</span><span class="fedge">a draft of you</span><span class="fedge">the truth, mostly</span><span class="fedge q">budget: ???</span>
+        <svg class="fsvg" aria-hidden="true"><path class="fpath" id="fpath"/><circle class="fpkt" r="6"><animateMotion dur="12s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;.75;1"><mpath href="#fpath"/></animateMotion></circle></svg>
+        <span class="fedge" id="fRcpt">receipts</span><span class="fedge">a draft of you</span><span class="fedge q">budget: ???</span>
         <ol>
-        <li class="fnode" style="--i:0;--c:1"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><div class="ftxt"><h4>Reads your Gmail</h4><p>Every “your order is confirmed”, from your own export.</p><div class="mails" id="fMail" aria-label="Order emails being processed"></div></div></li>
-        <li class="fnode lo" style="--i:1;--c:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h12l6 6v16H5Z"/><path d="M17 3v6h6"/><path d="M9 14h10M9 18.5h6"/></svg><span class="fnum">2</span></span><div class="ftxt"><h4>Pulls out the details</h4><p>Line by line, receipt by receipt.</p><div class="tags"><span class="tag">Item</span><span class="tag">Size</span><span class="tag">Brand</span><span class="tag">Price</span><span class="tag">Date</span></div></div></li>
-        <li class="fnode" style="--i:2;--c:3"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">3</span></span><div class="ftxt"><h4>Rebuilds your wardrobe</h4><div class="fitems" id="fItems"></div><div class="tags" id="fTaste"></div></div></li>
-        <li class="fnode lo" style="--i:3;--c:4"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg><span class="fnum">4</span></span><div class="ftxt"><h4>You confirm</h4><p>Still own it? Gone? Never liked it?</p><div class="fseg" aria-hidden="true"><span style="--k:0">Keep</span><span style="--k:1">Meh</span><span style="--k:2">Gone</span></div></div></li>
-        <li class="fnode" style="--i:4;--c:5"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">5</span></span><div class="ftxt"><h4>Add your card</h4><p>Then you won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></div></li>
-        <li class="fnode lo" style="--i:5;--c:6"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">6</span></span><div class="ftxt"><h4>Black Friday, 00:00</h4><p>Checks out from vendors you already use. The receipts go back to step 1.</p><div class="vendors" id="fVendors"></div></div></li>
+        <li class="fnode" style="--i:0;--c:1"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><div class="ftxt"><h4>Reads your Gmail</h4><div class="mails" id="fMail" aria-label="Order emails being processed"></div></div></li>
+        <li class="fnode lo" style="--i:1;--c:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">2</span></span><div class="ftxt"><h4>Rebuilds your wardrobe</h4><div class="fitems" id="fItems"></div><p id="fTaste">Sizes, brands, taste.</p></div></li>
+        <li class="fnode" style="--i:2;--c:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">3</span></span><div class="ftxt"><h4>Add your card</h4><p>You won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></div></li>
+        <li class="fnode lo" style="--i:3;--c:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">4</span></span><div class="ftxt"><h4>Black Friday, 00:00</h4><div class="vendors" id="fVendors"></div></div></li>
         </ol>
       </div>
     </div>
+  </div>
 
     <div class="stats">
       <div class="stat"><small id="range">Spent on clothes</small><b>$<span id="total">0</span></b></div>
@@ -440,8 +465,8 @@
       <div class="tees-head">
         <b id="teeN">30</b><span id="teeMsg">black tees. Normal.</span><small id="teeSub">Click one to discard it.</small>
         <div class="tees-btns">
-          <button class="btn onpurple sm" id="teeOne">Discard one</button>
-          <button class="btn onpurple sm" id="teeReset" hidden>Put them back</button>
+          <button class="btn ghost sm" id="teeOne">Discard one</button>
+          <button class="btn ghost sm" id="teeReset" hidden>Put them back</button>
         </div>
       </div>
       <div class="rack" role="group" aria-label="30 black t-shirts and one white one. Click a black one to discard it.">
@@ -449,7 +474,6 @@
         <div class="rack-row" id="rack"></div>
       </div>
     </div>
-  </div>
 </header>
 
 <section id="spending">
@@ -469,11 +493,16 @@
 <section id="timeline" style="padding-top: 24px; padding-bottom: 72px">
   <div class="wrap">
     <div class="sec-head" style="margin-bottom: 24px">
-      <div><h2>The fit timeline</h2><p>Every purchase, immortalized. Zoom in for evidence.</p></div>
+      <h2 id="timelineTitle">The fit timeline</h2>
+    </div>
+    <div class="tl-sources" role="group" aria-label="Timeline source">
+      <button class="chip" id="sourcePurchases" aria-pressed="false">Purchases</button>
+      <button class="chip" id="sourceInventory" aria-pressed="false">Inventory</button>
     </div>
     <div class="tl-tools">
-      <div class="chips" id="chips"></div>
-      <div class="zoom">
+      <div class="chips" id="chips" role="group" aria-label="Filter timeline"></div>
+      <select id="purchaseYear" aria-label="Purchase year" hidden></select>
+      <div class="zoom" id="timelineZoom">
         <button id="zOut" title="Zoom out">−</button>
         <input type="range" id="zoom" min="0" max="1000" value="300" aria-label="Zoom">
         <button id="zIn" title="Zoom in">+</button>
@@ -481,8 +510,8 @@
       </div>
     </div>
   </div>
-  <div class="tl-scroll" id="tl"></div>
-  <p class="hint">Drag to pan · ⌘/Ctrl + scroll or pinch to zoom · tap a piece to relive the purchase</p>
+  <div class="tl-scroll" id="tl" role="region" aria-labelledby="timelineTitle" tabindex="0"></div>
+  <p class="hint" id="timelineHint" hidden>Drag to pan · ⌘/Ctrl + scroll or pinch to zoom</p>
 </section>
 
 <section id="blackfriday">
@@ -591,7 +620,7 @@
   </form>
 </dialog>
 
-<dialog id="detail">
+<dialog id="detail" aria-labelledby="detailTitle">
   <div id="detBody"></div>
   <div class="actions">
     <button class="btn ghost" id="detDel">Deny it ever happened</button>
@@ -1155,16 +1184,16 @@ $("#teeReset").onclick = () => { rackEl.querySelectorAll(".tee.gone").forEach(t 
 // ---------- hero: how jop works (vendors, receipts and taste come from your data) ----------
 function renderFlow() {
   const counts = {}; items.forEach(i => { if (i.brand) counts[i.brand] = (counts[i.brand] || 0) + 1; });
-  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
   $("#fVendors").innerHTML = top.map(b => `<span class="vm">${esc(b)}</span>`).join("");
   $("#fRcpt").textContent = `${items.length} receipts`;
 
   // what step 3 learned about you
   const mode = list => Object.entries(list.filter(Boolean).reduce((c, v) => (c[v] = (c[v] || 0) + 1, c), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
   const kept = items.filter(i => !isGone(i)), size = cat => mode(kept.filter(i => i.cat === cat).map(i => i.size));
-  $("#fTaste").innerHTML = [...["Tops", "Bottoms", "Shoes"].map(c => size(c) && `${c} ${size(c)}`), top[0] && `loyal to ${top[0]}`].filter(Boolean).map(t => `<span class="tag">${esc(t)}</span>`).join("");
+  $("#fTaste").textContent = [...["Tops", "Shoes"].map(c => size(c) && `${c} ${size(c)}`), top[0] && `loyal to ${top[0]}`].filter(Boolean).join(" · ");
 
-  // order emails (step 1) turning into wardrobe items (step 3): one per recent vendor, from your real items
+  // order emails (step 1) turning into wardrobe items (step 2): one per recent vendor, from your real items
   const SUBJECTS = ["Your order is confirmed", "Order confirmation", "Thanks for your order"], seen = new Set(), feed = [];
   for (const i of [...items].sort((a, b) => b.date.localeCompare(a.date))) {
     const k = i.store || i.brand; if (!k || seen.has(k)) continue;

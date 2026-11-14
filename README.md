@@ -14,7 +14,7 @@ A tongue-in-cheek homage to Shop. Not affiliated.
 - **Where it all went.** Monthly spend with a running total, and spend per category.
 - **Black Friday, supervised.** Set a budget and Jop reviews your wardrobe against a 24-piece capsule, ranks the deals by what you actually need, shows the cost per wear, and blocks the ones you'd regret (the Impulse Shield).
 - **Jop Agent.** Suggests the next purchase per category and can add it to your timeline. Autopilot on means it doesn't ask first.
-- **A hero that explains the job.** "Hand Jop your card", with the workflow front and centre as a path that zig-zags up and down through six steps: read the order emails in your Gmail export, pull out item, size, brand, price and date, rebuild your wardrobe (with your sizes and favourite brand), have you confirm what you still own, add your card (and then you won't know what it buys), and shop Black Friday at 00:00 from the vendors you already use. Order emails turn from *processing* to *processed* in step 1 as their items appear in step 3. As a small extra, a rack of 30 identical black tees you can click to discard.
+- **A hero that explains the job.** A compact banner, 40% of the screen tall: "Hand Jop your card. Trust the agent to be your jopper." Next to it, the workflow zig-zags up and down through four steps: read the order emails in your Gmail export, rebuild your wardrobe (with your sizes and favourite brand), add your card (and then you won't know what it buys), and shop Black Friday at 00:00 from the vendors you already use. One order email at a time goes from *processing* to *processed* while its item pops in step 2. Below the banner: your totals, and a rack of 30 identical black tees you can click to discard.
 
 ## Run it
 
