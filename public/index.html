@@ -46,68 +46,98 @@
   .btn.sm { padding: 9px 16px; font-size: 14px; }
 
   /* hero */
-  .hero { position: relative; overflow: hidden; border-radius: 44px; color: #fff; padding: 56px 56px 40px; margin-top: 8px;
+  .hero { position: relative; overflow: hidden; border-radius: 44px; color: #fff; padding: 56px 56px 36px; margin-top: 8px;
     background: radial-gradient(120% 120% at 100% 0%, #3DD9AE 0%, var(--main) 45%, #08694F 100%); }
-  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: end; }
   .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--accent); color: #fff; }
   .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { transform: scale(1.7); opacity: .4; } }
-  .total { margin-top: 28px; font-size: clamp(72px, 12vw, 164px); font-weight: 800; letter-spacing: -.07em; line-height: .9; font-variant-numeric: tabular-nums; }
-  .total sup { font-size: .4em; vertical-align: top; position: relative; top: .12em; margin-right: 4px; font-weight: 700; color: #B8FFE6; }
-  #range { margin-top: 18px; font-size: 19px; font-weight: 500; letter-spacing: -.02em; opacity: .92; max-width: 460px; }
+  .hero h1 { margin-top: 24px; font-size: clamp(44px, 7vw, 88px); font-weight: 800; letter-spacing: -.07em; line-height: .92; }
+  .hero-sub { margin-top: 20px; max-width: 580px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.35; opacity: .94; }
   .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
 
-  /* the rack: 30 black tees you can discard */
-  .tees-note { display: flex; align-items: flex-end; justify-content: flex-end; gap: 18px; padding-bottom: 6px; }
-  .tees-note b { font-size: clamp(72px, 10vw, 132px); font-weight: 800; letter-spacing: -.07em; line-height: .85; font-variant-numeric: tabular-nums; }
-  .tees-note > div { max-width: 260px; padding-bottom: 6px; }
-  .tees-note span { display: block; font-size: 21px; font-weight: 700; letter-spacing: -.035em; line-height: 1.1; }
-  .tees-note small { display: block; margin-top: 6px; font-size: 13px; opacity: .78; }
-  .tees-btns { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-  .tees-btns .btn { white-space: nowrap; }
-  .rack { margin-top: 36px; }
-  .rail { height: 8px; border-radius: 8px; background: linear-gradient(#f0f4f5, #8e9ba2); box-shadow: 0 8px 16px rgba(0,0,0,.28); position: relative; z-index: 3; }
-  .rack-row { display: grid; grid-template-columns: repeat(30, 1fr) 80px; margin-top: -2px; }
-  .tee { position: relative; height: 68px; padding: 0; border: 0; background: none; cursor: pointer; color: #15191b; overflow: visible; font: inherit; }
-  .tee svg { position: absolute; top: 0; left: -27%; width: 154%; height: auto; aspect-ratio: 60 / 76; overflow: visible; pointer-events: none;
-    filter: drop-shadow(0 7px 6px rgba(0,0,0,.28)); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
-  .tee:hover { z-index: 5; }
-  .tee:hover svg { transform: translateY(-6px); }
-  .tee.black { --edge: rgba(255,255,255,.26); }
-  .tee.white { --edge: rgba(10,60,45,.18); color: #fff; cursor: default; margin-left: 22px; }
-  .tee.white svg { left: 12px; width: 56px; animation: sway 4s ease-in-out infinite; transform-origin: 50% 0; }
-  @keyframes sway { 50% { transform: rotate(2.5deg); } }
-  .tee.gone { pointer-events: none; }
-  .tee.gone svg { transform: translateY(170px) rotate(var(--r)); opacity: 0; transition: transform .8s cubic-bezier(.55,0,.85,.4) var(--d), opacity .6s .2s; }
-
-  /* hero: how jop works (minimal) */
-  .flow-label { margin-top: 34px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .8; text-align: center; }
-  .flow { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); }
-  .fstep { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 8px; text-align: center; }
-  .fic { width: 56px; height: 56px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 3s - 15s); }
-  .fic svg { display: block; }
+  /* the workflow: the centrepiece of the hero */
+  .flowbox { margin-top: 44px; padding: 34px 20px 38px; border-radius: 36px; background: rgba(255,255,255,.12); }
+  .flow-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .85; text-align: center; }
+  .flow { list-style: none; padding: 0; margin: 30px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .fstep { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0 10px; text-align: center; }
+  .fic { position: relative; width: 84px; height: 84px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 3s - 15s); }
+  .fic > svg { display: block; height: 38px; width: auto; }
+  .fnum { position: absolute; top: -4px; right: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(255,255,255,.9); }
   @keyframes fic { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; }
-    2%, 17% { box-shadow: 0 0 0 7px rgba(255,255,255,.3); transform: scale(1.08); }
+    2%, 17% { box-shadow: 0 0 0 10px rgba(255,255,255,.28); transform: scale(1.07); }
     20%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
-  .fstep:not(:last-child)::before { content: ""; position: absolute; top: 27px; left: calc(50% + 36px); width: calc(100% - 72px); border-top: 2px dashed rgba(255,255,255,.4); }
-  .fstep:not(:last-child)::after { content: ""; position: absolute; top: 22px; left: calc(50% + 36px); width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 2px rgba(255,255,255,.8); opacity: 0;
+  .fstep:not(:last-child)::before { content: ""; position: absolute; top: 41px; left: calc(50% + 54px); width: calc(100% - 108px); border-top: 3px dashed rgba(255,255,255,.45); }
+  .fstep:not(:last-child)::after { content: ""; position: absolute; top: 35px; left: calc(50% + 54px); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px 3px rgba(255,255,255,.85); opacity: 0;
     animation: fdot 15s infinite; animation-delay: calc(var(--i) * 3s - 15s + 2.2s); }
-  @keyframes fdot { 0% { left: calc(50% + 36px); opacity: 0; } 1% { opacity: 1; } 7% { left: calc(150% - 46px); opacity: 1; } 8%, 100% { left: calc(150% - 46px); opacity: 0; } }
-  .fstep h4 { font-size: 15px; font-weight: 800; letter-spacing: -.03em; }
-  .fstep p { font-size: 12.5px; opacity: .82; line-height: 1.35; max-width: 175px; }
+  @keyframes fdot { 0% { left: calc(50% + 54px); opacity: 0; } 1% { opacity: 1; } 7% { left: calc(150% - 68px); opacity: 1; } 8%, 100% { left: calc(150% - 68px); opacity: 0; } }
+  .fstep h4 { font-size: 19px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+  .fstep p { font-size: 14px; opacity: .88; line-height: 1.35; max-width: 200px; }
+  .mystery { font-size: 12px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 4px 11px; }
   .vendors { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
-  .vm { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.16); border-radius: 6px; padding: 3px 7px; }
-  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 12px; }
+  .vm { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 8px; }
+  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
   .vm:nth-child(3) { letter-spacing: .26em; font-weight: 500; }
-  .vm:nth-child(4) { text-transform: lowercase; letter-spacing: -.02em; font-size: 12px; }
+  .vm:nth-child(4) { text-transform: lowercase; letter-spacing: -.02em; font-size: 13px; }
 
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 36px; border-top: 1px solid rgba(255,255,255,.24); padding-top: 22px; }
-  .stat { padding: 0 18px; border-left: 1px solid rgba(255,255,255,.18); }
+  /* inbox -> processed -> wardrobe */
+  .feed { margin-top: 36px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.22); }
+  .feed-head, .feed-row { display: grid; grid-template-columns: 1.3fr .6fr 1fr; gap: 18px; align-items: center; }
+  .feed-head { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .78; padding: 0 16px; margin-bottom: 10px; }
+  .feed-row { margin-bottom: 8px; }
+  .em, .it { display: flex; align-items: center; gap: 12px; border-radius: 18px; min-width: 0; }
+  .em { background: rgba(255,255,255,.15); padding: 10px 16px; min-height: 62px; animation: emIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .em svg { flex: none; width: 28px; height: 22px; }
+  .em div, .it div { min-width: 0; display: flex; flex-direction: column; }
+  .em b, .it b { font-size: 14.5px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .em span, .it div span { font-size: 12.5px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .st { position: relative; height: 30px; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; }
+  .st span { position: absolute; display: inline-flex; align-items: center; gap: 7px; border-radius: 99px; padding: 5px 12px; white-space: nowrap; }
+  .st .a { background: rgba(255,255,255,.18); animation: stA 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .st .b { background: #fff; color: var(--main); animation: stB 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .spin { width: 11px; height: 11px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .it { background: #fff; color: var(--ink); padding: 8px 14px 8px 8px; min-height: 62px; animation: itIn 12s infinite both; animation-delay: calc(var(--i) * 1.5s); }
+  .it .th { position: relative; width: 46px; height: 46px; border-radius: 12px; overflow: hidden; flex: none; }
+  .it div span { color: var(--muted); opacity: 1; }
+  @keyframes emIn { 0% { opacity: 0; transform: translateX(-22px); } 4%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateX(-22px); } }
+  @keyframes stA { 0%, 4% { opacity: 0; } 6%, 15% { opacity: 1; } 17%, 100% { opacity: 0; } }
+  @keyframes stB { 0%, 16% { opacity: 0; transform: scale(.85); } 19%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+  @keyframes itIn { 0%, 17% { opacity: 0; transform: translateX(22px) scale(.97); } 21%, 92% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: translateX(22px) scale(.97); } }
+  @media (max-width: 860px) { .feed-head { display: none; } .feed-row { grid-template-columns: 1fr; gap: 6px; margin-bottom: 16px; } .st { height: 26px; justify-content: start; place-items: start; } .st span { position: static; } .st .b { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .em, .st .a, .st .b, .it { animation: none; opacity: 1; } .st .a { display: none; } .st .b { position: static; } }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; margin-top: 34px; }
+  .stat { padding: 0 18px; border-left: 1px solid rgba(255,255,255,.2); }
   .stat:first-child { padding-left: 0; border-left: 0; }
   .stat small { display: block; font-size: 13px; opacity: .78; margin-bottom: 4px; font-weight: 500; }
-  .stat b { font-weight: 700; font-size: 30px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
-  @media (max-width: 1000px) { .flow { grid-template-columns: repeat(3, 1fr); row-gap: 24px; } .fstep::before, .fstep::after { display: none; } }
-  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .tees-note { justify-content: flex-start; } .rack { overflow-x: auto; } .rack > * { min-width: 720px; } .stats { grid-template-columns: repeat(2, 1fr); row-gap: 18px; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
+  .stat b { font-weight: 700; font-size: 28px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+
+  /* a small extra: 30 black tees you can discard */
+  .tees { margin-top: 30px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22); }
+  .tees-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 15px; }
+  .tees-head b { font-size: 26px; font-weight: 800; letter-spacing: -.05em; font-variant-numeric: tabular-nums; min-width: 1.2em; }
+  .tees-head span { font-weight: 700; letter-spacing: -.02em; }
+  .tees-head small { opacity: .75; font-size: 13px; }
+  .tees-head .tees-btns { margin-left: auto; display: flex; gap: 6px; }
+  .tees-head .btn { white-space: nowrap; }
+  .rack { margin-top: 10px; }
+  .rail { height: 6px; border-radius: 6px; background: linear-gradient(#f0f4f5, #8e9ba2); box-shadow: 0 6px 12px rgba(0,0,0,.25); position: relative; z-index: 3; }
+  .rack-row { display: grid; grid-template-columns: repeat(30, 1fr) 70px; margin-top: -2px; }
+  .tee { position: relative; height: 54px; padding: 0; border: 0; background: none; cursor: pointer; color: #15191b; overflow: visible; font: inherit; }
+  .tee svg { position: absolute; top: 0; left: -14%; width: 128%; height: auto; aspect-ratio: 60 / 76; overflow: visible; pointer-events: none;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,.25)); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .tee:hover { z-index: 5; }
+  .tee:hover svg { transform: translateY(-5px); }
+  .tee.black { --edge: rgba(255,255,255,.26); }
+  .tee.white { --edge: rgba(10,60,45,.18); color: #fff; cursor: default; margin-left: 18px; }
+  .tee.white svg { left: 10px; width: 42px; animation: sway 4s ease-in-out infinite; transform-origin: 50% 0; }
+  @keyframes sway { 50% { transform: rotate(2.5deg); } }
+  .tee.gone { pointer-events: none; }
+  .tee.gone svg { transform: translateY(110px) rotate(var(--r)); opacity: 0; transition: transform .7s cubic-bezier(.55,0,.85,.4) var(--d), opacity .5s .2s; }
+
+  @media (max-width: 1000px) { .flow { grid-template-columns: repeat(3, 1fr); row-gap: 30px; } .fstep::before, .fstep::after { display: none; } .stats { grid-template-columns: repeat(3, 1fr); row-gap: 18px; } .stat:nth-child(4) { padding-left: 0; border-left: 0; } }
+  @media (max-width: 860px) { .rack { overflow-x: auto; } .rack > * { min-width: 720px; } .tees-head .tees-btns { margin-left: 0; } }
+  @media (max-width: 620px) { .flow { grid-template-columns: 1fr 1fr; } .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(odd) { padding-left: 0; border-left: 0; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
   @media (prefers-reduced-motion: reduce) { .fic, .tee.white svg, .fstep::after { animation: none; } .fstep::after { display: none; } }
 
   section { padding: 88px 0 72px; }
@@ -327,7 +357,7 @@
 
   @media (max-width: 860px) {
     nav ul { display: none; }
-    .hero { padding: 32px 24px; border-radius: 32px; }
+    .hero { padding: 32px 22px 28px; border-radius: 32px; }
     .zoom input[type=range] { width: 90px; }
     .auto { margin-left: 0; }
     .card { padding: 22px; }
@@ -359,48 +389,49 @@
 
 <header class="wrap">
   <div class="hero">
-    <div class="hero-grid">
-      <div>
-        <span class="pill">Jop Agent is online and has opinions</span>
-        <div class="total"><sup>$</sup><span id="total">0</span></div>
-        <p id="range">—</p>
-        <div class="hero-cta">
-          <button class="btn lime" id="heroAdd">Log another “essential”</button>
-          <a class="btn onpurple" href="#timeline" style="text-decoration:none">Review the evidence</a>
-        </div>
-      </div>
-      <div class="tees-note">
-        <b id="teeN">30</b>
-        <div>
-          <span id="teeMsg">black tees. Normal.</span>
-          <small id="teeSub">Click one to discard it.</small>
-          <div class="tees-btns">
-            <button class="btn onpurple sm" id="teeOne">Discard one</button>
-            <button class="btn onpurple sm" id="teeReset" hidden>Put them back</button>
-          </div>
-        </div>
-      </div>
+    <span class="pill">Jop Agent is online and has opinions</span>
+    <h1>Hand Jop<br>your card.</h1>
+    <p class="hero-sub">It reads your receipts, rebuilds your wardrobe, then does your Black Friday shopping. You won't know what it buys.</p>
+    <div class="hero-cta">
+      <button class="btn lime" id="heroAdd">Log another “essential”</button>
+      <a class="btn onpurple" href="#timeline" style="text-decoration:none">Review the evidence</a>
     </div>
 
-    <div class="rack" role="group" aria-label="30 black t-shirts and one white one. Click a black one to discard it.">
-      <div class="rail"></div>
-      <div class="rack-row" id="rack"></div>
+    <div class="flowbox">
+      <p class="flow-label">How Jop works</p>
+      <ol class="flow" id="flow">
+      <li class="fstep" style="--i:0"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><h4>Reads your Gmail</h4><p>Receipts and order emails, from your own export.</p></li>
+      <li class="fstep" style="--i:1"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">2</span></span><h4>Rebuilds your wardrobe</h4><p>Pieces, sizes, brands and taste.</p></li>
+      <li class="fstep" style="--i:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg><span class="fnum">3</span></span><h4>You confirm</h4><p>Still own it? Gone? Your call.</p></li>
+      <li class="fstep" style="--i:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">4</span></span><h4>Add your card</h4><p>Then you won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></li>
+      <li class="fstep" style="--i:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">5</span></span><h4>Black Friday</h4><p>Checks out at 00:00, from vendors you already use.</p><div class="vendors" id="fVendors"></div></li>
+      </ol>
+      <div class="feed" aria-label="Order emails from Gmail being processed into wardrobe items">
+        <div class="feed-head"><span>From your inbox</span><span></span><span>Added to your wardrobe</span></div>
+        <div id="feedRows"></div>
+      </div>
     </div>
-
-    <p class="flow-label">How Jop works</p>
-    <ol class="flow" id="flow">
-      <li class="fstep" style="--i:0"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg></span><h4>Reads your Gmail</h4><p>Receipts and order emails, from your own export.</p></li>
-      <li class="fstep" style="--i:1"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg></span><h4>Rebuilds your wardrobe</h4><p>Pieces, sizes, brands and taste.</p></li>
-      <li class="fstep" style="--i:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg></span><h4>You confirm</h4><p>Still own it? Gone? Your call.</p></li>
-      <li class="fstep" style="--i:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg></span><h4>Add your card</h4><p>Then you won't know what it buys.</p></li>
-      <li class="fstep" style="--i:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg></span><h4>Black Friday</h4><div class="vendors" id="fVendors"></div></li>
-    </ol>
 
     <div class="stats">
+      <div class="stat"><small id="range">Spent on clothes</small><b>$<span id="total">0</span></b></div>
       <div class="stat"><small>Pieces owned</small><b id="sCount">0</b></div>
       <div class="stat"><small>Avg. per “it was a steal”</small><b id="sAvg">0</b></div>
       <div class="stat"><small>Last 90 days · recent damage</small><b id="s90">0</b></div>
       <div class="stat"><small>Regret fund · bought, then bailed</small><b id="sMax">0</b></div>
+    </div>
+
+    <div class="tees">
+      <div class="tees-head">
+        <b id="teeN">30</b><span id="teeMsg">black tees. Normal.</span><small id="teeSub">Click one to discard it.</small>
+        <div class="tees-btns">
+          <button class="btn onpurple sm" id="teeOne">Discard one</button>
+          <button class="btn onpurple sm" id="teeReset" hidden>Put them back</button>
+        </div>
+      </div>
+      <div class="rack" role="group" aria-label="30 black t-shirts and one white one. Click a black one to discard it.">
+        <div class="rail"></div>
+        <div class="rack-row" id="rack"></div>
+      </div>
     </div>
   </div>
 </header>
@@ -610,7 +641,7 @@ function renderHero() {
   const total = items.reduce((a,i)=>a+i.price,0);
   const dates = items.map(i=>i.date).sort();
   $("#total").textContent = Math.round(total).toLocaleString("en-US");
-  $("#range").textContent = items.length ? `spent on clothes since ${monthName(monthKey(dates[0]))}. All of it necessary, obviously.` : "Nothing yet. Suspicious.";
+  $("#range").textContent = items.length ? `Spent since ${new Date(monthKey(dates[0]) + "-01T00:00").toLocaleDateString("en-US", { month: "short", year: "numeric" })}` : "Nothing yet. Suspicious.";
   $("#sCount").textContent = items.filter(i => i.status !== "disposed" && i.status !== "unavailable").length;
   $("#sAvg").textContent = fmt(items.length ? total/items.length : 0);
   const cutoff = new Date(Date.now() - 90*864e5).toISOString().slice(0,10);
@@ -1110,6 +1141,21 @@ function renderFlow() {
   const counts = {}; items.forEach(i => { if (i.brand) counts[i.brand] = (counts[i.brand] || 0) + 1; });
   const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
   $("#fVendors").innerHTML = top.map(b => `<span class="vm">${esc(b)}</span>`).join("");
+
+  // order emails turning into wardrobe items: one row per recent vendor, from your real items
+  const SUBJECTS = ["Your order is confirmed", "Order confirmation", "Thanks for your order"], seen = new Set(), feed = [];
+  for (const i of [...items].sort((a, b) => b.date.localeCompare(a.date))) {
+    const k = i.store || i.brand; if (!k || seen.has(k)) continue;
+    seen.add(k); feed.push(i); if (feed.length === 3) break;
+  }
+  $("#feedRows").innerHTML = feed.map((i, n) => {
+    const from = "orders@" + (i.store || i.brand).toLowerCase().replace(/[^a-z0-9]/g, "") + ".com";
+    return `<div class="feed-row" style="--i:${n}">
+      <div class="em"><svg viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><div><b>${SUBJECTS[n % 3]}</b><span>${esc(from)} · ${esc(i.name)} × 1 · ${fmt(i.price)}</span></div></div>
+      <div class="st"><span class="a" style="--i:${n}"><i class="spin"></i>Processing…</span><span class="b" style="--i:${n}">✓ Processed</span></div>
+      <div class="it"><span class="th pic" style="${picBg(i)}">${pic(i)}</span><div><b>${esc(i.name)}</b><span>${esc(i.brand || "")}${i.size ? " · " + esc(i.size) : ""} · ${i.cat} · ${fmt(i.price)}</span></div></div>
+    </div>`;
+  }).join("");
 }
 
 function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); renderFlow(); }

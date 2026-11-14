@@ -4,7 +4,7 @@
 
 A tongue-in-cheek homage to Shop. Not affiliated.
 
-![A tour of JOP: the hero, the 5-year timeline, an item's detail, the Black Friday basket and Jop Agent](docs/jop-tour.gif)
+![A tour of JOP: the workflow hero, order emails becoming wardrobe items, the 5-year timeline, an item's detail, the Black Friday basket and Jop Agent](docs/jop-tour.gif)
 
 ## What it does
 
@@ -14,7 +14,7 @@ A tongue-in-cheek homage to Shop. Not affiliated.
 - **Where it all went.** Monthly spend with a running total, and spend per category.
 - **Black Friday, supervised.** Set a budget and Jop reviews your wardrobe against a 24-piece capsule, ranks the deals by what you actually need, shows the cost per wear, and blocks the ones you'd regret (the Impulse Shield).
 - **Jop Agent.** Suggests the next purchase per category and can add it to your timeline. Autopilot on means it doesn't ask first.
-- **A hero you can play with.** A rack of 30 identical black tees (and one white one) that you can click to discard. Under it, the intended flow in five steps: read purchase emails from your Gmail export, rebuild your wardrobe, sizes and taste, have you confirm the state, add your card (and then you won't know what it buys), and Black Friday shopping from the vendors you already use.
+- **A hero that explains the job.** "Hand Jop your card", with the workflow front and centre: read purchase emails from your Gmail export, rebuild your wardrobe, sizes and taste, have you confirm the state, add your card (and then you won't know what it buys), and shop Black Friday from the vendors you already use. An animated feed shows order emails ("Your order is confirmed") being processed into wardrobe items. As a small extra, a rack of 30 identical black tees you can click to discard.
 
 ## Run it
 
