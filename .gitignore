@@ -3,3 +3,13 @@ data/
 node_modules/
 .DS_Store
 .env*
+
+# Gmail exports and anything derived from email: never commit
+gmail/
+Takeout/
+takeout-*
+*.mbox
+*.eml
+*.zip
+*.tgz
+*.tar.gz

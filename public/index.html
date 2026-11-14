@@ -48,7 +48,7 @@
   /* hero */
   .hero { position: relative; overflow: hidden; border-radius: 44px; color: #fff; padding: 56px 56px 40px; margin-top: 8px;
     background: radial-gradient(120% 120% at 100% 0%, #3DD9AE 0%, var(--main) 45%, #08694F 100%); }
-  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: end; }
   .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--accent); color: #fff; }
   .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { transform: scale(1.7); opacity: .4; } }
@@ -56,12 +56,59 @@
   .total sup { font-size: .4em; vertical-align: top; position: relative; top: .12em; margin-right: 4px; font-weight: 700; color: #B8FFE6; }
   #range { margin-top: 18px; font-size: 19px; font-weight: 500; letter-spacing: -.02em; opacity: .92; max-width: 460px; }
   .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
-  .hero-img { position: relative; aspect-ratio: 4/5; border-radius: 32px; overflow: hidden; transform: rotate(2.5deg); background: #5433EB url("assets/hero.jpg") 97% 50%/cover; box-shadow: 0 30px 60px -20px rgba(10,0,60,.6); }
-  .sticker { position: absolute; left: -6px; bottom: 22px; transform: rotate(-6deg); background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; letter-spacing: -.01em; padding: 10px 16px; border-radius: 14px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.4); }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 44px; }
-  .stat { background: rgba(255,255,255,.12); border-radius: 22px; padding: 18px 22px; }
-  .stat small { display: block; font-size: 13px; opacity: .8; margin-bottom: 6px; font-weight: 500; }
-  .stat b { font-weight: 700; font-size: 32px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+
+  /* the rack: 30 black tees you can discard */
+  .tees-note { display: flex; align-items: flex-end; justify-content: flex-end; gap: 18px; padding-bottom: 6px; }
+  .tees-note b { font-size: clamp(72px, 10vw, 132px); font-weight: 800; letter-spacing: -.07em; line-height: .85; font-variant-numeric: tabular-nums; }
+  .tees-note > div { max-width: 260px; padding-bottom: 6px; }
+  .tees-note span { display: block; font-size: 21px; font-weight: 700; letter-spacing: -.035em; line-height: 1.1; }
+  .tees-note small { display: block; margin-top: 6px; font-size: 13px; opacity: .78; }
+  .tees-btns { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .tees-btns .btn { white-space: nowrap; }
+  .rack { margin-top: 36px; }
+  .rail { height: 8px; border-radius: 8px; background: linear-gradient(#f0f4f5, #8e9ba2); box-shadow: 0 8px 16px rgba(0,0,0,.28); position: relative; z-index: 3; }
+  .rack-row { display: grid; grid-template-columns: repeat(30, 1fr) 80px; margin-top: -2px; }
+  .tee { position: relative; height: 68px; padding: 0; border: 0; background: none; cursor: pointer; color: #15191b; overflow: visible; font: inherit; }
+  .tee svg { position: absolute; top: 0; left: -27%; width: 154%; height: auto; aspect-ratio: 60 / 76; overflow: visible; pointer-events: none;
+    filter: drop-shadow(0 7px 6px rgba(0,0,0,.28)); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .tee:hover { z-index: 5; }
+  .tee:hover svg { transform: translateY(-6px); }
+  .tee.black { --edge: rgba(255,255,255,.26); }
+  .tee.white { --edge: rgba(10,60,45,.18); color: #fff; cursor: default; margin-left: 22px; }
+  .tee.white svg { left: 12px; width: 56px; animation: sway 4s ease-in-out infinite; transform-origin: 50% 0; }
+  @keyframes sway { 50% { transform: rotate(2.5deg); } }
+  .tee.gone { pointer-events: none; }
+  .tee.gone svg { transform: translateY(170px) rotate(var(--r)); opacity: 0; transition: transform .8s cubic-bezier(.55,0,.85,.4) var(--d), opacity .6s .2s; }
+
+  /* hero: how jop works (minimal) */
+  .flow-label { margin-top: 34px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .8; text-align: center; }
+  .flow { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .fstep { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 8px; text-align: center; }
+  .fic { width: 56px; height: 56px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 15s infinite; animation-delay: calc(var(--i) * 3s - 15s); }
+  .fic svg { display: block; }
+  @keyframes fic { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; }
+    2%, 17% { box-shadow: 0 0 0 7px rgba(255,255,255,.3); transform: scale(1.08); }
+    20%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
+  .fstep:not(:last-child)::before { content: ""; position: absolute; top: 27px; left: calc(50% + 36px); width: calc(100% - 72px); border-top: 2px dashed rgba(255,255,255,.4); }
+  .fstep:not(:last-child)::after { content: ""; position: absolute; top: 22px; left: calc(50% + 36px); width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 2px rgba(255,255,255,.8); opacity: 0;
+    animation: fdot 15s infinite; animation-delay: calc(var(--i) * 3s - 15s + 2.2s); }
+  @keyframes fdot { 0% { left: calc(50% + 36px); opacity: 0; } 1% { opacity: 1; } 7% { left: calc(150% - 46px); opacity: 1; } 8%, 100% { left: calc(150% - 46px); opacity: 0; } }
+  .fstep h4 { font-size: 15px; font-weight: 800; letter-spacing: -.03em; }
+  .fstep p { font-size: 12.5px; opacity: .82; line-height: 1.35; max-width: 175px; }
+  .vendors { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+  .vm { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.16); border-radius: 6px; padding: 3px 7px; }
+  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 12px; }
+  .vm:nth-child(3) { letter-spacing: .26em; font-weight: 500; }
+  .vm:nth-child(4) { text-transform: lowercase; letter-spacing: -.02em; font-size: 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 36px; border-top: 1px solid rgba(255,255,255,.24); padding-top: 22px; }
+  .stat { padding: 0 18px; border-left: 1px solid rgba(255,255,255,.18); }
+  .stat:first-child { padding-left: 0; border-left: 0; }
+  .stat small { display: block; font-size: 13px; opacity: .78; margin-bottom: 4px; font-weight: 500; }
+  .stat b { font-weight: 700; font-size: 30px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+  @media (max-width: 1000px) { .flow { grid-template-columns: repeat(3, 1fr); row-gap: 24px; } .fstep::before, .fstep::after { display: none; } }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .tees-note { justify-content: flex-start; } .rack { overflow-x: auto; } .rack > * { min-width: 720px; } .stats { grid-template-columns: repeat(2, 1fr); row-gap: 18px; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
+  @media (prefers-reduced-motion: reduce) { .fic, .tee.white svg, .fstep::after { animation: none; } .fstep::after { display: none; } }
 
   section { padding: 88px 0 72px; }
   .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
@@ -281,9 +328,6 @@
   @media (max-width: 860px) {
     nav ul { display: none; }
     .hero { padding: 32px 24px; border-radius: 32px; }
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-img { aspect-ratio: 16/10; transform: none; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
     .zoom input[type=range] { width: 90px; }
     .auto { margin-left: 0; }
     .card { padding: 22px; }
@@ -291,6 +335,13 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="teeShape" viewBox="0 0 60 76">
+    <path d="M30 13V8.5A4 4 0 1 1 34 12.5" fill="none" stroke="#d3dadd" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M30 13 9 25H51Z" fill="none" stroke="#d3dadd" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M20 19 8 25 1 43 11 47 16 40V75H44V40L49 47 59 43 52 25 40 19Q30 29 20 19Z" fill="currentColor" stroke-width="1.1" stroke-linejoin="round" style="stroke:var(--edge,transparent)"/>
+  </symbol>
+</svg>
 <div id="offline" hidden>Can't reach the Jop backend. In the wardrobe folder run <code>npm start</code>, then open <a href="http://127.0.0.1:3000" style="color:#fff">127.0.0.1:3000</a>.</div>
 
 <nav>
@@ -318,8 +369,33 @@
           <a class="btn onpurple" href="#timeline" style="text-decoration:none">Review the evidence</a>
         </div>
       </div>
-      <div class="hero-img"><div class="sticker">30 black tees. Normal.</div></div>
+      <div class="tees-note">
+        <b id="teeN">30</b>
+        <div>
+          <span id="teeMsg">black tees. Normal.</span>
+          <small id="teeSub">Click one to discard it.</small>
+          <div class="tees-btns">
+            <button class="btn onpurple sm" id="teeOne">Discard one</button>
+            <button class="btn onpurple sm" id="teeReset" hidden>Put them back</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="rack" role="group" aria-label="30 black t-shirts and one white one. Click a black one to discard it.">
+      <div class="rail"></div>
+      <div class="rack-row" id="rack"></div>
+    </div>
+
+    <p class="flow-label">How Jop works</p>
+    <ol class="flow" id="flow">
+      <li class="fstep" style="--i:0"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg></span><h4>Reads your Gmail</h4><p>Receipts and order emails, from your own export.</p></li>
+      <li class="fstep" style="--i:1"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg></span><h4>Rebuilds your wardrobe</h4><p>Pieces, sizes, brands and taste.</p></li>
+      <li class="fstep" style="--i:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="14" r="10.5"/><path d="m9 14.3 3.7 3.6L19 10.7"/></svg></span><h4>You confirm</h4><p>Still own it? Gone? Your call.</p></li>
+      <li class="fstep" style="--i:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg></span><h4>Add your card</h4><p>Then you won't know what it buys.</p></li>
+      <li class="fstep" style="--i:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg></span><h4>Black Friday</h4><div class="vendors" id="fVendors"></div></li>
+    </ol>
+
     <div class="stats">
       <div class="stat"><small>Pieces owned</small><b id="sCount">0</b></div>
       <div class="stat"><small>Avg. per “it was a steal”</small><b id="sAvg">0</b></div>
@@ -629,8 +705,10 @@ const scroller = $("#tl");
 let tz = 0.3, firstTl = true;       // zoom 0 (fit all) .. 1 (day level)
 
 function extent() {
+  // always show at least the last 5 years, or further back if you own older pieces
+  const fiveYearsAgo = dayNum((+today().slice(0,4) - 5) + today().slice(4));
   const ds = items.map(i => dayNum(i.date)).concat(dayNum(today()));
-  const start = Math.min(...ds) - 30, end = Math.max(...ds) + 30, span = end - start;
+  const start = Math.min(...ds, fiveYearsAgo) - 30, end = Math.max(...ds) + 30, span = end - start;
   const min = Math.max(320, scroller.clientWidth - 160) / span, max = Math.max(14, min * 3);
   return { start, end, span, ppd: min * Math.pow(max/min, tz) };
 }
@@ -1009,7 +1087,32 @@ document.addEventListener("click", e => {
   bfManual = next; renderBF();
 });
 
-function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); }
+// ---------- hero: 30 black tees you can discard ----------
+const rackEl = $("#rack"), TEE_ICON = '<svg viewBox="0 0 60 76"><use href="#teeShape"/></svg>';
+rackEl.innerHTML = Array.from({ length: 30 }, (_, i) =>
+  `<button class="tee black" tabindex="-1" aria-label="Discard black tee ${i + 1}" style="--r:${Math.round(Math.random() * 50 - 25)}deg;--d:${(Math.random() * .18).toFixed(2)}s">${TEE_ICON}</button>`).join("")
+  + `<div class="tee white" aria-hidden="true">${TEE_ICON}</div>`;
+const TEE_MSG = [[30, "black tees. Normal."], [25, "black tees. Still normal."], [15, "black tees. Getting somewhere."], [6, "black tees. Now we're talking."], [1, "black tees. Almost a capsule wardrobe."], [0, "black tees. Jop is proud. The white one is thriving."]];
+function updateTees() {
+  const n = rackEl.querySelectorAll(".tee.black:not(.gone)").length;
+  $("#teeN").textContent = n;
+  $("#teeMsg").textContent = TEE_MSG.find(([min]) => n >= min)[1].replace(/^black tees/, n === 1 ? "black tee" : "black tees");
+  $("#teeSub").textContent = n === 30 ? "Click one to discard it." : `${30 - n} discarded.`;
+  $("#teeReset").hidden = n === 30;
+  $("#teeOne").disabled = n === 0;
+}
+rackEl.addEventListener("click", e => { const t = e.target.closest(".tee.black:not(.gone)"); if (t) { t.classList.add("gone"); updateTees(); } });
+$("#teeOne").onclick = () => { const left = [...rackEl.querySelectorAll(".tee.black:not(.gone)")]; if (left.length) { left[Math.floor(Math.random() * left.length)].classList.add("gone"); updateTees(); } };
+$("#teeReset").onclick = () => { rackEl.querySelectorAll(".tee.gone").forEach(t => t.classList.remove("gone")); updateTees(); };
+
+// ---------- hero: how jop works (vendors come from your data) ----------
+function renderFlow() {
+  const counts = {}; items.forEach(i => { if (i.brand) counts[i.brand] = (counts[i.brand] || 0) + 1; });
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(e => e[0]);
+  $("#fVendors").innerHTML = top.map(b => `<span class="vm">${esc(b)}</span>`).join("");
+}
+
+function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); renderFlow(); }
 load().catch(() => { $("#offline").hidden = false; });
 </script>
 </body>

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
-import { SEED } from "./seed.js";
+import { SEED, SEED_VERSION } from "./seed.js";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(ROOT, "public");
@@ -52,14 +52,23 @@ const insertItem = db.prepare(`INSERT INTO items (${COLS.join(",")}) VALUES (${C
 const DEFAULTS = { brand: "", size: "", color: "#2b2d33", store: "", material: "", notes: "", wears: 0, status: "active", status_note: "", photo: null };
 const getItem = db.prepare("SELECT * FROM items WHERE id = ?");
 
-function seed() {
+// Sample data is versioned: a database seeded at version N only receives rows added in later versions,
+// once, so deleting a sample item never brings it back on restart.
+db.exec("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
+function seed(from = 0) {
   db.exec("BEGIN");
   try {
-    for (const r of SEED) insertItem.run(...COLS.map((c) => r[c] ?? null));
+    for (const r of SEED) if (r.since > from) insertItem.run(...COLS.map((c) => r[c] ?? null));
+    db.prepare("INSERT INTO meta (key, value) VALUES ('seed_version', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").run(String(SEED_VERSION));
     db.exec("COMMIT");
   } catch (e) { db.exec("ROLLBACK"); throw e; }
 }
-if (db.prepare("SELECT COUNT(*) AS n FROM items").get().n === 0) seed();
+{
+  const stored = db.prepare("SELECT value FROM meta WHERE key = 'seed_version'").get();
+  const empty = db.prepare("SELECT COUNT(*) AS n FROM items").get().n === 0;
+  const version = stored ? Number(stored.value) : empty ? 0 : 1; // databases from before versioning hold the first 21 rows
+  if (version < SEED_VERSION) seed(version);
+}
 
 // DB row -> JSON the frontend uses
 const toApi = (r) => ({
