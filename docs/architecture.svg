@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="760" viewBox="0 0 1120 760" role="img" aria-labelledby="title desc">
+<title id="title">JOP: a second look before checkout</title>
+<desc id="desc">Google Takeout provides a local MBOX. A Python importer produces a full DuckDB archive and shopping SQLite. A second Python step reconstructs orders and returns into the app SQLite database. The browser uses a local Node server. A human decides whether to buy.</desc>
+<rect width="1120" height="760" fill="#fffdf7"/>
+<g fill="#252525" font-family="Chalkboard SE, Comic Sans MS, cursive" font-size="19">
+<text x="560" y="46" font-size="29" text-anchor="middle">JOP: a second look before checkout</text>
+<text x="560" y="78" font-size="17" text-anchor="middle">All the processing below happens on your computer.</text>
+<path d="M52.0,126.0 L162.0,124.0 L272.0,127.0 L273.0,169.0 L270.0,213.0 L162.0,214.0 L53.0,212.0 L51.0,169.0 L52.0,126.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="162.0" y="157" font-size="19" text-anchor="middle">Gmail Takeout</text>
+<text x="162.0" y="183" font-size="19" text-anchor="middle">local MBOX export</text>
+<path d="M382.0,126.0 L524.5,124.0 L667.0,127.0 L668.0,169.0 L665.0,213.0 L524.5,214.0 L383.0,212.0 L381.0,169.0 L382.0,126.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="524.5" y="157" font-size="19" text-anchor="middle">Python mail importer</text>
+<text x="524.5" y="183" font-size="19" text-anchor="middle">parse + classify</text>
+<path d="M272.0,168.0 L323.5,168.0 L382.0,168.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M373.0,172.3 L382.0,168.0 L373.0,163.7" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="327.0" y="156.0" font-size="15" text-anchor="middle">receipts</text>
+<path d="M813.0,124.0 L938.0,122.0 L1063.0,125.0 L1064.0,169.0 L1061.0,215.0 L938.0,216.0 L814.0,214.0 L812.0,169.0 L813.0,124.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="938.0" y="155" font-size="19" text-anchor="middle">mail.duckdb</text>
+<text x="938.0" y="181" font-size="19" text-anchor="middle">full mail archive</text>
+<path d="M382.0,293.0 L524.5,291.0 L667.0,294.0 L668.0,337.0 L665.0,382.0 L524.5,383.0 L383.0,381.0 L381.0,337.0 L382.0,293.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="524.5" y="324" font-size="19" text-anchor="middle">mail.sqlite3</text>
+<text x="524.5" y="350" font-size="19" text-anchor="middle">shopping candidates</text>
+<path d="M667.0,167.0 L737.7,167.0 L813.0,167.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M804.0,171.3 L813.0,167.0 L804.0,162.7" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="740.0" y="155.0" font-size="15" text-anchor="middle">all messages</text>
+<path d="M524.0,213.0 L523.3,250.9 L524.0,292.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M519.7,283.0 L524.0,292.0 L528.3,283.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="524.0" y="240.5" font-size="15" text-anchor="middle">shopping only</text>
+<text x="938" y="250" font-size="16" text-anchor="middle">kept private</text>
+<text x="938" y="273" font-size="16" text-anchor="middle">(yes, even spam)</text>
+<path d="M382.0,450.0 L524.5,448.0 L667.0,451.0 L668.0,493.0 L665.0,537.0 L524.5,538.0 L383.0,536.0 L381.0,493.0 L382.0,450.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="524.5" y="481" font-size="19" text-anchor="middle">Purchase rebuild</text>
+<text x="524.5" y="507" font-size="19" text-anchor="middle">group orders + returns</text>
+<path d="M524.0,382.0 L522.8,414.2 L524.0,449.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M519.7,440.0 L524.0,449.0 L528.3,440.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M813.0,450.0 L938.0,448.0 L1063.0,451.0 L1064.0,493.0 L1061.0,537.0 L938.0,538.0 L814.0,536.0 L812.0,493.0 L813.0,450.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="938.0" y="481" font-size="19" text-anchor="middle">App SQLite</text>
+<text x="938.0" y="507" font-size="19" text-anchor="middle">items, likes, ownership</text>
+<path d="M667.0,494.0 L737.0,494.0 L813.0,494.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M804.0,498.3 L813.0,494.0 L804.0,489.7" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M813.0,606.0 L938.0,604.0 L1063.0,607.0 L1064.0,649.5 L1061.0,694.0 L938.0,695.0 L814.0,693.0 L812.0,649.5 L813.0,606.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="938.0" y="637" font-size="19" text-anchor="middle">Node + browser</text>
+<text x="938.0" y="663" font-size="19" text-anchor="middle">127.0.0.1 only</text>
+<path d="M938.0,537.0 L938.0,569.6 L938.0,605.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M933.7,596.0 L938.0,605.0 L942.3,596.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="938.0" y="559.0" font-size="15" text-anchor="middle">local API</text>
+<path d="M55.0,450.0 L162.5,448.0 L270.0,451.0 L271.0,493.0 L268.0,537.0 L162.5,538.0 L56.0,536.0 L54.0,493.0 L55.0,450.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="162.5" y="481" font-size="19" text-anchor="middle">Review the evidence</text>
+<text x="162.5" y="507" font-size="19" text-anchor="middle">timeline + spending</text>
+<path d="M813.0,650.0 L761.1,650.0 L705.0,650.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M714.0,645.7 L705.0,650.0 L714.0,654.3" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M705.0,650.0 L160.0,651.0 L160.0,537.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M160.0,547.0 L159.8,542.2 L160.0,537.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M164.3,546.0 L160.0,537.0 L155.7,546.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="500" y="595" font-size="17" text-anchor="middle">No LLM. No checkout API.</text>
+<text x="500" y="619" font-size="17" text-anchor="middle">Your wallet gets no surprise visitors.</text>
+<circle cx="139" cy="306" r="18" fill="none" stroke="#252525" stroke-width="2.5"/>
+<path d="M139.0,325.0 L138.0,368.0 L114.0,397.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M138.0,368.0 L161.0,397.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M139.0,338.0 L113.0,353.0 L95.0,338.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M139.0,338.0 L162.0,350.0 L179.0,333.0" fill="none" stroke="#252525" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="167" y="280" font-size="18" text-anchor="middle">Do I already own this?</text>
+<text x="560" y="732" font-size="17" text-anchor="middle">Publishing the code is fine. Publishing the inbox is a plot twist.</text>
+</g></svg>

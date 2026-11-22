@@ -13,3 +13,27 @@ takeout-*
 *.zip
 *.tgz
 *.tar.gz
+
+# Mail indexes, backups, local profiles, and publication artifacts
+*.duckdb*
+*.sqlite*
+*.db
+*.db-*
+*.db.*
+*.jsonl*
+*.mbox*
+*.log
+*.pem
+*.key
+*.p12
+*.bak
+*.backup
+__pycache__/
+.venv/
+.local/
+dist/
+coverage/
+MEMORY.md
+memory.md
+.env
+.env.*

@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>jop · your closet, audited</title>
+<title>jop · pause before you purchase</title>
+<meta name="description" content="Rebuild your wardrobe from receipts, review what you wear, and pause before your next impulse purchase. Runs locally.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%2310a37f'/%3E%3Cpath d='M10 13H22L22.7 20C22.7 24 20.2 26 18 25.3C17 25 16.3 24.3 16 23.5C15.7 24.3 15 25 14 25.3C11.8 26 9.3 24 9.3 20Z' fill='%23fff'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -21,7 +22,7 @@
   * { box-sizing: border-box; margin: 0; }
   html { scroll-behavior: smooth; }
   body { background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.5; font-size: 16px; }
-  button, input, select { font: inherit; color: inherit; }
+  button, input, select, textarea { font: inherit; color: inherit; }
   .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
 
   /* nav */
@@ -32,6 +33,12 @@
   nav ul { display: flex; gap: 6px; list-style: none; padding: 0; font-size: 15px; font-weight: 500; }
   nav ul a { color: var(--ink); text-decoration: none; padding: 8px 16px; border-radius: 999px; transition: background .2s; }
   nav ul a:hover { background: var(--lav); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  @media (max-width: 1000px) { nav ul { display: none; } }
+  @media (max-width: 480px) {
+    nav .wrap { padding-inline: 14px; }
+    .nav-actions .btn { padding-inline: 10px; font-size: 13px; }
+  }
 
   .btn { border: 0; cursor: pointer; border-radius: 999px; padding: 12px 22px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; transition: transform .15s, background .2s, box-shadow .2s; }
   .btn:active { transform: scale(.96); }
@@ -45,56 +52,60 @@
   .btn.onpurple:hover { background: rgba(255,255,255,.24); }
   .btn.sm { padding: 9px 16px; font-size: 14px; }
 
-  /* hero: a compact banner, 40% of the screen. Title on the left, the workflow on the right */
-  .hero { position: relative; overflow: hidden; border-radius: 40px; color: #fff; padding: 26px 26px 26px 48px; margin-top: 8px;
-    height: 40vh; min-height: 340px; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.4fr); gap: 32px; align-items: center;
+  /* hero: a banner, about half the screen. Title on the left, the workflow on the right */
+  .hero { position: relative; overflow: hidden; border-radius: 40px; color: #fff; padding: 24px 24px 24px 44px; margin-top: 8px;
+    height: 54vh; min-height: 470px; max-height: 620px; display: grid; grid-template-columns: minmax(300px, .78fr) minmax(0, 1.75fr); gap: 28px; align-items: center;
     background: radial-gradient(120% 120% at 100% 0%, #3DD9AE 0%, var(--main) 45%, #08694F 100%); }
   .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; padding: 5px 12px 5px 10px; border-radius: 999px; background: var(--accent); color: #fff; }
   .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { transform: scale(1.7); opacity: .4; } }
-  .hero h1 { margin-top: 14px; font-size: clamp(38px, min(5.4vw, 8.5vh), 84px); font-weight: 800; letter-spacing: -.07em; line-height: .92; }
-  .hero-sub { margin-top: 12px; font-size: clamp(16px, 2.4vh, 21px); font-weight: 600; letter-spacing: -.02em; line-height: 1.3; opacity: .94; }
+  .hero h1 { margin-top: 14px; font-size: clamp(36px, min(4.3vw, 8vh), 72px); font-weight: 800; letter-spacing: -.07em; line-height: .92; }
+  .hero-sub { margin-top: 12px; font-size: clamp(15px, 2.2vh, 19px); font-weight: 600; letter-spacing: -.02em; line-height: 1.3; opacity: .94; }
   .hero-cta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
 
   /* the workflow: four steps zig-zag up and down one path */
-  .flowbox { height: 100%; padding: 12px 18px; border-radius: 30px; background: rgba(255,255,255,.12); }
-  .fmap { position: relative; height: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto minmax(84px, 1fr) auto; }
+  .flowbox { height: 100%; padding: 22px 34px; border-radius: 30px; background: rgba(255,255,255,.12); }
+  .fmap { position: relative; height: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto minmax(150px, 1fr) auto; }
   .fmap > ol, .fnode { display: contents; }
   .fsvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .fpath { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 4; stroke-linecap: round; stroke-dasharray: .1 10; animation: fdash 1s linear infinite; }
   @keyframes fdash { to { stroke-dashoffset: -10.1; } }
   .fpkt { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
-  .fedge { position: absolute; transform: translate(-50%, -50%); font-size: 10.5px; font-weight: 700; white-space: nowrap; padding: 3px 9px; border-radius: 99px; background: #0B7A5C; box-shadow: 0 0 0 3px rgba(255,255,255,.14); }
+  .farr { fill: #fff; }
+  .fedge { position: absolute; z-index: 2; transform: translate(-50%, -50%); font-size: 13px; font-weight: 700; white-space: nowrap; padding: 5px 13px; border-radius: 99px; background: #0B7A5C; box-shadow: 0 0 0 3px rgba(255,255,255,.14); }
   .fedge.q { background: var(--accent); }
   .fic { grid-row: 2; grid-column: var(--c); justify-self: center; align-self: start; z-index: 1;
-    position: relative; width: 50px; height: 50px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 12s infinite; animation-delay: calc(var(--i) * 3s - 12s); }
+    position: relative; width: 78px; height: 78px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--main); animation: fic 12s infinite; animation-delay: calc(var(--i) * 3s - 12s); }
   .lo .fic { align-self: end; }
-  .fic > svg { display: block; height: 23px; width: auto; }
-  .fnum { position: absolute; top: -5px; right: -5px; width: 19px; height: 19px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10.5px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(255,255,255,.9); }
+  .fic > svg { display: block; height: 36px; width: auto; }
+  .fnum { position: absolute; top: -4px; right: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13.5px; font-weight: 800; display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(255,255,255,.9); }
   @keyframes fic { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; }
     2%, 19% { box-shadow: 0 0 0 8px rgba(255,255,255,.28); transform: scale(1.08); }
     23%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: none; } }
-  .ftxt { grid-row: 1; grid-column: var(--c); align-self: end; width: 160%; margin: 0 0 10px -30%; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; }
-  .lo .ftxt { grid-row: 3; align-self: start; margin: 10px 0 0 -30%; }
+  .ftxt { grid-row: 1; grid-column: var(--c); align-self: end; width: 160%; margin: 0 0 14px -30%; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+  .lo .ftxt { grid-row: 3; align-self: start; margin: 14px 0 0 -30%; }
   .fnode:first-child .ftxt { width: 130%; margin-left: 0; align-items: flex-start; text-align: left; }
   .fnode:last-child .ftxt { width: 130%; margin-left: -30%; align-items: flex-end; text-align: right; }
-  .ftxt h4 { font-size: 15px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1; }
-  .ftxt p { font-size: 12px; opacity: .88; line-height: 1.3; }
-  .mystery { font-size: 11px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 3px 10px; }
+  .ftxt h4 { font-size: 21px; font-weight: 800; letter-spacing: -.035em; line-height: 1.1; }
+  .ftxt p { font-size: 14.5px; opacity: .88; line-height: 1.3; }
+  .frow { display: flex; align-items: center; gap: 10px; }
+  .frow > p { white-space: nowrap; }
+  .frow > .taste { text-align: left; white-space: pre; }
+  .mystery { flex: none; white-space: nowrap; font-size: 12px; font-weight: 700; background: var(--accent); border-radius: 99px; padding: 4px 11px; }
   .vendors { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
   .fnode:last-child .vendors { justify-content: flex-end; }
-  .vm { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 3px 7px; }
-  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 12px; }
+  .vm { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.18); border-radius: 6px; padding: 4px 8px; }
+  .vm:nth-child(2) { font-family: Georgia, serif; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
   .vm:nth-child(3) { letter-spacing: .26em; font-weight: 500; }
 
   /* one order email at a time: in, processed, out. Its item pops in step 2 */
-  .mails { position: relative; width: 100%; max-width: 230px; height: 38px; }
+  .mails { position: relative; width: 100%; max-width: 330px; height: 52px; }
   .ml { position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.15); border-radius: 11px; padding: 0 9px; text-align: left; animation: ml 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
-  .ml svg { flex: none; width: 16px; height: 12px; }
+  .ml svg { flex: none; width: 20px; height: 15px; }
   .ml div { min-width: 0; flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
-  .ml b { font-size: 11.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ml div span { font-size: 10px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ms { position: relative; flex: none; width: 18px; height: 18px; }
+  .ml b { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ml div span { font-size: 11.5px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms { position: relative; flex: none; width: 21px; height: 21px; }
   .ms i { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; font-style: normal; font-size: 10px; font-weight: 800; }
   .ms .a { animation: msA 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
   .ms .b { background: #fff; color: var(--main); animation: msB 12s infinite both; animation-delay: calc(var(--i) * 4s - 12s); }
@@ -104,7 +115,7 @@
   @keyframes msA { 0%, 3% { opacity: 0; } 4%, 13% { opacity: 1; } 14%, 100% { opacity: 0; } }
   @keyframes msB { 0%, 13% { opacity: 0; transform: scale(.6); } 15%, 30% { opacity: 1; transform: none; } 33%, 100% { opacity: 0; } }
   .fitems { display: flex; gap: 6px; justify-content: center; }
-  .fth { position: relative; width: 34px; height: 34px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 2px #fff; animation: fth 12s infinite; animation-delay: calc(var(--i) * 4s - 12s); }
+  .fth { position: relative; width: 50px; height: 50px; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 2px #fff; animation: fth 12s infinite; animation-delay: calc(var(--i) * 4s - 12s); }
   @keyframes fth { 0%, 13% { transform: none; } 16% { transform: scale(1.22); } 21%, 100% { transform: none; } }
 
   /* narrow screens: the same steps, one under another */
@@ -112,74 +123,64 @@
     .hero { height: auto; min-height: 0; grid-template-columns: 1fr; gap: 24px; padding: 30px 22px 24px; }
     .fmap { display: block; }
     .fsvg, .fedge { display: none; }
-    .fnode { display: grid; grid-template-columns: 50px 1fr; column-gap: 16px; position: relative; padding-bottom: 20px; }
-    .fnode:not(:last-child)::before { content: ""; position: absolute; left: 24px; top: 58px; bottom: 6px; border-left: 3px dotted rgba(255,255,255,.5); }
+    .fnode { display: grid; grid-template-columns: 58px 1fr; column-gap: 16px; position: relative; padding-bottom: 20px; }
+    .fnode:not(:last-child)::before { content: ""; position: absolute; left: 28px; top: 66px; bottom: 6px; border-left: 3px dotted rgba(255,255,255,.5); }
     .fic, .lo .fic { grid-row: 1; grid-column: 1; align-self: start; }
+    .fic { width: 58px; height: 58px; }
+    .fic > svg { height: 27px; }
     .ftxt, .lo .ftxt, .fnode:first-child .ftxt, .fnode:last-child .ftxt { grid-row: 1; grid-column: 2; width: auto; margin: 0; align-items: flex-start; text-align: left; }
     .vendors, .fitems, .fnode:last-child .vendors { justify-content: flex-start; }
+    .frow { flex-wrap: wrap; }
+    .frow > p { white-space: normal; }
+    .frow > .taste { white-space: pre-line; }
   }
   @media (prefers-reduced-motion: reduce) { .ml, .ms .a, .ms .b, .fth, .fpath { animation: none; opacity: 1; } .ms .a, .fpkt, .ml:not(:first-child) { display: none; } }
 
-  /* under the banner: the numbers, then a small extra */
+  /* under the banner: the numbers */
   .stats { display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; margin-top: 28px; padding: 0 8px; }
   .stat { padding: 0 18px; border-left: 1px solid var(--line); }
   .stat:first-child { padding-left: 0; border-left: 0; }
   .stat small { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
   .stat b { font-weight: 700; font-size: 28px; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
 
-  /* a small extra: 30 black tees you can discard */
-  .tees { margin-top: 26px; padding: 18px 8px 0; border-top: 1px solid var(--line); }
-  .tees-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 15px; }
-  .tees-head b { font-size: 26px; font-weight: 800; letter-spacing: -.05em; font-variant-numeric: tabular-nums; min-width: 1.2em; }
-  .tees-head span { font-weight: 700; letter-spacing: -.02em; }
-  .tees-head small { color: var(--muted); font-size: 13px; }
-  .tees-head .tees-btns { margin-left: auto; display: flex; gap: 6px; }
-  .tees-head .btn { white-space: nowrap; }
-  .rack { margin-top: 10px; }
-  .rail { height: 6px; border-radius: 6px; background: linear-gradient(#f0f4f5, #8e9ba2); box-shadow: 0 6px 12px rgba(0,0,0,.25); position: relative; z-index: 3; }
-  .rack-row { display: grid; grid-template-columns: repeat(30, 1fr) 70px; margin-top: -2px; }
-  .tee { position: relative; height: 54px; padding: 0; border: 0; background: none; cursor: pointer; color: #15191b; overflow: visible; font: inherit; }
-  .tee svg { position: absolute; top: 0; left: -14%; width: 128%; height: auto; aspect-ratio: 60 / 76; overflow: visible; pointer-events: none;
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,.25)); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
-  .tee:hover { z-index: 5; }
-  .tee:hover svg { transform: translateY(-5px); }
-  .tee.black { --edge: rgba(255,255,255,.26); }
-  .tee.white { --edge: rgba(10,60,45,.18); color: #fff; cursor: default; margin-left: 18px; }
-  .tee.white svg { left: 10px; width: 42px; animation: sway 4s ease-in-out infinite; transform-origin: 50% 0; }
-  @keyframes sway { 50% { transform: rotate(2.5deg); } }
-  .tee.gone { pointer-events: none; }
-  .tee.gone svg { transform: translateY(110px) rotate(var(--r)); opacity: 0; transition: transform .7s cubic-bezier(.55,0,.85,.4) var(--d), opacity .5s .2s; }
-
   @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, 1fr); row-gap: 18px; } .stat:nth-child(4) { padding-left: 0; border-left: 0; } }
-  @media (max-width: 860px) { .rack { overflow-x: auto; } .rack > * { min-width: 720px; } .tees-head .tees-btns { margin-left: 0; } }
   @media (max-width: 620px) { .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(odd) { padding-left: 0; border-left: 0; } .stat:nth-child(3) { padding-left: 0; border-left: 0; } }
-  @media (prefers-reduced-motion: reduce) { .fic, .tee.white svg { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .fic { animation: none; } }
 
   section { padding: 88px 0 72px; }
   .sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
   h2 { font-weight: 800; font-size: clamp(36px, 5vw, 56px); letter-spacing: -.055em; line-height: 1; }
   .sec-head p { color: var(--muted); margin-top: 12px; font-size: 18px; letter-spacing: -.015em; }
 
-  .seg { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--lav); }
-  .seg button { border: 0; background: none; padding: 8px 18px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); }
-  .seg button.on { background: var(--main); color: #fff; }
-
   /* chart */
+  #spending { scroll-margin-top: 72px; }
   .card { background: var(--lav); border-radius: 36px; padding: 36px; }
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .chart-total { display: grid; gap: 3px; margin-bottom: 18px; }
+  .chart-total span { color: var(--muted); font-size: 14px; font-weight: 600; }
+  .chart-total strong { font-size: clamp(30px, 4vw, 44px); line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .chart-note { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+  .chart-note[hidden], .chart-plot[hidden], .legend[hidden], .cats[hidden] { display: none; }
+  .chart-plot { overflow: auto; }
   #chart { width: 100%; height: 260px; display: block; overflow: visible; }
+  #chart .gridline { stroke: var(--lav2); }
   #chart .bar { fill: var(--main); opacity: .18; transition: opacity .2s, fill .2s; }
   #chart .bar.has { opacity: 1; }
-  #chart g:hover .bar { fill: var(--ink); opacity: 1; }
+  #chart .spend-bar:is(:hover, :focus-visible) .bar { fill: var(--ink); }
   #chart text { fill: var(--muted); font-size: 11px; font-family: var(--font); font-weight: 500; }
-  #chart .tip { opacity: 0; transition: opacity .15s; fill: var(--ink) !important; font-size: 13px; font-weight: 700; }
-  #chart g:hover .tip { opacity: 1; }
   #chart .cum { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 2 7; }
-  .legend { display: flex; gap: 22px; margin-top: 18px; font-size: 14px; font-weight: 500; color: var(--muted); }
+  #chart :is(.cum, circle) { pointer-events: none; }
+  .spend-bar { cursor: pointer; }
+  .spend-bar .bar-hit { fill: transparent; }
+  .spend-bar:focus-visible { outline: none; }
+  .spend-bar:focus-visible .bar-hit { stroke: var(--main-d); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .spend-bar .period-label { text-decoration: underline; text-underline-offset: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; font-size: 14px; font-weight: 500; color: var(--muted); }
   .legend span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; background: var(--main); }
   .legend span:last-child::before { background: var(--ink); }
 
   .cats { margin-top: 32px; padding-top: 28px; border-top: 1.5px solid var(--lav2); display: grid; gap: 14px; }
-  .cat-row { display: grid; grid-template-columns: 120px 1fr 90px; gap: 16px; align-items: center; font-size: 15px; font-weight: 600; }
+  .cat-row { display: grid; grid-template-columns: minmax(85px, 120px) 1fr auto; gap: 12px; align-items: center; font-size: 15px; font-weight: 600; }
   .cat-row .track { height: 12px; background: #fff; border-radius: 99px; overflow: hidden; }
   .cat-row .fill { height: 100%; background: var(--main); border-radius: 99px; transition: width .6s cubic-bezier(.2,.8,.2,1); }
   .cat-row:first-child .fill { background: var(--ink); }
@@ -187,7 +188,70 @@
 
   /* timeline */
   #timeline { scroll-margin-top: 72px; }
-  .tl-sources { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tl-sources { display: flex; gap: 8px; }
+  .scope-controls { display: flex; gap: 12px 20px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+  .scope-filters { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .scope-filter { width: auto; max-width: min(100%, 240px); min-height: 38px; margin: 0; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; background: #fff; }
+  .scope-filter[hidden], #timelineZoom[hidden] { display: none; }
+  @media (max-width: 680px) {
+    #spending .card { padding: 20px; }
+    #chart { min-width: 650px; }
+  }
+  #insights { scroll-margin-top: 72px; padding-top: 24px; padding-bottom: 56px; }
+  .year-overview { padding: 12px 0 28px; scroll-margin-top: 84px; }
+  .year-overview-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 10px; }
+  .year-overview-head h3 { font-size: 25px; letter-spacing: -.035em; }
+  .year-overview-head h3 span { margin-left: 6px; color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: 0; }
+  .year-breakdown-controls { display: flex; flex-wrap: wrap; gap: 6px; }
+  .year-overview-plot { overflow-x: auto; }
+  #yearChart { display: block; width: 100%; height: auto; }
+  #yearChart text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  #yearChart .year-total { fill: var(--ink); font-weight: 700; }
+  #yearChart .year-grid { stroke: var(--line); }
+  #yearChart .spend-bar:is(:hover, :focus-visible) .year-segment { opacity: .76; }
+  .year-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0; margin: 8px 0 0; list-style: none; font-size: 14px; }
+  .year-legend li { display: inline-flex; align-items: center; gap: 7px; }
+  .year-swatch { width: 10px; height: 10px; flex: none; border-radius: 2px; background: var(--swatch); }
+  .year-empty { color: var(--muted); margin: 12px 0; }
+  .year-values { margin-top: 12px; font-size: 14px; }
+  .year-values summary { width: fit-content; cursor: pointer; color: var(--main-d); font-weight: 700; }
+  .year-table-scroll { overflow: auto; margin-top: 8px; }
+  .year-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  .year-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .year-table :is(th, td) { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .year-table th:first-child { padding-left: 0; text-align: left; }
+  .year-overview [hidden] { display: none; }
+  .insights-grid { display: grid; grid-template-columns: 1fr 1fr 1.18fr; gap: 26px; border-block: 1px solid var(--line); padding-block: 24px; }
+  .insight { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 0; }
+  .insight + .insight { border-left: 1px solid var(--line); padding-left: 26px; }
+  .insight h3 { font-size: 22px; letter-spacing: -.035em; }
+  .insight h4 { font-size: 14px; font-weight: 700; }
+  .insight p, .insight-counts dt { color: var(--muted); font-size: 14px; }
+  .insight-counts { display: flex; gap: 8px 18px; flex-wrap: wrap; }
+  .insight-counts dd { font-size: 25px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .insight-rank { list-style: none; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+  .insight-rank li { display: flex; gap: 10px; justify-content: space-between; align-items: baseline; overflow-wrap: anywhere; }
+  .insight-rank b { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .insight-link { justify-self: start; color: var(--main-d); font-size: 14px; font-weight: 700; text-underline-offset: .18em; }
+  .timing { padding: 24px 0 0; scroll-margin-top: 84px; }
+  .timing > h3 { font-size: 22px; letter-spacing: -.035em; }
+  #timingResults p { color: var(--muted); font-size: 14px; }
+  .timing-grid { margin-top: 12px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 20px 32px; }
+  .timing-grid h4 { font-size: 15px; margin-bottom: 2px; }
+  .timing-bars { display: grid; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); gap: 3px; margin: 10px 0 0; padding: 0; list-style: none; }
+  .timing-bars li { min-width: 0; min-height: 100px; display: grid; grid-template-rows: 80px 20px; align-items: end; text-align: center; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .timing-bar { height: 100%; min-width: 0; display: flex; flex-direction: column; justify-content: end; align-items: center; border-bottom: 1px solid var(--line); }
+  .timing-bar b { color: var(--ink); line-height: 1.25; }
+  .timing-bar i { width: min(70%, 30px); height: var(--height); border-radius: 3px 3px 0 0; background: var(--main); }
+  .timing-bars .peak i { background: var(--main-d); }
+  .timing-months { grid-column: 1 / -1; }
+  .timing-notes { list-style: none; padding: 0; margin-top: 4px; display: grid; gap: 2px; color: var(--muted); font-size: 14px; }
+  .timing-notes b { color: var(--ink); }
+  @media (max-width: 680px) { .timing-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) {
+    .insights-grid { grid-template-columns: 1fr; gap: 20px; }
+    .insight + .insight { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
+  }
   .tl-tools { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
   .chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .chip { border: 0; background: var(--lav); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink); transition: all .2s; }
@@ -198,22 +262,39 @@
   .zoom button:hover { background: var(--lav2); }
   .zoom .fit { font-size: 14px; padding: 0 16px; }
   .zoom input[type=range] { width: 140px; margin: 0; padding: 0; border: 0; accent-color: var(--main); }
-  #purchaseYear { width: auto; margin: 0; padding: 8px 12px; border-radius: 12px; font-size: 14px; }
-  #purchaseYear[hidden], #timelineZoom[hidden] { display: none; }
   .hint { color: var(--muted); font-size: 14px; margin-top: 16px; text-align: center; }
   .tl-scroll { position: relative; overflow-x: auto; overflow-y: hidden; cursor: grab; user-select: none; -webkit-user-select: none; scrollbar-width: thin; scrollbar-color: var(--main) transparent; background: var(--lav); }
   .tl-scroll.drag { cursor: grabbing; }
-  .tl-scroll.purchase-list { width: calc(100% - 56px); max-width: 1104px; margin-inline: auto; max-height: min(560px, 64vh); overflow: auto; cursor: auto; user-select: auto; -webkit-user-select: auto; background: #fff; border-block: 1px solid var(--line); }
-  .purchase-month h3 { position: sticky; top: 0; z-index: 2; padding: 9px 14px; font-size: 14px; font-weight: 700; background: var(--lav); }
-  .purchase-row { width: 100%; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 12px; border: 0; border-bottom: 1px solid var(--line); background: #fff; padding: 10px 14px; text-align: left; cursor: pointer; scroll-margin-block-start: 42px; }
-  .purchase-row:hover { background: #f7fbf9; }
-  .purchase-row:focus-visible, .tcard:focus-visible { outline: 2px solid var(--main-d); outline-offset: -2px; }
-  .purchase-day, .purchase-meta { font-size: 13px; color: var(--muted); }
-  .purchase-name { display: block; font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
+  .tl-scroll.purchase-photos { max-height: min(600px, 68vh); overflow-y: auto; }
+  .tcard:focus-visible { outline: 2px solid var(--main-d); outline-offset: -2px; }
+  .purchase-meta { font-size: 13px; color: var(--muted); }
   .purchase-meta { display: block; margin-top: 3px; }
-  .purchase-end { display: grid; justify-items: end; gap: 5px; font-size: 13px; font-variant-numeric: tabular-nums; }
-  .return-flag { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; line-height: 1.4; color: #713b19; background: #f9eadc; text-align: right; }
+  .card-flags { position: absolute; top: 11px; left: 11px; right: 11px; z-index: 2; display: grid; justify-items: start; gap: 3px; }
+  .card-flags > span { max-width: 100%; padding: 3px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .return-flag { color: #713b19; background: #f9eadc; }
   .return-flag.confirmed { color: #56284b; background: #f2e5f0; }
+  .state-flag { color: #fff; background: var(--ink); }
+  .state-flag.disliked { background: var(--accent); }
+  .state-flag.kept { color: var(--ink); background: var(--lav2); }
+  .tl-piece.compact .card-flags > span:not(:first-child) { display: none; }
+  .tcard[data-purchase] img, .purchase-picture img { object-fit: contain; background: #fff; }
+  .tcard[data-purchase] .meta { font-size: 11px; }
+  .card-actions { position: absolute; z-index: 3; right: 9px; top: calc(var(--photo-size) - 39px); display: grid; grid-template-columns: repeat(3, 32px); gap: 3px; }
+  .card-action { height: 32px; min-width: 0; display: grid; place-items: center; padding: 0; border: 1px solid #ded9e5; border-radius: 999px; background: #fff; color: var(--ink); cursor: pointer; box-shadow: 0 1px 5px #281a1126; transition: background .18s, color .18s; }
+  .card-action:hover { background: var(--lav); }
+  .card-action[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .card-action:focus-visible { position: relative; z-index: 1; outline: 2px solid var(--main-d); outline-offset: 1px; }
+  .card-action svg { width: 15px; height: 15px; }
+  .tl-piece.compact .pic { margin-bottom: var(--card-action-space); }
+  .tl-piece.compact .card-actions { left: 2px; right: 2px; top: calc(var(--photo-size) - 3px); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  .tl-piece.compact .card-action { height: 29px; box-shadow: none; }
+  .detail-heading { display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: space-between; gap: 8px 14px; }
+  .detail-heading h3 { flex: 1 1 150px; overflow-wrap: anywhere; }
+  #detFavourite { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  #detFavourite svg { width: 15px; height: 15px; }
+  #detFavourite[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .favourite-error { margin-bottom: 12px; color: #922f38; font-size: 14px; }
+  .purchase-picture { max-height: 250px; }
   .timeline-state { padding: 20px 14px; color: var(--muted); }
   .timeline-state .btn { margin-left: 8px; }
   .purchase-facts { display: grid; grid-template-columns: max-content minmax(0,1fr); gap: 8px 16px; margin: 20px 0; font-size: 14px; }
@@ -230,13 +311,20 @@
   .conn { position: absolute; width: 2px; background: var(--main); opacity: .25; }
   .conn.h { height: 2px; }
   .dot { position: absolute; width: 13px; height: 13px; border-radius: 50%; background: #fff; border: 3.5px solid var(--main); }
-  .tcard { position: absolute; padding: 7px; background: #fff; border-radius: 24px; cursor: pointer; transition: box-shadow .25s, transform .25s; overflow: hidden; box-shadow: 0 2px 0 var(--lav2); }
-  .tcard:hover { box-shadow: 0 18px 40px -14px rgba(16,163,127,.5); transform: translateY(-4px); z-index: 3; }
+  .tl-piece { position: absolute; border-radius: 24px; transition: box-shadow .25s; box-shadow: 0 2px 0 var(--lav2); }
+  .tl-piece:hover, .tl-piece:focus-within { box-shadow: 0 18px 40px -14px rgba(16,163,127,.5); z-index: 3; }
+  .tcard { position: relative; width: 100%; height: 100%; padding: 7px; border: 0; text-align: left; background: #fff; border-radius: 24px; cursor: pointer; overflow: hidden; }
   .pic { position: relative; width: 100%; aspect-ratio: 1; border-radius: 18px; overflow: hidden; }
   .pic img, .pic svg, .big img, .big svg, .sug-pic img, .sug-pic svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; pointer-events: none; }
+  .tcard .pic, .tcard .info { display: block; }
   .tcard .info { height: 44px; padding: 9px 6px 0; }
-  .tcard h4 { font-weight: 700; font-size: 13px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tcard .meta { color: var(--muted); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tcard .item-name { display: block; font-weight: 700; font-size: 13px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tcard .meta { display: block; color: var(--muted); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .undated-wardrobe { margin-bottom: 24px; }
+  .undated-wardrobe h3 { font-size: 18px; margin-bottom: 10px; }
+  .undated-items { display: flex; flex-wrap: wrap; gap: 14px; }
+  .undated-items .tl-piece { position: relative; border: 1px solid var(--line); }
+  .undated-items .item-name { white-space: normal; line-height: 1.25; }
   .big { position: relative; aspect-ratio: 1; border-radius: 24px; overflow: hidden; margin-bottom: 22px; }
   .dm { color: var(--muted); font-size: 15px; margin-top: -12px; font-weight: 500; }
   .drow { display: flex; align-items: baseline; gap: 14px; margin: 18px 0 8px; flex-wrap: wrap; }
@@ -255,16 +343,10 @@
   .suggest .wrap { position: relative; }
   .suggest h2 { color: #fff; }
   .suggest .sec-head p { color: #9FD6C3; }
+  .suggestion-note { max-width: 310px; margin-left: auto; font-size: 13px; color: #9FD6C3; }
   .agent { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; flex-wrap: wrap; }
   .avatar { width: 84px; height: 84px; border-radius: 28px; background: var(--main) url("assets/agent.jpg") center/cover; flex: none; box-shadow: 0 0 0 4px rgba(255,255,255,.1); }
   .bubble { position: relative; background: #fff; color: var(--ink); padding: 16px 22px; border-radius: 22px 22px 22px 6px; font-weight: 600; letter-spacing: -.02em; font-size: 17px; max-width: 420px; }
-  .auto { margin-left: auto; display: flex; align-items: center; gap: 14px; border: 0; cursor: pointer; background: rgba(255,255,255,.08); border-radius: 22px; padding: 12px 18px 12px 14px; color: #fff; text-align: left; }
-  .auto .knob { width: 46px; height: 28px; border-radius: 99px; background: #2c4a40; position: relative; flex: none; transition: background .25s; }
-  .auto .knob::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform .25s; }
-  .auto.on .knob { background: var(--accent); }
-  .auto.on .knob::after { transform: translateX(18px); background: #fff; }
-  .auto b { display: block; font-size: 15px; letter-spacing: -.02em; }
-  .auto small { font-size: 12px; color: #9FD6C3; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
   .sug { background: #fff; color: var(--ink); border-radius: 32px; padding: 10px 10px 22px; display: flex; flex-direction: column; gap: 10px; transition: transform .25s; animation: rise .5s both; }
   .sug:hover { transform: translateY(-5px) rotate(-.5deg); }
@@ -285,24 +367,17 @@
   .empty { color: #9FD6C3; font-size: 18px; }
 
   /* item status on the timeline */
-  .tcard .badge { position: absolute; top: 13px; left: 13px; z-index: 2; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; color: #fff; background: var(--ink); }
-  .tcard.st-disliked .badge { background: var(--accent); }
-  .tcard.st-unavailable .badge { background: #C77B0B; }
   .tcard.st-disposed { background: transparent; box-shadow: none; outline: 1.5px dashed var(--muted); outline-offset: -1.5px; }
   .tcard.st-disposed .pic { filter: grayscale(1); opacity: .4; }
   .tcard.st-unavailable .pic { filter: grayscale(.7); opacity: .55; }
-  .tcard.st-disposed h4 { text-decoration: line-through; color: var(--muted); }
+  .tcard.st-disposed .item-name { text-decoration: line-through; color: var(--muted); }
   .dot.gone { border-color: var(--muted); background: var(--lav2); }
   .status-box { display: grid; gap: 10px; margin: 4px 0 20px; }
   .status-box .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
-  .seg2 { display: flex; gap: 6px; flex-wrap: wrap; }
-  .seg2 button { border: 0; background: var(--lav); padding: 8px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
-  .seg2 button:hover { background: var(--lav2); }
-  .seg2 button.on { background: var(--main); color: #fff; }
-  .seg2 button.on[data-status=disliked] { background: var(--accent); }
-  .seg2 button.on[data-status=unavailable] { background: #C77B0B; }
-  .seg2 button.on[data-status=disposed] { background: var(--ink); }
-  .status-box input { margin: 0; }
+  .wardrobe-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .wardrobe-actions button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .status-box :is(input, select, p) { margin: 0; }
+  .status-box [hidden] { display: none; }
   .chip.toggle { background: transparent; box-shadow: inset 0 0 0 1.5px var(--lav2); }
   .chip.toggle.on { background: var(--ink); color: #fff; box-shadow: none; }
 
@@ -383,110 +458,150 @@
   dialog { border: 0; border-radius: 36px; padding: 32px; width: min(460px, 92vw); background: #fff; color: var(--ink); margin: auto; box-shadow: 0 40px 100px -20px rgba(18,11,51,.5); }
   dialog::backdrop { background: rgba(18,11,51,.55); backdrop-filter: blur(6px); }
   dialog h3 { font-weight: 800; font-size: 32px; letter-spacing: -.055em; line-height: 1.05; margin-bottom: 22px; }
+  .spend-detail { width: min(640px, 94vw); max-height: min(760px, 88dvh); padding: 0; border-radius: 24px; }
+  .spend-detail-head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 20px clamp(14px, 4vw, 28px) 16px; background: #fff; border-bottom: 1px solid var(--line); }
+  .spend-detail-head h3 { font-size: clamp(22px, 5vw, 32px); margin: 0 0 5px; }
+  .spend-detail-total, .spend-line-price { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .spend-lines { margin: 0; padding: 0 clamp(14px, 4vw, 28px) 12px; list-style: none; }
+  .spend-line { display: grid; grid-template-columns: clamp(56px, 13vw, 76px) minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 0; }
+  .spend-line + .spend-line { border-top: 1px solid var(--line); }
+  .spend-line .pic { border-radius: 10px; }
+  .spend-line .pic img { object-fit: contain; background: #fff; }
+  .spend-line-name { overflow-wrap: anywhere; line-height: 1.25; }
+  .spend-line-price { text-align: right; white-space: nowrap; }
+  .spend-line-meta { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+  @media (max-width: 460px) {
+    .spend-line { grid-template-columns: 56px minmax(0, 1fr); gap: 3px 10px; }
+    .spend-line .pic { grid-row: span 2; align-self: start; }
+    .spend-line-price { grid-column: 2; text-align: left; }
+  }
   label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
-  input, select { width: 100%; margin-top: 6px; padding: 13px 16px; border-radius: 16px; border: 0; background: var(--lav); outline: 2px solid transparent; transition: outline .2s; font-weight: 500; }
-  input:focus, select:focus { outline-color: var(--main); }
+  input, select, textarea { width: 100%; margin-top: 6px; padding: 13px 16px; border-radius: 16px; border: 0; background: var(--lav); outline: 2px solid transparent; transition: outline .2s; font-weight: 500; }
+  input:focus, select:focus, textarea:focus { outline-color: var(--main); }
   input[type=color] { padding: 4px; height: 46px; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  #preferences { padding: clamp(18px, 5vw, 32px); }
+  #preferences h3 { margin-bottom: 6px; }
+  #preferences fieldset { min-inline-size: 0; padding: 0; border: 0; }
+  #preferences :is(input, textarea) { display: block; color: var(--ink); font-size: 16px; }
+  #preferences textarea { min-height: 96px; max-height: 50dvh; resize: vertical; }
+  #preferences button:disabled { opacity: .6; cursor: default; }
+  .preferences-note { margin-bottom: 18px; color: var(--muted); font-size: 14px; }
+  .preferences-error { margin-bottom: 12px; color: #922f38; font-size: 14px; }
 
   @media (max-width: 860px) {
-    nav ul { display: none; }
     .hero { border-radius: 32px; }
     .zoom input[type=range] { width: 90px; }
-    .auto { margin-left: 0; }
     .card { padding: 22px; }
-  }
-  @media (max-width: 520px) {
-    .tl-scroll.purchase-list { width: calc(100% - 32px); }
-    .purchase-row { grid-template-columns: 26px minmax(0, 1fr) minmax(68px, auto); gap: 8px; padding-inline: 10px; }
-    .purchase-end { max-width: 106px; }
   }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="teeShape" viewBox="0 0 60 76">
-    <path d="M30 13V8.5A4 4 0 1 1 34 12.5" fill="none" stroke="#d3dadd" stroke-width="1.7" stroke-linecap="round"/>
-    <path d="M30 13 9 25H51Z" fill="none" stroke="#d3dadd" stroke-width="1.7" stroke-linejoin="round"/>
-    <path d="M20 19 8 25 1 43 11 47 16 40V75H44V40L49 47 59 43 52 25 40 19Q30 29 20 19Z" fill="currentColor" stroke-width="1.1" stroke-linejoin="round" style="stroke:var(--edge,transparent)"/>
-  </symbol>
-</svg>
 <div id="offline" hidden>Can't reach the Jop backend. In the wardrobe folder run <code>npm start</code>, then open <a href="http://127.0.0.1:3000" style="color:#fff">127.0.0.1:3000</a>.</div>
 
 <nav>
   <div class="wrap">
     <a class="logo" href="#"><svg width="26" height="26" viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#10a37f"/><path d="M10 13H22L22.7 20C22.7 24 20.2 26 18 25.3C17 25 16.3 24.3 16 23.5C15.7 24.3 15 25 14 25.3C11.8 26 9.3 24 9.3 20Z" fill="#fff"/><path d="M16 17.5V23" stroke="#10a37f" stroke-opacity=".16" stroke-width="1" stroke-linecap="round"/><path d="M13 13v-1.5a3 3 0 0 1 6 0V13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>jop</a>
     <ul>
-      <li><a href="#spending">The damage</a></li>
-      <li><a href="#timeline">The fits</a></li>
+      <li><a href="#spending">Spending</a></li>
+      <li><a href="#insights">Insights</a></li>
+      <li><a href="#timeline">Wardrobe</a></li>
       <li><a href="#blackfriday">Black Friday</a></li>
-      <li><a href="#next">Jop Agent</a></li>
+      <li><a href="#next">Before you buy</a></li>
     </ul>
-    <button class="btn primary" id="openAdd">+ Add a purchase</button>
+    <div class="nav-actions">
+      <button class="btn ghost sm" type="button" id="openPreferences" aria-haspopup="dialog">Preferences</button>
+      <button class="btn primary" id="openAdd">+ Add a purchase</button>
+    </div>
   </div>
 </nav>
 
 <header class="wrap">
   <div class="hero">
     <div>
-      <span class="pill">Jop Agent is online and has opinions</span>
-      <h1>Hand Jop<br>your card.</h1>
-      <p class="hero-sub">Trust the agent to be your jopper.</p>
+      <span class="pill">Your wardrobe, with hindsight</span>
+      <h1>Pause before<br>you buy.</h1>
+      <p class="hero-sub">See what you own. Buy what you’ll use.</p>
       <div class="hero-cta">
-        <button class="btn lime sm" id="heroAdd">Log another “essential”</button>
+        <button class="btn lime sm" id="heroAdd">Add an item</button>
         <a class="btn onpurple sm" href="#timeline" style="text-decoration:none">Review the evidence</a>
       </div>
     </div>
 
     <div class="flowbox" aria-label="How Jop works">
       <div class="fmap" id="fmap">
-        <svg class="fsvg" aria-hidden="true"><path class="fpath" id="fpath"/><circle class="fpkt" r="6"><animateMotion dur="12s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;.75;1"><mpath href="#fpath"/></animateMotion></circle></svg>
-        <span class="fedge" id="fRcpt">receipts</span><span class="fedge">a draft of you</span><span class="fedge q">budget: ???</span>
+        <svg class="fsvg" aria-hidden="true"><path class="fpath" id="fpath"/><circle class="fpkt" r="6"><animateMotion dur="12s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;.75;1"><mpath href="#fpath"/></animateMotion></circle><g id="farrs"></g></svg>
+        <span class="fedge" id="fRcpt">receipts</span><span class="fedge">your patterns</span><span class="fedge q">a second look</span>
         <ol>
-        <li class="fnode" style="--i:0;--c:1"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><div class="ftxt"><h4>Reads your Gmail</h4><div class="mails" id="fMail" aria-label="Order emails being processed"></div></div></li>
-        <li class="fnode lo" style="--i:1;--c:2"><span class="fic"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 11V9a3 3 0 1 1 3 3"/><path d="M14 11 3 19.5A1.5 1.5 0 0 0 4 22h20a1.5 1.5 0 0 0 1-2.5Z"/></svg><span class="fnum">2</span></span><div class="ftxt"><h4>Rebuilds your wardrobe</h4><div class="fitems" id="fItems"></div><p id="fTaste">Sizes, brands, taste.</p></div></li>
-        <li class="fnode" style="--i:2;--c:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3.5" width="26" height="19" rx="4"/><path d="M2 10h26"/><path d="M7 16.5h5" stroke-width="2.6"/></svg><span class="fnum">3</span></span><div class="ftxt"><h4>Add your card</h4><p>You won&#39;t know what it buys.</p><span class="mystery">Basket: ???</span></div></li>
-        <li class="fnode lo" style="--i:3;--c:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">4</span></span><div class="ftxt"><h4>Black Friday, 00:00</h4><div class="vendors" id="fVendors"></div></div></li>
+        <li class="fnode" style="--i:0;--c:1"><span class="fic"><svg width="30" height="23" viewBox="0 0 52 40" aria-hidden="true"><path fill="#4285F4" d="M4 40h8V19.6L0 10.6V36a4 4 0 0 0 4 4z"/><path fill="#34A853" d="M40 40h8a4 4 0 0 0 4-4V10.6l-12 9z"/><path fill="#FBBC04" d="M40 5.4v14.2l12-9V6.8c0-3.1-5.9-6-10-3z"/><path fill="#EA4335" d="M12 19.6V5.4L26 16 40 5.4v14.2L26 30z"/><path fill="#C5221F" d="M0 6.8v3.8l12 9V5.4L10 3.9C5.9.8 0 3.7 0 6.8z"/></svg><span class="fnum">1</span></span><div class="ftxt"><h4>Import order emails</h4><div class="mails" id="fMail" aria-label="Order emails being processed"></div></div></li>
+        <li class="fnode lo" style="--i:1;--c:2"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.4 5.6a2.6 2.6 0 1 1 3.8 2.3c-.75.38-1.2 1.08-1.2 1.9V11"/><path d="M15 11 3.4 19.2A1.5 1.5 0 0 0 4.3 22h21.4a1.5 1.5 0 0 0 .9-2.8Z"/></svg><span class="fnum">2</span></span><div class="ftxt"><h4>Rebuilds your wardrobe</h4><div class="frow"><div class="fitems" id="fItems"></div><p class="taste" id="fTaste">Sizes, brands, taste.</p></div></div></li>
+        <li class="fnode" style="--i:2;--c:3"><span class="fic"><svg width="30" height="26" viewBox="0 0 30 26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3v20h24"/><path d="M8 18v-5m7 5V8m7 10V4" stroke-width="3"/></svg><span class="fnum">3</span></span><div class="ftxt"><h4>Spot the patterns</h4><div class="frow"><p>Likes, returns, repeat purchases.</p><span class="mystery">Keep or skip?</span></div></div></li>
+        <li class="fnode lo" style="--i:3;--c:4"><span class="fic"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h18l-1.2 14a2.5 2.5 0 0 1-2.5 2.3H7.7A2.5 2.5 0 0 1 5.2 23Z"/><path d="M9 9V7a4 4 0 0 1 8 0v2"/></svg><span class="fnum">4</span></span><div class="ftxt"><h4>Decide before the sale</h4><div class="vendors" id="fVendors"></div></div></li>
         </ol>
       </div>
     </div>
   </div>
 
     <div class="stats">
-      <div class="stat"><small id="range">Spent on clothes</small><b>$<span id="total">0</span></b></div>
-      <div class="stat"><small>Pieces owned</small><b id="sCount">0</b></div>
-      <div class="stat"><small>Avg. per “it was a steal”</small><b id="sAvg">0</b></div>
-      <div class="stat"><small>Last 90 days · recent damage</small><b id="s90">0</b></div>
-      <div class="stat"><small>Regret fund · bought, then bailed</small><b id="sMax">0</b></div>
+      <div class="stat"><small id="range">Recorded item prices</small><b id="total">—</b></div>
+      <div class="stat"><small id="sCountLabel">Items</small><b id="sCount">—</b></div>
+      <div class="stat"><small>Average per priced item</small><b id="sAvg">—</b></div>
+      <div class="stat"><small>Last 90 days</small><b id="s90">—</b></div>
+      <div class="stat"><small id="sMaxLabel">Orders</small><b id="sMax">—</b></div>
     </div>
 
-    <div class="tees">
-      <div class="tees-head">
-        <b id="teeN">30</b><span id="teeMsg">black tees. Normal.</span><small id="teeSub">Click one to discard it.</small>
-        <div class="tees-btns">
-          <button class="btn ghost sm" id="teeOne">Discard one</button>
-          <button class="btn ghost sm" id="teeReset" hidden>Put them back</button>
-        </div>
-      </div>
-      <div class="rack" role="group" aria-label="30 black t-shirts and one white one. Click a black one to discard it.">
-        <div class="rail"></div>
-        <div class="rack-row" id="rack"></div>
-      </div>
-    </div>
 </header>
 
 <section id="spending">
   <div class="wrap">
     <div class="sec-head">
-      <div><h2>Where it all went</h2><p>A monthly reenactment of “just one more thing.”</p></div>
-      <div class="seg" id="yearSeg"></div>
+      <h2>Where it all went</h2>
     </div>
+    <div class="scope-controls" data-wardrobe-controls="Spending"></div>
     <div class="card">
-      <svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none"></svg>
-      <div class="legend"><span>Monthly damage</span><span>Running total (sorry)</span></div>
+      <div class="chart-head">
+        <div class="chart-total" role="status"><span id="chartTotalLabel">Recorded item prices</span><strong id="chartTotal">—</strong></div>
+        <select id="chartCurrency" class="scope-filter" aria-label="Chart currency" hidden></select>
+      </div>
+      <p class="chart-note" id="chartNote" hidden></p>
+      <div class="chart-plot" id="chartPlot"><svg id="chart" viewBox="0 0 1000 260" preserveAspectRatio="none" role="group" aria-label="Monthly spending and running total"></svg></div>
+      <div class="legend" id="chartLegend"><span>Monthly · left scale</span><span>Running total · right scale</span></div>
       <div class="cats" id="cats"></div>
     </div>
+  </div>
+</section>
+
+<section id="insights" aria-labelledby="insightsTitle">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="insightsTitle">Insights</h2>
+    </div>
+    <div class="scope-controls" data-wardrobe-controls="Insights"></div>
+    <section id="yearly-spending" class="year-overview" aria-labelledby="yearOverviewTitle">
+      <div class="year-overview-head">
+        <h3 id="yearOverviewTitle"><b id="spendingOverviewHeading">Yearly spending</b> <span id="yearOverviewCurrency"></span></h3>
+        <div class="year-breakdown-controls" role="group" aria-label="Stack spending by">
+          <button type="button" class="chip on" data-year-stack="brand" aria-pressed="true">Brand</button>
+          <button type="button" class="chip" data-year-stack="type" aria-pressed="false">Clothing type</button>
+        </div>
+      </div>
+      <p class="chart-note" id="overviewExclusions" hidden></p>
+      <p id="yearOverviewEmpty" class="year-empty" role="status" hidden></p>
+      <div class="year-overview-plot" id="yearOverviewPlot" tabindex="0" role="region" aria-label="Spending overview chart">
+        <svg id="yearChart" viewBox="0 0 1000 300" role="group" aria-label="Yearly spending"></svg>
+      </div>
+      <ul class="year-legend" id="yearLegend" aria-label="Chart legend"></ul>
+      <details class="year-values" id="yearValues">
+        <summary id="spendingOverviewBreakdown">Yearly breakdown</summary>
+        <div class="year-table-scroll"><table class="year-table" id="yearTable"></table></div>
+      </details>
+    </section>
+    <div class="insights-grid" id="insightResults"></div>
+    <section class="timing" id="purchase-timing" aria-labelledby="timingTitle">
+      <h3 id="timingTitle">When you buy</h3>
+      <div id="timingResults"></div>
+    </section>
   </div>
 </section>
 
@@ -495,13 +610,12 @@
     <div class="sec-head" style="margin-bottom: 24px">
       <h2 id="timelineTitle">The fit timeline</h2>
     </div>
-    <div class="tl-sources" role="group" aria-label="Timeline source">
-      <button class="chip" id="sourcePurchases" aria-pressed="false">Purchases</button>
-      <button class="chip" id="sourceInventory" aria-pressed="false">Inventory</button>
+    <div class="scope-controls" data-wardrobe-controls="Timeline"></div>
+    <div class="undated-wardrobe" id="undatedWardrobe" role="region" aria-labelledby="undatedTitle" hidden>
+      <h3 id="undatedTitle">No purchase date</h3>
+      <div class="undated-items" id="undatedItems"></div>
     </div>
     <div class="tl-tools">
-      <div class="chips" id="chips" role="group" aria-label="Filter timeline"></div>
-      <select id="purchaseYear" aria-label="Purchase year" hidden></select>
       <div class="zoom" id="timelineZoom">
         <button id="zOut" title="Zoom out">−</button>
         <input type="range" id="zoom" min="0" max="1000" value="300" aria-label="Zoom">
@@ -520,7 +634,7 @@
       <div>
         <span class="bf-tag">Black Friday · Nov 27</span>
         <h2>Black Friday,<br>supervised.</h2>
-        <p>Jop helps you save money by spending it more carefully. It has read your wardrobe. All of it.</p>
+        <p>Check for duplicates and set a limit before a discount makes the decision for you.</p>
       </div>
       <div class="bf-count" aria-label="Countdown to Black Friday">
         <div><b id="bfD">0</b><small>days</small></div>
@@ -540,7 +654,7 @@
           <div class="bf-line"><span id="bfLeftLbl">Left to spend</span><b id="bfLeft">$0</b></div>
           <div class="bf-line"><span>Saved vs. full price</span><b id="bfSaved">$0</b></div>
           <div class="bf-line"><span>Impulse Shield blocked</span><b id="bfBlocked">$0</b></div>
-          <button class="btn primary" id="bfQueue">Queue with Jop Agent</button>
+          <button class="btn primary" id="bfQueue">Review selected items</button>
           <button class="btn ghost" id="bfReset" hidden>Back to Jop's picks</button>
         </div>
         <div class="bf-card">
@@ -569,12 +683,12 @@
   <div class="wrap">
     <section>
       <div class="sec-head" style="margin-bottom: 28px">
-        <div><h2>Jop Agent<br>has thoughts.</h2><p id="sugNote"></p></div>
+        <div><h2>Before you buy.</h2><p id="sugNote"></p></div>
       </div>
       <div class="agent">
         <div class="avatar"></div>
-        <div class="bubble">I’ve reviewed your wardrobe. We need to talk.</div>
-        <button class="auto on" id="auto"><span class="knob"></span><span><b>Autopilot checkout</b><small id="autoNote">ON · Jop may spend your money</small></span></button>
+        <div class="bubble">Start with what you already own.</div>
+        <p class="suggestion-note">Suggestions use inventory counts and example targets. Review them against your own needs.</p>
       </div>
       <div class="grid" id="sug"></div>
     </section>
@@ -584,16 +698,16 @@
 <footer>
   <div class="wrap">
     <div class="logo">jop</div>
-    <p>Pay in 4 installments of regret. Not affiliated with Shop. Just a fan with a closet problem.</p>
-    <p style="margin-top:8px">Everything lives in a local SQLite file on your machine. <a href="#" id="reset">Reset sample data</a></p>
+    <p>A little purchase history. A little less impulse shopping.</p>
+    <p style="margin-top:8px">Everything lives in a local SQLite file on your machine. <a href="#" id="reset">Reset sample inventory</a></p>
   </div>
 </footer>
 
-<div id="toast"></div>
+<div id="toast" role="status"></div>
 
 <dialog id="dlg">
   <form method="dialog" id="form">
-    <h3 id="formTitle">What did you buy this time?</h3>
+    <h3 id="formTitle">Add a wardrobe item</h3>
     <label>Name<input name="name" required maxlength="120" placeholder="A very necessary jacket"></label>
     <div class="row">
       <label>Brand<input name="brand" maxlength="80" placeholder="COS"></label>
@@ -601,10 +715,10 @@
     </div>
     <div class="row">
       <label>Category<select name="cat"></select></label>
-      <label>Price ($)<input name="price" type="number" min="0" step="0.01" required placeholder="180"></label>
+      <label>Price (CAD, optional)<input name="price" type="number" min="0" step="0.01" placeholder="180"></label>
     </div>
     <div class="row">
-      <label>Date<input name="date" type="date" required></label>
+      <label>Purchase date (optional)<input name="date" type="date"></label>
       <label>Store<input name="store" maxlength="80" placeholder="Where it happened"></label>
     </div>
     <label>Material<input name="material" maxlength="80" placeholder="100% wool"></label>
@@ -615,7 +729,7 @@
     </div>
     <div class="actions">
       <button type="button" class="btn ghost" id="cancel">Never mind</button>
-      <button class="btn primary" id="formSave">Add it. No judgment.</button>
+      <button class="btn primary" id="formSave">Save item</button>
     </div>
   </form>
 </dialog>
@@ -629,6 +743,33 @@
     <button class="btn primary" id="detClose">Close</button>
   </div>
   <input type="file" id="photoIn" accept="image/*" hidden>
+</dialog>
+
+<dialog class="spend-detail" id="spendDetail" aria-labelledby="spendDetailTitle" aria-describedby="spendDetailTotal">
+  <div class="spend-detail-head">
+    <div><h3 id="spendDetailTitle"></h3><p class="spend-detail-total" id="spendDetailTotal"></p></div>
+    <button class="btn ghost sm" type="button" id="spendDetailClose" autofocus>Close</button>
+  </div>
+  <ul class="spend-lines" id="spendDetailLines" role="list"></ul>
+</dialog>
+
+<dialog id="preferences" aria-labelledby="preferencesTitle" aria-describedby="preferencesNote">
+  <h3 id="preferencesTitle">Preferences</h3>
+  <p class="preferences-note" id="preferencesNote">All fields are optional and saved on this device.</p>
+  <p class="preferences-note" id="preferencesLoading" role="status" hidden>Loading preferences…</p>
+  <form id="preferencesForm" method="dialog">
+    <fieldset id="preferencesFields" hidden>
+      <label>Preferred colours<input name="colours" maxlength="160" placeholder="e.g. navy, olive, black"></label>
+      <label>Location (city or region)<input name="location" maxlength="120"></label>
+      <label>Additional notes<textarea name="notes" rows="4" maxlength="2000"></textarea></label>
+    </fieldset>
+    <p class="preferences-error" id="preferencesError" role="alert" hidden></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="preferencesCancel" autofocus>Cancel</button>
+      <button class="btn primary" type="button" id="preferencesRetry" hidden>Try again</button>
+      <button class="btn primary" type="submit" id="preferencesSave" hidden>Save preferences</button>
+    </div>
+  </form>
 </dialog>
 
 <script>
@@ -652,17 +793,17 @@ const QUIPS = {
   Shoes: "Your feet have filed a complaint.",
   Accessories: "Every outfit needs a plot twist."
 };
-const STATUSES = [["active","Active"],["disliked","Not feeling it"],["unavailable","Not available"],["disposed","Disposed"]];
-const STATUS_LABEL = Object.fromEntries(STATUSES), STATUS_SHORT = { disliked: "Meh", unavailable: "N/A", disposed: "Gone" };
-const isGone = i => i.status !== "active";
+const isGone = i => !i.inWardrobe || i.disliked;
 const PALETTE = ["#3b3f46","#7a8b7c","#a9c1de","#8a6f5a","#566149","#b9b2a6","#44474d","#1d2b3a"];
 
-let items = [], year = "All", filter = "All", showGone = true;
+let items = [], year = "All", brandFilter = "All", filter = "All", hideRemoved = false;
+let purchases = [], purchaseError = false, timelineSource = null, returnFilter = "hide", favouritesOnly = false;
+let chartCurrency = "", yearStack = "brand";
 const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 const fmt = n => "$" + Math.round(n).toLocaleString("en-US");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const monthKey = d => d.slice(0,7);
-const monthName = k => new Date(k+"-01T00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});
 const today = () => new Date().toISOString().slice(0,10);
 
 // ---------- backend ----------
@@ -672,7 +813,16 @@ async function api(path, { method = "GET", json, body, type } = {}) {
   if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.statusText);
   return r.status === 204 ? null : r.json();
 }
-async function load() { items = await api("/items"); render(); }
+async function loadPurchases() {
+  try { purchases = (await api("/purchases")).filter(i => i.date && onTimeline(i)); purchaseError = false; }
+  catch { purchaseError = true; }
+}
+async function load() {
+  [items] = await Promise.all([api("/items"), loadPurchases()]);
+  timelineSource ??= purchases.length || purchaseError ? "purchases" : "inventory";
+  $("#offline").hidden = true;
+  render();
+}
 // run an async handler, surface failures as a toast
 const guard = fn => async (...a) => { try { await fn(...a); } catch (e) { toast(e.message || "Something broke."); } };
 
@@ -681,71 +831,363 @@ function toast(msg) {
   clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 3400);
 }
 
-// ---------- hero + chart ----------
-function renderHero() {
-  const total = items.reduce((a,i)=>a+i.price,0);
-  const dates = items.map(i=>i.date).sort();
-  $("#total").textContent = Math.round(total).toLocaleString("en-US");
-  $("#range").textContent = items.length ? `Spent since ${new Date(monthKey(dates[0]) + "-01T00:00").toLocaleDateString("en-US", { month: "short", year: "numeric" })}` : "Nothing yet. Suspicious.";
-  $("#sCount").textContent = items.filter(i => i.status !== "disposed" && i.status !== "unavailable").length;
-  $("#sAvg").textContent = fmt(items.length ? total/items.length : 0);
-  const cutoff = new Date(Date.now() - 90*864e5).toISOString().slice(0,10);
-  $("#s90").textContent = fmt(items.filter(i=>i.date>=cutoff).reduce((a,i)=>a+i.price,0));
-  $("#sMax").textContent = fmt(items.filter(isGone).reduce((a,i)=>a+i.price,0));
+const preferencesDialog = $("#preferences"), preferencesForm = $("#preferencesForm"), preferencesFields = $("#preferencesFields");
+const preferencesLoading = $("#preferencesLoading"), preferencesError = $("#preferencesError");
+const preferencesSave = $("#preferencesSave"), preferencesCancel = $("#preferencesCancel"), preferencesRetry = $("#preferencesRetry");
+let preferencesLoad;
+function preferenceError(message) {
+  preferencesError.hidden = !message;
+  preferencesError.textContent = message;
+}
+async function loadPreferences() {
+  preferencesFields.hidden = preferencesSave.hidden = preferencesRetry.hidden = true;
+  preferencesLoading.hidden = false;
+  preferenceError("");
+  const request = preferencesLoad = api("/preferences");
+  const current = () => request === preferencesLoad && preferencesDialog.open;
+  try {
+    const saved = await request;
+    if (!current()) return;
+    for (const key of ["colours", "location", "notes"]) preferencesForm.elements[key].value = saved[key];
+    preferencesFields.hidden = preferencesSave.hidden = false;
+    preferencesForm.elements.colours.focus();
+  } catch {
+    if (!current()) return;
+    preferenceError("Couldn’t load your preferences.");
+    preferencesRetry.hidden = false;
+    preferencesRetry.focus();
+  } finally {
+    if (current()) preferencesLoading.hidden = true;
+  }
+}
+$("#openPreferences").onclick = () => {
+  loadPreferences();
+  preferencesDialog.showModal();
+};
+preferencesRetry.onclick = loadPreferences;
+preferencesCancel.onclick = () => preferencesDialog.close();
+preferencesDialog.addEventListener("cancel", e => { if (preferencesSave.disabled) e.preventDefault(); });
+preferencesForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (preferencesSave.hidden || preferencesSave.disabled) return;
+  const json = Object.fromEntries(new FormData(preferencesForm));
+  preferenceError("");
+  preferencesFields.disabled = preferencesSave.disabled = preferencesCancel.disabled = true;
+  preferencesSave.textContent = "Saving…";
+  try {
+    await api("/preferences", {method: "PUT", json});
+    preferencesDialog.close();
+    toast("Preferences saved.");
+  } catch {
+    preferenceError("Couldn’t save your preferences. Try again.");
+  } finally {
+    preferencesFields.disabled = preferencesSave.disabled = preferencesCancel.disabled = false;
+    preferencesSave.textContent = "Save preferences";
+    if (preferencesDialog.open) preferencesSave.focus();
+  }
+});
+
+// ---------- summary and spending ----------
+const centsLabel = (cents, precision = 2) => (cents / 100).toLocaleString("en-CA", {
+  minimumFractionDigits: precision, maximumFractionDigits: precision,
+});
+const localDate = date => [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+  .map((part, i) => String(part).padStart(i === 0 ? 4 : 2, "0")).join("-");
+const monthsOfYear = yr => Array.from({length: 12}, (_,i) => `${yr}-${String(i + 1).padStart(2,"0")}`);
+const spendMonthName = (key, month) => new Date(key + "-01T00:00:00Z").toLocaleDateString("en-CA", {month, timeZone:"UTC"});
+function spendingModel(list, imported) {
+  const byCurrency = new Map();
+  let missing = 0, units = 0, excludedRequests = 0, undated = 0;
+  for (const i of list) {
+    const qty = imported ? i.quantity : 1;
+    units += qty;
+    if (imported && i.returnStatus === "return_requested") { excludedRequests++; continue; }
+    if (!i.date) { undated++; continue; }
+    const currency = imported ? i.currency?.trim().toUpperCase() : "CAD";
+    if (!/^[A-Z]{3}$/.test(currency || "") || !Number.isFinite(i.price)) { missing++; continue; }
+    // A reported line price already covers the full quantity.
+    const cents = Math.round(i.price * 100) * (imported && i.priceBasis === "listed_item_price" ? qty : 1);
+    if (!byCurrency.has(currency)) byCurrency.set(currency, []);
+    byCurrency.get(currency).push({item: i, qty, cents});
+  }
+  const currencies = [...byCurrency.keys()].sort();
+  if (!currencies.includes(chartCurrency)) chartCurrency = currencies.includes("CAD") ? "CAD" : currencies[0] || "";
+  const rows = byCurrency.get(chartCurrency) ?? [];
+  const total = rows.reduce((sum, r) => sum + r.cents, 0);
+  const pricedUnits = rows.reduce((sum, r) => sum + r.qty, 0);
+  return {list, imported, currencies, rows, total, units, pricedUnits, missing, excludedRequests, undated};
+}
+const chartMoney = cents => chartCurrency ? `${chartCurrency} ${centsLabel(cents)}` : "—";
+function spendingPeriods(rows, monthly) {
+  const periods = new Map();
+  for (const row of rows) {
+    const key = monthly ? monthKey(row.item.date) : row.item.date.slice(0,4);
+    const period = periods.get(key) ?? {total: 0, rows: []};
+    period.total += row.cents;
+    period.rows.push(row);
+    periods.set(key, period);
+  }
+  return periods;
+}
+const spendingPeriodLabel = key => key.length === 4 ? key : `${spendMonthName(key, "long")} ${key.slice(0,4)}`;
+const spendingBarAttrs = (key, total) => `class="spend-bar" data-spend-period="${key}" role="button" tabindex="0" aria-haspopup="dialog"
+  aria-label="${spendingPeriodLabel(key)} purchases: ${chartMoney(total)}"`;
+const spendingBarHit = (x, bottom, width, height) => `<rect class="bar-hit" x="${x - width / 2}" y="${bottom - Math.max(height, 24)}" width="${width}" height="${Math.max(height, 24) + 25}" rx="3" aria-hidden="true"/>`;
+const spendDetail = $("#spendDetail");
+let spendDetailTrigger;
+function openSpendingDetail(svg, button, period) {
+  const key = button.dataset.spendPeriod;
+  if (!period || spendDetail.open) return;
+  spendDetailTrigger = {svg, key};
+  $("#spendDetailTitle").textContent = `${spendingPeriodLabel(key)} purchases`;
+  $("#spendDetailTotal").textContent = `${chartMoney(period.total)} total`;
+  $("#spendDetailLines").innerHTML = [...period.rows].sort((a,b) => b.item.date.localeCompare(a.item.date) || b.cents - a.cents).map(({item, qty, cents}) => {
+    const metadata = [brandName(item), purchaseDate(item.date)].filter(Boolean).join(" · ");
+    const quantity = qty > 1 ? item.priceBasis === "listed_item_price"
+      ? `${qty} × ${chartMoney(Math.round(item.price * 100))}` : `Qty ${qty}` : "";
+    return `<li class="spend-line">
+      <div class="pic" style="${picBg(item)}" aria-hidden="true">${pic(item, true)}</div>
+      <div class="spend-line-name"><b>${esc(item.name)}</b><span class="spend-line-meta">${esc(metadata)}</span></div>
+      <div class="spend-line-price"><span>${chartMoney(cents)}</span>${quantity ? `<small class="spend-line-meta">${quantity}</small>` : ""}</div>
+    </li>`;
+  }).join("");
+  spendDetail.scrollTop = 0;
+  spendDetail.showModal();
+}
+function wireSpendingBars(svg, periods) {
+  const activate = e => {
+    const button = e.target.closest("[data-spend-period]");
+    if (!button) return;
+    e.preventDefault();
+    openSpendingDetail(svg, button, periods.get(button.dataset.spendPeriod));
+  };
+  svg.onclick = activate;
+  svg.onkeydown = e => { if (!e.repeat && (e.key === "Enter" || e.key === " ")) activate(e); };
+}
+$("#spendDetailClose").onclick = () => spendDetail.close();
+spendDetail.addEventListener("close", () => {
+  const {svg, key} = spendDetailTrigger;
+  svg.querySelector(`[data-spend-period="${key}"]`)?.focus({preventScroll: true});
+  $("#spendDetailLines").replaceChildren();
+});
+const spendingExclusions = ({excludedRequests, undated}) => [
+  excludedRequests ? `${excludedRequests} ${excludedRequests === 1 ? "item with a return request is" : "items with return requests are"} excluded from spending.` : "",
+  undated ? `${undated} ${undated === 1 ? "item has" : "items have"} no purchase date and ${undated === 1 ? "is" : "are"} excluded from spending.` : "",
+].filter(Boolean).join(" ");
+function renderSummary({list, imported, rows, total, units, pricedUnits}) {
+  const unavailable = imported && purchaseError;
+  $("#range").textContent = imported ? "Recorded purchase prices" : "Inventory purchase prices";
+  $("#total").textContent = chartMoney(total);
+  $("#sCountLabel").textContent = imported ? "Purchased units" : "Pieces owned";
+  $("#sCount").textContent = unavailable ? "—" : imported ? units : list.filter(i => i.inWardrobe).length;
+  $("#sAvg").textContent = pricedUnits ? chartMoney(total / pricedUnits) : "—";
+  const now = new Date(), cutoff = new Date(now);
+  cutoff.setDate(now.getDate() - 89);
+  const first = localDate(cutoff), last = localDate(now);
+  $("#s90").textContent = chartMoney(rows.reduce((sum, r) => r.item.date >= first && r.item.date <= last ? sum + r.cents : sum, 0));
+  $("#sMaxLabel").textContent = imported ? "Purchase orders" : "Disliked or removed";
+  $("#sMax").textContent = unavailable ? "—" : imported ? new Set(list.map(i => i.orderId)).size
+    : chartMoney(rows.reduce((sum, r) => isGone(r.item) ? sum + r.cents : sum, 0));
 }
 
-function renderChart() {
-  const years = ["All", ...[...new Set(items.map(i=>i.date.slice(0,4)))].sort()];
-  if (!years.includes(year)) year = "All";
-  $("#yearSeg").innerHTML = years.map(y=>`<button class="${y===year?"on":""}" data-y="${y}">${y}</button>`).join("");
-  const list = items.filter(i => year==="All" || i.date.startsWith(year));
-  const svg = $("#chart");
-  if (!list.length) { svg.innerHTML = ""; $("#cats").innerHTML = ""; return; }
-  const keys = list.map(i=>monthKey(i.date)).sort();
-  const months = [];
-  let [y,m] = keys[0].split("-").map(Number);
-  const [ey,em] = keys[keys.length-1].split("-").map(Number);
-  while (y<ey || (y===ey && m<=em)) { months.push(`${y}-${String(m).padStart(2,"0")}`); if (++m>12) { m=1; y++; } }
-  const sums = months.map(k => list.filter(i=>monthKey(i.date)===k).reduce((a,i)=>a+i.price,0));
-  const max = Math.max(...sums), total = sums.reduce((a,b)=>a+b,0);
-  const W=1000, H=230, bw = W/months.length;
-  let run = 0, pts = [];
-  const bars = months.map((k,i)=>{
-    const h = sums[i] ? Math.max(4, sums[i]/max*(H-30)) : 3;
-    run += sums[i]; pts.push(`${(i*bw+bw/2).toFixed(1)},${(H - run/total*(H-30)).toFixed(1)}`);
-    const x = i*bw + bw*.18, w = bw*.64;
-    const label = months.length>14 ? (i%3===0 ? k.slice(2) : "") : k.slice(2);
-    return `<g><rect class="bar ${sums[i]?"has":""}" x="${x}" y="${H-h}" width="${w}" height="${h}" rx="4"/>
-      ${sums[i]?`<text class="tip" x="${x+w/2}" y="${H-h-8}" text-anchor="middle">${fmt(sums[i])}</text>`:""}
-      <text x="${x+w/2}" y="${H+18}" text-anchor="middle">${label}</text></g>`;
-  }).join("");
-  svg.innerHTML = bars + `<polyline class="cum" points="${pts.join(" ")}" vector-effect="non-scaling-stroke"/>`;
+function renderChart(model) {
+  const {list, imported, currencies, rows, total, missing} = model;
+  const currency = $("#chartCurrency");
+  setSelectOptions(currency, currencies.map(code => [code, code]), chartCurrency);
+  currency.hidden = currencies.length <= 1;
+  $("#chartTotalLabel").textContent = imported ? "Recorded purchase prices" : "Inventory purchase prices";
+  $("#chartTotal").textContent = chartMoney(total);
+  const noData = imported && purchaseError ? "Couldn’t load imported purchases." : !list.length
+    ? "No items match these filters." : "";
+  const assumed = rows.filter(({item}) => item.currencyAssumed).length;
+  const note = noData || [
+    spendingExclusions(model),
+    assumed ? `${assumed} ${assumed === 1 ? "line defaults" : "lines default"} to CAD because no currency was recorded.` : "",
+    missing ? `${missing} ${missing === 1 ? "line excluded" : "lines excluded"} from spending: price or currency unavailable.` : "",
+  ].filter(Boolean).join(" ");
+  $("#chartNote").textContent = note;
+  $("#chartNote").hidden = !note;
+  const svg = $("#chart"), cats = $("#cats");
+  $("#chartPlot").hidden = $("#chartLegend").hidden = cats.hidden = !rows.length;
+  if (!rows.length) { svg.replaceChildren(); cats.replaceChildren(); return; }
 
-  const byCat = CATS.map(c=>[c, list.filter(i=>i.cat===c).reduce((a,i)=>a+i.price,0)]).sort((a,b)=>b[1]-a[1]);
-  $("#cats").innerHTML = byCat.map(([c,v])=>`<div class="cat-row"><span>${c}</span>
-    <div class="track"><div class="fill" style="width:${v/byCat[0][1]*100}%"></div></div><em>${fmt(v)}</em></div>`).join("");
+  const monthly = spendingPeriods(rows, true), categories = new Map();
+  for (const {item, cents} of rows) {
+    categories.set(item.cat, (categories.get(item.cat) ?? 0) + cents);
+  }
+  const months = year !== "All" ? monthsOfYear(year) : [];
+  if (year === "All") {
+    const keys = [...monthly.keys()].sort();
+    let [y,m] = keys[0].split("-").map(Number);
+    const [ey,em] = keys.at(-1).split("-").map(Number);
+    while (y < ey || (y === ey && m <= em)) { months.push(`${y}-${String(m).padStart(2,"0")}`); if (++m > 12) { m = 1; y++; } }
+  }
+  const sums = months.map(k => monthly.get(k)?.total ?? 0);
+  const monthlyMax = Math.max(...sums), bottom = 230, height = 203, left = 66, right = 924, bw = (right - left) / months.length;
+  const axisAmount = cents => centsLabel(cents, cents % 100 ? 2 : 0);
+  const grids = [0, .5, 1].map(t => {
+    const y = bottom - t * height;
+    return `<line class="gridline" x1="${left}" x2="${right}" y1="${y}" y2="${y}"/>
+      <text x="${left - 8}" y="${y + 4}" text-anchor="end">${axisAmount(monthlyMax * t)}</text>
+      <text x="${right + 8}" y="${y + 4}">${axisAmount(total * t)}</text>`;
+  }).join("");
+  let run = 0;
+  const pts = [];
+  const bars = months.map((k, i) => {
+    const h = monthlyMax ? sums[i] / monthlyMax * height : 0;
+    const center = left + (i + .5) * bw;
+    run += sums[i];
+    pts.push(`${center.toFixed(1)},${(bottom - (total ? run / total : 0) * height).toFixed(1)}`);
+    const label = year !== "All" ? spendMonthName(k, "short") : i % Math.max(1, Math.ceil(months.length / 14)) === 0 ? k.slice(2) : "";
+    const hasPurchases = monthly.has(k);
+    return `<g ${hasPurchases ? spendingBarAttrs(k, sums[i]) : ""}><title>${spendingPeriodLabel(k)}: ${chartMoney(sums[i])} monthly; ${chartMoney(run)} running total</title>
+      ${hasPurchases ? spendingBarHit(center, bottom, bw * .96, h) : ""}
+      <rect class="bar has" x="${center - bw * .32}" y="${bottom - h}" width="${bw * .64}" height="${h}" rx="3"/>
+      <text class="period-label" x="${center}" y="${bottom + 18}" text-anchor="middle">${label}</text></g>`;
+  }).join("");
+  svg.setAttribute("aria-label", `Monthly spending and running total in ${chartCurrency}`);
+  svg.innerHTML = grids + bars + (pts.length > 1
+    ? `<polyline class="cum" points="${pts.join(" ")}" vector-effect="non-scaling-stroke"/>`
+    : `<circle cx="${left + bw / 2}" cy="${bottom - (total ? height : 0)}" r="4" fill="var(--ink)"/>`);
+  wireSpendingBars(svg, monthly);
+  const byCat = [...categories.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  cats.innerHTML = byCat.map(([type, cents]) => `<div class="cat-row"><span>${esc(type)}</span>
+    <div class="track"><div class="fill" style="width:${byCat[0][1] ? cents / byCat[0][1] * 100 : 0}%"></div></div><em>${centsLabel(cents)}</em></div>`).join("");
+}
+function renderSpending() {
+  const model = spendingModel(scopedSelection(), timelineSource === "purchases");
+  renderSummary(model);
+  renderChart(model);
+  renderYearOverview(model);
+}
+
+const YEAR_STACK_COLORS = ["#128369", "#485FC0", "#D18635", "#884DA8", "#227B9D", "#B65070"];
+function stackedSpending(buckets, keys, byBrand) {
+  const groups = new Map();
+  const periods = keys.map(key => {
+    const bucket = buckets.get(key);
+    const amounts = new Map();
+    for (const {item, cents} of bucket?.rows ?? []) {
+      const groupKey = byBrand ? brandKey(item) : item.cat;
+      const label = byBrand ? brandName(item) || "Unknown brand" : item.cat;
+      const group = groups.get(groupKey) ?? {key: groupKey, label, total: 0};
+      group.total += cents;
+      groups.set(groupKey, group);
+      amounts.set(groupKey, (amounts.get(groupKey) ?? 0) + cents);
+    }
+    return {key, total: bucket?.total ?? 0, amounts};
+  });
+  const ranked = [...groups.values()].sort((a,b) => b.total - a.total || a.label.localeCompare(b.label, "en-CA"));
+  const named = byBrand ? ranked.filter(g => g.key !== "unknown") : ranked;
+  const shown = (byBrand ? named.slice(0, YEAR_STACK_COLORS.length) : named).map((g,i) => ({
+    label: g.label, keys: [g.key], color: YEAR_STACK_COLORS[byBrand ? i : CATS.indexOf(g.key)] || YEAR_STACK_COLORS[i % YEAR_STACK_COLORS.length],
+  }));
+  if (byBrand && named.length > YEAR_STACK_COLORS.length) {
+    shown.push({label: "Other brands", keys: named.slice(YEAR_STACK_COLORS.length).map(g => g.key), color: "#778A84"});
+  }
+  if (byBrand && groups.has("unknown")) shown.push({label: "Unknown brand", keys: ["unknown"], color: "#B8AA90"});
+  return {
+    series: shown,
+    periods: periods.map(p => ({
+      key: p.key, total: p.total,
+      values: shown.map(g => g.keys.reduce((sum,key) => sum + (p.amounts.get(key) ?? 0), 0)),
+    })),
+  };
+}
+function renderYearOverview(model) {
+  const {rows, imported} = model;
+  const byBrand = yearStack === "brand";
+  const monthly = year !== "All";
+  const periodName = key => monthly ? spendMonthName(key, "long") : key;
+  for (const button of $$("[data-year-stack]")) {
+    const active = button.dataset.yearStack === yearStack;
+    button.classList.toggle("on", active);
+    button.setAttribute("aria-pressed", active);
+  }
+  const title = monthly ? `Monthly spending for ${year}` : "Yearly spending";
+  $("#spendingOverviewHeading").textContent = monthly ? "Monthly spending" : "Yearly spending";
+  $("#yearOverviewCurrency").textContent = [monthly ? year : "", chartCurrency].filter(Boolean).join(" · ");
+  $("#spendingOverviewBreakdown").textContent = monthly ? "Monthly breakdown" : "Yearly breakdown";
+  const empty = $("#yearOverviewEmpty"), svg = $("#yearChart"), legend = $("#yearLegend"), table = $("#yearTable");
+  const plot = $("#yearOverviewPlot");
+  const exclusions = $("#overviewExclusions");
+  exclusions.textContent = spendingExclusions(model);
+  exclusions.hidden = !exclusions.textContent;
+  empty.hidden = !!rows.length;
+  plot.hidden = legend.hidden = $("#yearValues").hidden = !rows.length;
+  if (!rows.length) {
+    empty.textContent = imported && purchaseError ? "Couldn’t load imported purchases." : "No eligible prices for these filters.";
+    svg.replaceChildren(); legend.replaceChildren(); table.replaceChildren();
+    return;
+  }
+  const buckets = spendingPeriods(rows, monthly);
+  const keys = monthly ? monthsOfYear(year) : [...buckets.keys()].sort();
+  const {series, periods} = stackedSpending(buckets, keys, byBrand);
+  svg.setAttribute("aria-label", `${title} in ${chartCurrency}, stacked by ${byBrand ? "brand" : "clothing type"}`);
+  const minWidth = Math.max(320, 106 + periods.length * (monthly ? 57 : 82));
+  const canvas = Math.max(minWidth, plot.clientWidth);
+  svg.setAttribute("viewBox", `0 0 ${canvas} 300`);
+  svg.style.minWidth = `${minWidth}px`;
+  const left = 75, right = canvas - 16, bottom = 269, height = 232;
+  const max = Math.max(...periods.map(p => p.total), 1);
+  const rawStep = max / 4, magnitude = 10 ** Math.floor(Math.log10(rawStep));
+  const step = Math.max(1, Math.round(magnitude * [1, 2, 2.5, 5, 10].find(n => n >= rawStep / magnitude)));
+  const limit = Math.ceil(max / step) * step;
+  const usable = Math.min(right - left, periods.length * 180);
+  const start = left + (right - left - usable) / 2, col = usable / periods.length, width = Math.min(col * .64, 102);
+  const format = n => centsLabel(n, n % 100 ? 2 : 0);
+  const grid = Array.from({length: limit / step + 1}, (_,i) => {
+    const amount = i * step, y = bottom - amount / limit * height;
+    return `<line class="year-grid" x1="${left}" x2="${right}" y1="${y}" y2="${y}"/>
+      <text x="${left - 10}" y="${y + 4}" text-anchor="end">${format(amount)}</text>`;
+  }).join("");
+  svg.innerHTML = grid + periods.map(({key, total, values}, i) => {
+    const x = start + (i + .5) * col;
+    const label = periodName(key);
+    const date = spendingPeriodLabel(key);
+    let running = 0;
+    const segments = values.map((amount, index) => {
+      if (!amount) return "";
+      running += amount;
+      return `<rect class="year-segment" x="${x - width/2}" y="${bottom - running/limit*height}" width="${width}" height="${amount/limit*height}"
+        fill="${series[index].color}"><title>${date} · ${esc(series[index].label)} · ${chartMoney(amount)}</title></rect>`;
+    }).join("");
+    const hasPurchases = buckets.has(key);
+    return `<g ${hasPurchases ? spendingBarAttrs(key, total) : ""}><title>${date} total: ${chartMoney(total)}</title>
+      ${hasPurchases ? spendingBarHit(x, bottom, Math.max(width, Math.min(col * .94, 44)), total / limit * height) : ""}${segments}
+      <text class="year-total" x="${x}" y="${bottom - total/limit*height - 9}" text-anchor="middle">${centsLabel(total)}</text>
+      <text class="period-label" x="${x}" y="${bottom + 22}" text-anchor="middle">${monthly ? spendMonthName(key, "short") : label}</text></g>`;
+  }).join("");
+  wireSpendingBars(svg, buckets);
+  legend.innerHTML = series.map(g => `<li><span class="year-swatch" style="--swatch:${g.color}" aria-hidden="true"></span>${esc(g.label)}</li>`).join("");
+  table.innerHTML = `<caption>${title} by ${byBrand ? "brand" : "clothing type"} in ${chartCurrency}</caption>
+    <thead><tr><th scope="col">${monthly ? "Month" : "Year"}</th><th scope="col">Total</th>${series.map(g => `<th scope="col">${esc(g.label)}</th>`).join("")}</tr></thead>
+    <tbody>${periods.map(p => `<tr><th scope="row">${periodName(p.key)}</th><td><b>${centsLabel(p.total)}</b></td>
+      ${p.values.map(amount => `<td>${centsLabel(amount)}</td>`).join("")}</tr>`).join("")}</tbody>`;
 }
 
 // ---------- jop agent ----------
-let sugs = [], dismissed = new Set(), auto = true;
+let sugs = [], dismissed = new Set();
 function renderSuggestions() {
   const month = new Date().getMonth();
   const winter = [10,11,0,1,2].includes(month);
-  const avgAll = items.length ? items.reduce((a,i)=>a+i.price,0)/items.length : 100;
-  const yearSpend = items.filter(i=>i.date >= new Date(Date.now()-365*864e5).toISOString().slice(0,10)).reduce((a,i)=>a+i.price,0) || 1;
+  const priced = items.filter(i => Number.isFinite(i.price));
+  const avgAll = priced.length ? priced.reduce((a,i)=>a+i.price,0)/priced.length : 100;
+  const yearSpend = priced.filter(i=>i.date >= new Date(Date.now()-365*864e5).toISOString().slice(0,10)).reduce((a,i)=>a+i.price,0) || 1;
   sugs = CATS.map(c => {
     const own = items.filter(i=>i.cat===c && i.status==="active"); // pieces you no longer wear do not count
+    const knownPrices = own.filter(i => Number.isFinite(i.price));
     const gap = (TARGET[c]-own.length)/TARGET[c];
     const seasonal = winter && WINTER.includes(c);
     const ideas = IDEAS[c], idea = ideas[own.length % ideas.length];
     return { c, own: own.length, gap, seasonal, idea, key: c + idea, score: gap + (seasonal ? .25 : 0),
-      price: own.length ? own.reduce((a,i)=>a+i.price,0)/own.length : avgAll };
+      price: knownPrices.length ? knownPrices.reduce((a,i)=>a+i.price,0)/knownPrices.length : avgAll };
   }).filter(s => s.score > 0 && !dismissed.has(s.key)).sort((a,b)=>b.score-a.score).slice(0,4);
-  $("#sugNote").textContent = `${winter ? "It's cold out." : "It's warm out."} Jop compared you to a ${Object.values(TARGET).reduce((a,b)=>a+b)}-piece capsule wardrobe and found gaps. Many gaps.`;
+  $("#sugNote").textContent = "Review your existing pieces before filling a gap. Owning fewer than an example target is not a reason to buy.";
   $("#sug").innerHTML = sugs.length ? sugs.map((s, n) => {
-    const reason = s.gap <= 0 ? `You own ${s.own}. Technically complete. But it's cold, and Jop has feelings about that.`
-      : (s.own === 0 ? `You own zero ${s.c.toLowerCase()}. Bold strategy.` : `You own ${s.own} of ${TARGET[s.c]}. ${QUIPS[s.c]}`)
-        + (s.seasonal ? " Also it's getting cold. Physics agrees." : "");
+    const reason = s.gap <= 0 ? `You already have ${s.own} pieces in this category. Check whether one works for the season.`
+      : (s.own === 0 ? `No ${s.c.toLowerCase()} recorded. Check your wardrobe before assuming you need more.` : `You have ${s.own} pieces recorded; the example target is ${TARGET[s.c]}.`)
+        + (s.seasonal ? " Consider whether your existing pieces suit the weather." : "");
     return `<div class="sug" style="animation-delay:${n*70}ms">
       <div class="sug-pic" style="background:color-mix(in srgb, ${PALETTE[n]} 16%, #EFEBFF)">${art(s.c, PALETTE[n])}${s.seasonal ? '<span class="hot">In season</span>' : ""}</div>
       <div class="body">
@@ -753,13 +1195,270 @@ function renderSuggestions() {
         <h3>${s.idea}</h3>
         <p>${reason}</p>
         <div class="meter"><i style="width:${Math.min(1,1-s.gap)*100}%"></i></div>
-        <div class="foot"><b>~${fmt(s.price)}</b><small>+${(s.price/yearSpend*100).toFixed(0)}% of your yearly spend</small></div>
-        <div class="btns"><button class="btn primary sm" data-buy="${n}">Let Jop buy it</button><button class="btn ghost sm" data-nah="${n}">Nah</button></div>
+        <div class="foot"><b>Typical price: ${fmt(s.price)}</b><small>+${(s.price/yearSpend*100).toFixed(0)}% of your yearly spend</small></div>
+        <div class="btns"><button class="btn primary sm" data-compare="${n}">Compare with my wardrobe</button><button class="btn ghost sm" data-nah="${n}">Nah</button></div>
       </div></div>`;
-  }).join("") : `<p class="empty">Wardrobe complete. Jop has nothing left to judge. Suspicious.</p>`;
+  }).join("") : `<p class="empty">No gaps against the example targets. Start with the pieces you already own.</p>`;
 }
 
 // ---------- timeline ----------
+const TIMELINE_START = "2019-01-01";
+function onTimeline(i) {
+  if (i.date && i.date < TIMELINE_START) return false;
+  const name = i.name;
+  if (/\b(?:half[\s‐‑–-]*tights?|underwear|underpants|boxer[\s‐‑–-]*briefs?)\b/i.test(name) || /(?:^|\s)трус(?:ы|ов)(?:\s|$)/iu.test(name)) return false;
+  if (i.cat !== "Bottoms") return true;
+  if (/\b(?:boxers?|briefs)\b/i.test(name) || (/\btrunks?\b/i.test(name) && !/\b(?:swim\w*|bathing|beach)\b/i.test(name))) return false;
+  // SAXX receipts use collection names without identifying these pieces as underwear.
+  return i.brand?.toLowerCase() !== "saxx" || !/^(?:Ultra Super Soft|Vibe Xtra Soft Comfort)\b/i.test(name);
+}
+const brandName = i => (i.brand || "").trim().replace(/\s+/g, " ");
+const brandKey = i => brandName(i) ? "brand:" + brandName(i).normalize("NFKC").toLowerCase() : "unknown";
+const matchesTimeline = i => (filter === "All" || i.cat === filter)
+  && (year === "All" || i.date?.startsWith(year))
+  && (brandFilter === "All" || brandKey(i) === brandFilter)
+  && (!favouritesOnly || i.favourite) && (!hideRemoved || i.inWardrobe);
+const emptyFavourites = list => favouritesOnly && !list.some(i=>i.favourite) ? "No liked items yet." : "";
+const RETURN_LABEL = { return_requested: "Return requested", returned: "Returned", refunded: "Refunded", cancelled: "Cancelled" };
+const ORDER_RETURN_LABEL = { return_requested: "Order return requested", returned: "Order return", refunded: "Order refund", cancelled: "Order cancellation" };
+const DATE_BASIS_LABEL = { stated_order_date: "Purchased", confirmation_email_date: "Order confirmed", receipt_email_date: "Receipt dated", first_fulfillment_email: "First fulfillment email" };
+const itemReturn = p => Object.hasOwn(RETURN_LABEL, p.returnStatus) ? RETURN_LABEL[p.returnStatus] : "";
+const orderReturn = p => p.unassignedReturnEmails > 0 && Object.hasOwn(ORDER_RETURN_LABEL, p.orderReturnStatus)
+  ? ORDER_RETURN_LABEL[p.orderReturnStatus] : "";
+const hideFromPurchases = p => !p.ownershipConfirmed && (p.returnStatus === "return_requested" || p.reportedReturned);
+const purchasePrice = p => p.price == null ? null
+  : [p.currency, p.price.toLocaleString("en-CA", {minimumFractionDigits:2, maximumFractionDigits:2})].filter(Boolean).join(" ");
+const purchaseDate = date => date ? new Date(date + "T00:00").toLocaleDateString("en-CA", {day:"numeric",month:"long",year:"numeric"}) : null;
+
+const scopeRows = () => timelineSource === "purchases" ? (purchaseError ? [] : purchases) : items.filter(onTimeline);
+function scopedSelection() {
+  return scopeRows().filter(i => matchesTimeline(i) && (timelineSource !== "purchases" ||
+    (returnFilter === "all") || (returnFilter === "only" ? itemReturn(i) || orderReturn(i) : !hideFromPurchases(i))));
+}
+function insightRanks(rows, byBrand = false, count = () => 1) {
+  const grouped = new Map();
+  for (const i of rows) {
+    const key = byBrand ? brandKey(i) : i.cat;
+    const entry = grouped.get(key) ?? {label: byBrand ? brandName(i) || "Unknown brand" : i.cat, count: 0};
+    entry.count += count(i);
+    grouped.set(key, entry);
+  }
+  return [...grouped.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "en-CA"));
+}
+const insightRankList = (ranked, unit, limit = 3) => `<ol class="insight-rank">${ranked.slice(0, limit).map(({label, count}) =>
+  `<li><span>${esc(label)}</span><b>${count} ${count === 1 ? unit : unit + "s"}</b></li>`).join("")}</ol>`;
+const insightCounts = counts => `<dl class="insight-counts">${counts.map(([label, value]) =>
+  `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>`;
+const orderWeekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const easternOrderTime = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Toronto", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23",
+});
+const clockHour = hour => String(hour).padStart(2, "0");
+function timingBars(counts, labels, ticks, title, detail = () => "") {
+  const peak = Math.max(...counts, 1);
+  return `<ol class="timing-bars" role="list" aria-label="${title}" style="--columns:${counts.length}">${counts.map((count, i) => {
+    const description = `${labels[i]}: ${count} ${count === 1 ? "order" : "orders"}${detail(i)}`;
+    return `<li class="${count === peak ? "peak" : ""}" title="${description}" aria-label="${description}">
+      <span class="timing-bar" aria-hidden="true"><b>${count || ""}</b><i style="--height:${count / peak * 76}%"></i></span>
+      <span aria-hidden="true">${ticks[i]}</span>
+    </li>`;
+  }).join("")}</ol>`;
+}
+function timingPeak(counts, labels, total) {
+  const peak = Math.max(...counts);
+  const top = labels.filter((_,i) => counts[i] === peak);
+  if (top.length === 1) return `${top[0]} led with ${peak} of ${total} orders.`;
+  if (top.length > 3) return "No clear peak.";
+  return `${new Intl.ListFormat("en-CA").format(top)} tied at ${peak} ${peak === 1 ? "order" : "orders"} each.`;
+}
+const orderMonths = Array.from({length: 12}, (_, m) => new Date(Date.UTC(2000, m, 1)).toLocaleDateString("en-CA", {month: "long", timeZone: "UTC"}));
+const percent = (part, whole) => `${Math.round(part / whole * 100)}%`;
+// Black Friday week through Boxing Day sales: November 21 to December 31
+const inSaleSeason = date => date.slice(5) >= "11-21";
+// seasonal patterns: orders by calendar month across every year, plus what stands out
+function monthTiming(orders, list) {
+  const months = Array.from({length: 12}, () => ({orders: 0, units: 0, years: new Set(), types: new Map()}));
+  for (const o of orders.values()) { const m = months[Number(o.date.slice(5, 7)) - 1]; m.orders++; m.years.add(o.date.slice(0, 4)); }
+  let units = 0, saleUnits = 0, saleOrders = 0;
+  for (const i of list) {
+    if (!orders.has(i.orderId) || i.returnStatus === "return_requested" || i.returnStatus === "cancelled") continue;
+    const m = months[Number(i.date.slice(5, 7)) - 1], qty = i.quantity || 1;
+    m.units += qty; units += qty;
+    if (i.cat) m.types.set(i.cat, (m.types.get(i.cat) || 0) + qty);
+    if (inSaleSeason(i.date)) saleUnits += qty;
+  }
+  for (const o of orders.values()) if (inSaleSeason(o.date)) saleOrders++;
+  const counts = months.map(m => m.orders), total = orders.size;
+  const topType = m => [...m.types].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const detail = k => { const m = months[k]; return m.orders ? `, ${plural(m.units, "unit")}, in ${plural(m.years.size, "year")}${topType(m) ? `, mostly ${topType(m)}` : ""}` : ""; };
+  const notes = [timingPeak(counts, orderMonths, total)];
+  const years = new Set([...orders.values()].map(o => o.date.slice(0, 4))).size;
+  const [steady, steadyYears] = months.map((m, k) => [k, m.years.size]).sort((a, b) => b[1] - a[1])[0];
+  if (years > 2 && steadyYears > 2) {
+    if (counts[steady] === Math.max(...counts) && counts.filter(c => c === counts[steady]).length === 1) notes[0] = notes[0].replace(/\.$/, `, in ${steadyYears} of ${years} years.`);
+    else notes.push(`<b>${orderMonths[steady]}</b> is the steadiest: orders in ${steadyYears} of ${years} years.`);
+  }
+  if (saleOrders && saleOrders < total) {
+    const rest = (units - saleUnits) / (total - saleOrders), sale = saleUnits / saleOrders;
+    notes.push(`<b>${percent(saleUnits, units)} of units</b> came from November 21 to December 31 (Black Friday to Boxing Day), ${sale.toFixed(1)} units an order against ${rest.toFixed(1)} the rest of the year.`);
+  }
+  const quiet = orderMonths.filter((_, k) => counts[k] === Math.min(...counts));
+  if (quiet.length <= 3 && Math.min(...counts) < Math.max(...counts)) notes.push(`Quietest: ${new Intl.ListFormat("en-CA").format(quiet)}.`);
+  return {counts, detail, notes};
+}
+function returnSeasonNote(list) {
+  const returned = new Map(list.filter(i => itemReturn(i) || orderReturn(i)).map(i => [i.orderId, i.date]));
+  if (!returned.size) return "";
+  const sale = [...returned.values()].filter(inSaleSeason).length;
+  return sale ? `${sale} of ${plural(returned.size, "order")} with return activity were placed from November 21 to December 31.`
+    : `None of the ${plural(returned.size, "order")} with return activity were placed from November 21 to December 31: sale buys stay.`;
+}
+function renderOrderTiming(list, imported) {
+  $("#purchase-timing").hidden = !imported;
+  if (!imported) return;
+  const results = $("#timingResults");
+  const orders = new Map(list.filter(i => i.returnStatus !== "return_requested" && i.returnStatus !== "cancelled").map(i => [i.orderId, i]));
+  if (!orders.size) {
+    results.innerHTML = `<p>${purchaseError ? "Couldn’t load imported purchases." : "No orders match these filters."}</p>`;
+    return;
+  }
+  const byDay = Array(7).fill(0), byHour = Array(24).fill(0);
+  let dated = 0, timed = 0;
+  for (const {orderDate, orderDateBasis, confirmationSentAt} of orders.values()) {
+    if (!["stated_order_date", "confirmation_email_date"].includes(orderDateBasis)) continue;
+    const date = new Date(`${orderDate}T00:00:00Z`);
+    if (!Number.isFinite(+date)) continue;
+    byDay[(date.getUTCDay() + 6) % 7]++;
+    dated++;
+    if (!confirmationSentAt) continue;
+    const sent = new Date(confirmationSentAt);
+    if (!Number.isFinite(+sent)) continue;
+    const fields = Object.fromEntries(easternOrderTime.formatToParts(sent).map(({type, value}) => [type, value]));
+    if (`${fields.year}-${fields.month}-${fields.day}` !== orderDate) continue;
+    byHour[Number(fields.hour)]++;
+    timed++;
+  }
+  const hourLabels = byHour.map((_, hour) => `${clockHour(hour)}:00–${clockHour(hour)}:59`);
+  const month = monthTiming(orders, list), returnNote = returnSeasonNote(scopeRows().filter(matchesTimeline));
+  results.innerHTML = `<div class="timing-grid">
+    <div class="timing-months"><h4>Month of the year</h4>
+      <ul class="timing-notes">${[...month.notes, returnNote].filter(Boolean).map(n => `<li>${n}</li>`).join("")}</ul>
+      ${timingBars(month.counts, orderMonths, orderMonths.map(m => m.slice(0, 3)), "Orders by month of the year, all years", month.detail)}
+    </div>
+    <div><h4>Day of week</h4>
+      ${dated ? `<p>${timingPeak(byDay, orderWeekdays, dated)} ${dated < orders.size ? `${dated} of ${orders.size} orders had a usable date.` : ""}</p>
+        ${timingBars(byDay, orderWeekdays, orderWeekdays.map(day => day.slice(0,3)), "Orders by day of week")}`
+        : "<p>No order dates available for these filters.</p>"}
+    </div>
+    <div><h4>Confirmation email hour</h4>
+      ${timed ? `<p>${timingPeak(byHour, hourLabels, timed)} Same-day emails for ${timed} of ${orders.size} orders, Eastern time. Emails can arrive after checkout.</p>
+        ${timingBars(byHour, hourLabels, byHour.map((_,hour) => hour % 3 === 0 ? clockHour(hour) : ""), "Orders by confirmation email hour, Eastern time")}`
+        : "<p>No same-day order confirmations available for these filters.</p>"}
+    </div>
+  </div>`;
+}
+function renderInsights() {
+  const imported = timelineSource === "purchases";
+  const list = scopedSelection();
+  renderOrderTiming(list, imported);
+  const likes = list.filter(i => i.favourite), dislikes = list.filter(i => i.disliked);
+  const countUnits = i => imported ? i.quantity : 1;
+  // Return history uses the same brand, year, type, liked and ownership filters.
+  // The return visibility setting can hide cards without hiding this evidence.
+  const history = imported ? scopeRows().filter(matchesTimeline) : [];
+  const returned = history.filter(i => i.reportedReturned);
+  const requested = history.filter(i => i.returnStatus === "return_requested");
+  const refunded = history.filter(i => i.returnStatus === "refunded");
+  const flagged = history.filter(i => itemReturn(i) || orderReturn(i));
+  const kept = flagged.filter(i => i.ownershipConfirmed).length;
+  const unassignedOrders = new Set(history.filter(orderReturn).map(i => i.orderId)).size;
+  const returnNote = [
+    returnFilter === "hide" ? "Includes returns hidden from the timeline." : "",
+    refunded.some(i => i.reportedReturned) ? "Items with both a return and a refund appear in both counts." : "",
+    unassignedOrders ? `${unassignedOrders} ${unassignedOrders === 1 ? "order has" : "orders have"} notices without a named item.` : "",
+    kept ? `${kept} ${kept === 1 ? "item marked" : "items marked"} in your wardrobe.` : "",
+  ].filter(Boolean).join(" ");
+  const noItems = imported && purchaseError ? "Couldn’t load imported purchases." : "No items match these filters.";
+  $("#insightResults").innerHTML = `<section class="insight" aria-labelledby="insightBought">
+      <h3 id="insightBought">Most bought</h3>
+      ${list.length ? `<div><h4>Clothing types</h4>${insightRankList(insightRanks(list, false, countUnits), "unit")}</div>
+        <div><h4>Brands</h4>${insightRankList(insightRanks(list, true, countUnits), "unit")}</div>` : `<p>${noItems}</p>`}
+    </section>
+    <section class="insight" aria-labelledby="insightReactions">
+      <h3 id="insightReactions">Likes &amp; dislikes</h3>
+      ${list.length ? `${insightCounts([["Liked", likes.length], ["Disliked", dislikes.length]])}
+        <p>${likes.length + dislikes.length} of ${list.length} ${list.length === 1 ? "item line rated" : "item lines rated"}.</p>
+        ${likes.length ? `<div><h4>Most liked brands</h4>${insightRankList(insightRanks(likes, true), "like", 2)}</div>` : ""}
+        ${dislikes.length ? `<div><h4>Most disliked brands</h4>${insightRankList(insightRanks(dislikes, true), "dislike", 2)}</div>` : ""}`
+        : `<p>${noItems}</p>`}
+    </section>
+    <section class="insight" aria-labelledby="insightReturns">
+      <h3 id="insightReturns">Returns &amp; refunds</h3>
+      ${!imported ? "<p>Switch to Purchases to see return history.</p>" : purchaseError ? `<p>${noItems}</p>` : flagged.length ?
+        `${insightCounts([["Returned", returned.length], ["Requested", requested.length], ["Refunded", refunded.length]])}
+        ${returned.length ? `<div><h4>Most returned types</h4>${insightRankList(insightRanks(returned), "return")}</div>` : ""}
+        ${returnNote ? `<p>${returnNote}</p>` : ""}
+        <a class="insight-link" data-review-returns href="#timeline">Review return activity</a>` : "<p>No return activity matches these filters.</p>"}
+    </section>`;
+}
+function setSelectOptions(select, options, value) {
+  const markup = options.map(([key, label]) => `<option value="${esc(key)}">${esc(label)}</option>`).join("");
+  if (select.innerHTML !== markup) select.innerHTML = markup;
+  select.value = value;
+}
+for (const controls of $$("[data-wardrobe-controls]")) {
+  const title = controls.dataset.wardrobeControls;
+  controls.innerHTML = `<div class="tl-sources" role="group" aria-label="${title} source">
+      <button class="chip" type="button" data-view-source="purchases" aria-pressed="false">Purchases</button>
+      <button class="chip" type="button" data-view-source="inventory" aria-pressed="false">Inventory</button>
+    </div>
+    <div class="scope-filters" role="group" aria-label="${title} filters">
+      <select class="scope-filter" data-scope-filter="brand" aria-label="Brand"><option>All brands</option></select>
+      <select class="scope-filter" data-scope-filter="year" aria-label="Year"><option>All years</option></select>
+      <select class="scope-filter" data-scope-filter="type" aria-label="Clothing type"><option>All clothing types</option></select>
+      <select class="scope-filter" data-scope-filter="returns" aria-label="Return filter" hidden>
+        <option value="hide">Hide returns</option><option value="all">All purchases</option><option value="only">Returns only</option>
+      </select>
+      <button class="chip" type="button" data-hide-removed aria-pressed="false">Hide removed</button>
+      <button class="chip" type="button" data-favourites aria-pressed="false">Liked</button>
+    </div>`;
+}
+function renderScopeControls() {
+  const rows = scopeRows();
+  const years = [...new Set(rows.filter(i => i.date).map(i => i.date.slice(0,4)))].sort().reverse();
+  const brands = new Map();
+  for (const i of rows) {
+    const key = brandKey(i);
+    if (!brands.has(key)) brands.set(key, brandName(i) || "Unknown brand");
+  }
+  const sortedBrands = [...brands.entries()].sort(([a, nameA], [b, nameB]) =>
+    Number(a === "unknown") - Number(b === "unknown") || nameA.localeCompare(nameB, "en-CA"));
+  if (!years.includes(year)) year = "All";
+  if (!brands.has(brandFilter)) brandFilter = "All";
+  for (const select of $$("[data-scope-filter]")) {
+    switch (select.dataset.scopeFilter) {
+      case "brand": setSelectOptions(select, [["All", "All brands"], ...sortedBrands], brandFilter); break;
+      case "year": setSelectOptions(select, [["All", "All years"], ...years.map(y => [y, y])], year); break;
+      case "type": setSelectOptions(select, [["All", "All clothing types"], ...CATS.map(c => [c, c])], filter); break;
+      case "returns": select.hidden = timelineSource !== "purchases"; select.value = returnFilter; break;
+    }
+  }
+  for (const button of $$("[data-view-source], [data-hide-removed], [data-favourites]")) {
+    const pressed = button.dataset.viewSource ? button.dataset.viewSource === timelineSource
+      : button.hasAttribute("data-hide-removed") ? hideRemoved : favouritesOnly;
+    button.classList.toggle("on", pressed);
+    button.setAttribute("aria-pressed", pressed);
+  }
+}
+function renderWardrobeViews() {
+  if (!timelineSource) return;
+  renderScopeControls();
+  renderSpending();
+  renderInsights();
+  scroller.classList.toggle("purchase-photos", timelineSource === "purchases");
+  renderPhotoTimeline();
+}
+
 const dayNum = s => { const [y,m,d] = s.split("-").map(Number); return Date.UTC(y,m-1,d)/864e5; };
 const SHAPES = {
   Tops: "M30 20L42 14Q50 22 58 14L70 20L84 36L74 44L68 38V86H32V38L26 44L16 36Z",
@@ -774,43 +1473,125 @@ const art = (cat, color) => `<svg viewBox="0 0 100 100"><g transform="translate(
   ${cat==="Outerwear" ? '<path d="M50 30V92" stroke="rgba(0,0,0,.28)" stroke-width="1.2"/>' : ""}
   ${cat==="Knitwear" ? '<path d="M32 80H68" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/>' : ""}</g></svg>`;
 // the drawn silhouette sits underneath; a real photo covers it, and removes itself if it fails to load
-const pic = i => art(i.cat, i.color) + (i.photo ? `<img src="${esc(i.photo)}" alt="" draggable="false" onerror="this.remove()">` : "");
-const picBg = i => `background:color-mix(in srgb, ${esc(i.color)} 16%, #EFEBFF)`;
+const pictureColor = i => /^#[\da-f]{6}$/i.test(i.color) ? i.color : "#596970";
+const pic = (i, lazy = false) => art(i.cat, pictureColor(i)) + (i.photo ? `<img src="${esc(i.photo)}" alt="" draggable="false" referrerpolicy="no-referrer" ${lazy ? 'loading="lazy" decoding="async"' : ""} onerror="this.remove()">` : "");
+const picBg = i => `background:color-mix(in srgb, ${pictureColor(i)} 16%, #EFEBFF)`;
 
-const scroller = $("#tl");
-let tz = 0.3, firstTl = true;       // zoom 0 (fit all) .. 1 (day level)
+const scroller = $("#tl"), timeline = $("#timeline");
+const defaultTimelineZoom = () => timelineSource === "purchases" ? .5 : .3;
+let tz = null, recenter = true;       // zoom 0 (fit all) .. 1 (day level)
 
 function extent() {
-  // always show at least the last 5 years, or further back if you own older pieces
-  const fiveYearsAgo = dayNum((+today().slice(0,4) - 5) + today().slice(4));
-  const ds = items.map(i => dayNum(i.date)).concat(dayNum(today()));
-  const start = Math.min(...ds, fiveYearsAgo) - 30, end = Math.max(...ds) + 30, span = end - start;
+  const specificYear = year !== "All";
+  const ds = scopeRows().filter(i => i.date).map(i => dayNum(i.date)).concat(dayNum(today()));
+  const start = dayNum(specificYear ? year + "-01-01" : TIMELINE_START);
+  const end = specificYear ? dayNum((+year+1) + "-01-01") - 1 : Math.max(...ds) + 30;
+  const span = end - start;
   const min = Math.max(320, scroller.clientWidth - 160) / span, max = Math.max(14, min * 3);
   return { start, end, span, ppd: min * Math.pow(max/min, tz) };
 }
 
-function renderTimeline() {
-  $("#chips").innerHTML = ["All",...CATS].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${c}">${c}</button>`).join("")
-    + `<button class="chip toggle ${showGone?"":"on"}" data-gone="1">${showGone?"Hide the shame":"Show the shame"}</button>`;
-  $("#zoom").value = Math.round(tz * 1000);
-  const keep = scroller.scrollLeft, g = extent(), ppd = g.ppd;
-  const list = items.filter(i => (filter==="All" || i.cat===filter) && (showGone || !isGone(i))).sort((a,b) => a.date.localeCompare(b.date));
+const photoCardSelector = id => `.tcard[data-${typeof id === "string" ? "purchase" : "id"}="${CSS.escape(id)}"]`;
+const cardActionSpace = width => width < 114 ? 36 : 0;
+const cardActionButton = (action, name, pressed, icon, i) => `<button class="card-action" type="button" data-card-action="${action}"
+  aria-label="${name}: ${esc(i.name)}" aria-pressed="${pressed}" title="${name}">${icon}</button>`;
+const cardActionIcon = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+const THUMB = '<path d="M7 20h11a3 3 0 0 0 3-3.5l-1-6A3 3 0 0 0 17 8h-4l.5-4a1.5 1.5 0 0 0-2.8-1L7 10M3 10h4v10H3z"/>';
+const LIKE_ICON = cardActionIcon(THUMB);
+const DISLIKE_ICON = cardActionIcon(`<g transform="translate(0 24) scale(1 -1)">${THUMB}</g>`);
+const REMOVED_ICON = cardActionIcon('<path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8M3 4h18v4H3zM9 13h6"/>');
+function cardDisplay(i, imported) {
+  const price = imported ? purchasePrice(i) : Number.isFinite(i.price) ? fmt(i.price) : "";
+  const flag = imported && (itemReturn(i) || orderReturn(i));
+  const kept = flag && i.ownershipConfirmed;
+  const state = !i.inWardrobe && (i.status === "unavailable" ? "Unavailable" : "Removed");
+  const badges = [
+    flag && `<span class="return-flag ${["returned","refunded"].includes(i.returnStatus) ? "confirmed" : ""}">${esc(flag)}</span>`,
+    kept && '<span class="state-flag kept">In wardrobe</span>',
+    state && `<span class="state-flag">${state}</span>`,
+    i.disliked && '<span class="state-flag disliked">Disliked</span>',
+  ].filter(Boolean).join("");
+  const label = [imported && purchaseDate(i.date), i.name, !i.date && brandName(i), price, flag, kept && "In wardrobe", state, i.disliked && "Disliked", i.favourite && "Liked"]
+    .filter(Boolean).join(" · ");
+  const appearance = !i.inWardrobe ? i.status === "unavailable" ? "st-unavailable" : "st-disposed" : "";
+  return {price, badges, label, appearance};
+}
+function photoCard(i, imported, cw, ch, info, pos) {
+  const dl = i.date ? new Date(i.date+"T00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"}) : brandName(i);
+  const {price, badges, label, appearance} = cardDisplay(i, imported);
+  const space = cardActionSpace(cw);
+  return `<div class="tl-piece${space ? " compact" : ""}" style="${pos}width:${cw}px;height:${ch}px;--photo-size:${cw}px;--card-action-space:${space}px">
+    <button class="tcard ${appearance}" ${imported ? "data-purchase" : "data-id"}="${esc(i.id)}"
+      title="${esc(label)}" aria-label="${esc(label)}"><span class="card-flags">${badges}</span>
+      <span class="pic" style="${picBg(i)}">${pic(i, imported)}</span>
+      ${info ? `<span class="info"><strong class="item-name">${esc(i.name)}</strong><span class="meta">${esc([price,dl].filter(Boolean).join(" · "))}</span></span>` : ""}
+    </button>
+    <div class="card-actions">
+      ${cardActionButton("favourite", "Like", i.favourite, LIKE_ICON, i)}
+      ${cardActionButton("dislike", "Dislike", i.disliked, DISLIKE_ICON, i)}
+      ${cardActionButton("removed", "No longer in my wardrobe", !i.inWardrobe, REMOVED_ICON, i)}
+    </div>
+  </div>`;
+}
+const getCardAction = (card, action) => card?.parentElement.querySelector(`[data-card-action="${action}"]`);
+function syncTimelineCard(card, entry, imported) {
+  const {badges, label, appearance} = cardDisplay(entry, imported);
+  card.classList.toggle("st-unavailable", appearance === "st-unavailable");
+  card.classList.toggle("st-disposed", appearance === "st-disposed");
+  card.querySelector(".card-flags").innerHTML = badges;
+  card.title = label;
+  card.setAttribute("aria-label", label);
+  getCardAction(card, "dislike").setAttribute("aria-pressed", entry.disliked);
+  getCardAction(card, "removed").setAttribute("aria-pressed", !entry.inWardrobe);
+  getCardAction(card, "favourite").setAttribute("aria-pressed", entry.favourite);
+}
 
-  const cw = Math.round(64 + tz * 176), info = tz >= .3, ch = cw + (info ? 44 : 0), laneH = ch + 18;
+function renderPhotoTimeline() {
+  if (!timelineSource) return;
+  tz ??= defaultTimelineZoom();
+  const imported = timelineSource === "purchases", showTimelineTools = show => {
+    $("#timelineZoom").hidden = $("#timelineHint").hidden = !show;
+  };
+  const source = scopedSelection();
+  const undated = source.filter(i => !i.date);
+  $("#undatedWardrobe").hidden = !undated.length;
+  $("#undatedItems").innerHTML = undated.map(i => photoCard(i, false, 216, 273, true, "")).join("");
+  const list = source.filter(i => i.date).sort((a,b) => a.date.localeCompare(b.date));
+  scroller.hidden = !!undated.length && !list.length;
+  if (!source.length) {
+    scroller.innerHTML = imported && purchaseError
+      ? `<p class="timeline-state" role="status">Couldn’t load imported purchases. <button class="btn ghost sm" id="retryPurchases">Retry</button></p>`
+      : `<p class="timeline-state" role="status">${emptyFavourites(scopeRows()) || "No items match these filters."}</p>`;
+    showTimelineTools(false);
+    return;
+  }
+  if (!list.length) { scroller.replaceChildren(); showTimelineTools(false); return; }
+  showTimelineTools(true);
+  $("#zoom").value = Math.round(tz * 1000);
+  const keep = scroller.scrollLeft, keepY = scroller.scrollTop, g = extent(), ppd = g.ppd;
+  const cw = Math.round(imported ? 76 + tz * 92 : 76 + tz * 164), info = tz >= .3;
+  const ch = cw + cardActionSpace(cw) + (info ? 44 : 0), laneH = ch + 18;
   // purchases made on the same day sit side by side, centred on their date
   const GAP = 8, byDate = new Map();
   list.forEach(i => { if (!byDate.has(i.date)) byDate.set(i.date, []); byDate.get(i.date).push(i); });
-  const lanes = [];
   const placed = [...byDate].map(([date, group]) => {
     const x = (dayNum(date) - g.start) * ppd, sw = group.length * cw + (group.length - 1) * GAP, left = x - sw / 2;
+    return {group, x, left, right: left + sw};
+  });
+  const lanes = [];
+  // Sort by left edge so a wide order does not block an otherwise free lane.
+  [...placed].sort((a,b) => a.left - b.left).forEach(p => {
+    const {left, right} = p;
     let k = lanes.findIndex(end => end + 10 <= left);
     if (k < 0) { k = lanes.length; lanes.push(0); }
-    lanes[k] = left + sw;
-    return { group, x, left, k };
+    lanes[k] = right;
+    p.k = k;
   });
+  const pad = Math.max(0, ...placed.map(p=>12 - p.left));
+  const right = Math.max(g.span * ppd, ...placed.map(p=>p.right + 12));
   const aboveN = Math.max(1, ...placed.filter(p => p.k%2===0).map(p => (p.k>>1)+1));
   const belowN = Math.max(0, ...placed.filter(p => p.k%2===1).map(p => (p.k>>1)+1));
-  const axisY = 28 + aboveN*laneH + 14, H = axisY + 44 + belowN*laneH + 16, W = Math.ceil(g.span * ppd);
+  const axisY = 28 + aboveN*laneH + 14, H = axisY + 44 + belowN*laneH + 16, W = Math.ceil(right + pad);
 
   let ticks = "";
   const sd = new Date(g.start * 864e5);
@@ -819,7 +1600,7 @@ function renderTimeline() {
     const d = Date.UTC(y, m, 1) / 864e5;
     if (d > g.end) break;
     if (d >= g.start) {
-      const x = (d - g.start) * ppd;
+      const x = (d - g.start) * ppd + pad;
       const name = m===0 ? y : new Date(Date.UTC(y,m,1)).toLocaleDateString("en-US",{month:"short",timeZone:"UTC"});
       ticks += `<div class="tick" style="left:${x}px;top:${axisY-(m===0?10:6)}px;height:${m===0?20:12}px"></div>`;
       if (m===0 || ppd >= 1.8 || m%3===0) ticks += `<div class="tlabel ${m===0?"yr":""}" style="left:${x+5}px;top:${axisY+6}px">${name}</div>`;
@@ -827,15 +1608,16 @@ function renderTimeline() {
     if (++m > 11) { m = 0; y++; }
   }
   if (ppd >= 4) for (let d = Math.ceil(g.start/7)*7; d <= g.end; d += 7) {
-    const x = (d - g.start) * ppd, dom = new Date(d * 864e5).getUTCDate();
+    const x = (d - g.start) * ppd + pad, dom = new Date(d * 864e5).getUTCDate();
     ticks += `<div class="tick" style="left:${x}px;top:${axisY-3}px;height:6px"></div>`;
     if (ppd >= 9) ticks += `<div class="tlabel day" style="left:${x-5}px;top:${axisY+22}px">${dom}</div>`;
   }
-  const tx = (dayNum(today()) - g.start) * ppd;
-  ticks += `<div class="today" style="left:${tx}px"><span>You are here (shopping)</span></div>`;
+  const tx = (dayNum(today()) - g.start) * ppd + pad;
+  if (tx >= pad && tx <= g.span * ppd + pad) ticks += `<div class="today" style="left:${tx}px"><span>Today</span></div>`;
 
   let conns = "", dots = "", cards = "";
-  placed.forEach(({group, x, left, k}) => {
+  placed.forEach(({group, x: dateX, left: startX, k}) => {
+    const x = dateX + pad, left = startX + pad;
     const above = k%2===0, lvl = k>>1;
     const top = above ? axisY - 26 - lvl*laneH - ch : axisY + 34 + lvl*laneH;
     const by = above ? top + ch + 12 : top - 12;                       // the bracket joining a day's cards to the axis
@@ -843,49 +1625,66 @@ function renderTimeline() {
     conns += above ? `<div class="conn" style="left:${x}px;top:${by}px;height:${axisY-by}px"></div>`
                    : `<div class="conn" style="left:${x}px;top:${axisY}px;height:${by-axisY}px"></div>`;
     if (group.length > 1) conns += `<div class="conn h" style="left:${cxs[0]}px;width:${cxs[cxs.length-1]-cxs[0]+2}px;top:${by}px"></div>`;
-    dots += `<div class="dot ${group.every(isGone) ? "gone" : ""}" style="left:${x-5}px;top:${axisY-4}px"></div>`;
+    dots += `<div class="dot ${!imported && group.every(isGone) ? "gone" : ""}" style="left:${x-5}px;top:${axisY-4}px"></div>`;
     group.forEach((i, n) => {
       conns += `<div class="conn" style="left:${cxs[n]}px;top:${above ? top + ch : by}px;height:12px"></div>`;
-      const dl = new Date(i.date+"T00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
-      const badge = isGone(i) ? `<span class="badge">${cw >= 120 ? STATUS_LABEL[i.status] : STATUS_SHORT[i.status]}</span>` : "";
-      cards += `<div class="tcard st-${i.status}" data-id="${i.id}" title="${esc(i.name)} · ${fmt(i.price)}${isGone(i) ? " · " + STATUS_LABEL[i.status] : ""}" style="left:${left + n * (cw + GAP)}px;top:${top}px;width:${cw}px;height:${ch}px">
-        ${badge}<div class="pic" style="${picBg(i)}">${pic(i)}</div>
-        ${info ? `<div class="info"><h4>${esc(i.name)}</h4><div class="meta">${fmt(i.price)} · ${dl}</div></div>` : ""}</div>`;
+      cards += photoCard(i, imported, cw, ch, info, `left:${left + n * (cw + GAP)}px;top:${top}px;`);
     });
   });
-  scroller.innerHTML = `<div class="tl-in" style="width:${W}px;height:${H}px">${ticks}<div class="axis" style="top:${axisY}px"></div>${conns}${dots}${cards}</div>`;
-  scroller.scrollLeft = firstTl ? W : keep;
-  if (items.length) firstTl = false;
+  scroller.innerHTML = `<div class="tl-in" data-pad="${pad}" data-axis="${axisY}" style="width:${W}px;height:${H}px">${ticks}<div class="axis" style="top:${axisY}px"></div>${conns}${dots}${cards}</div>`;
+  const latestX = placed.at(-1)?.x + pad;
+  scroller.scrollLeft = recenter ? (imported && Number.isFinite(latestX) ? latestX - scroller.clientWidth * .7 : W) : keep;
+  scroller.scrollTop = imported ? (recenter ? axisY - scroller.clientHeight / 2 : keepY) : 0;
+  recenter = false;
 }
 
 function setZoom(t, anchorX = scroller.clientWidth / 2) {
-  const day = (scroller.scrollLeft + anchorX) / extent().ppd;
+  const canvas = $(".tl-in");
+  if (!canvas) return;
+  const day = (scroller.scrollLeft + anchorX - +canvas.dataset.pad) / extent().ppd;
+  const centerY = scroller.scrollTop - +canvas.dataset.axis;
   tz = Math.min(1, Math.max(0, t));
-  renderTimeline();
-  scroller.scrollLeft = day * extent().ppd - anchorX;
+  renderPhotoTimeline();
+  scroller.scrollLeft = day * extent().ppd + +$(".tl-in").dataset.pad - anchorX;
+  scroller.scrollTop = centerY + +$(".tl-in").dataset.axis;
 }
 $("#zoom").oninput = e => setZoom(e.target.value / 1000);
 $("#zIn").onclick = () => setZoom(tz + .12);
 $("#zOut").onclick = () => setZoom(tz - .12);
 $("#zFit").onclick = () => { setZoom(0); scroller.scrollLeft = 0; };
 scroller.addEventListener("wheel", e => {
-  if (!(e.ctrlKey || e.metaKey)) return;
+  if (!(e.ctrlKey || e.metaKey) || !$(".tl-in")) return;
   e.preventDefault();
   setZoom(tz - e.deltaY * .006, e.clientX - scroller.getBoundingClientRect().left);
 }, { passive: false });
-window.addEventListener("resize", () => renderTimeline());
+window.addEventListener("resize", renderPhotoTimeline);
 
 let drag = null, moved = false;
-scroller.addEventListener("pointerdown", e => { if (e.button === 0) { drag = { x: e.clientX, s: scroller.scrollLeft }; moved = false; } });
+scroller.addEventListener("pointerdown", e => {
+  if (e.button === 0) {
+    moved = false;
+    if (e.pointerType === "mouse" && !e.target.closest(".card-action")) drag = { x: e.clientX, y: e.clientY, s: scroller.scrollLeft, t: scroller.scrollTop };
+  }
+});
 window.addEventListener("pointermove", e => {
   if (!drag) return;
-  const dx = e.clientX - drag.x;
-  if (Math.abs(dx) > 4) { moved = true; scroller.classList.add("drag"); }
-  if (moved) scroller.scrollLeft = drag.s - dx;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (Math.hypot(dx,dy) > 4) { moved = true; scroller.classList.add("drag"); }
+  if (moved) { scroller.scrollLeft = drag.s - dx; scroller.scrollTop = drag.t - dy; }
 });
 window.addEventListener("pointerup", () => { drag = null; scroller.classList.remove("drag"); });
-scroller.addEventListener("click", e => {
-  if (moved) { moved = false; return; }
+timeline.addEventListener("click", e => {
+  if (moved && e.detail && scroller.contains(e.target)) { moved = false; return; }
+  const action = e.target.closest("[data-card-action]");
+  if (action) {
+    const card = action.closest(".tl-piece").querySelector(".tcard");
+    const entry = card.dataset.purchase ? purchases.find(i => i.id === card.dataset.purchase) : items.find(i => i.id === +card.dataset.id);
+    if (!entry) return;
+    void queueWardrobeAction(entry, action, action.dataset.cardAction);
+    return;
+  }
+  const purchase = e.target.closest("[data-purchase]");
+  if (purchase) { openPurchaseDetail(purchase.dataset.purchase); return; }
   const c = e.target.closest(".tcard");
   if (c) openDetail(+c.dataset.id);
 });
@@ -906,31 +1705,191 @@ function toPhoto(file) {
 }
 const uploadPhoto = (id, blob) => api(`/items/${id}/photo`, { method: "POST", body: blob, type: "image/jpeg" });
 
-const snark = i => i.status === "disposed" ? `Gone, but the ${fmt(i.price)} is not coming back.`
+const snark = i => !Number.isFinite(i.price) ? "No purchase price recorded."
+  : i.status === "disposed" ? `Gone, but the ${fmt(i.price)} is not coming back.`
   : i.status === "unavailable" ? `Not available anymore. ${fmt(i.price)} of "where did it go?"`
   : i.status === "disliked" ? `You don't like it anymore. Jop has filed ${fmt(i.price)} under "lessons."`
   : i.wears === 0 ? "Worn 0× so far. The tags are still on, aren't they?"
   : i.wears < 5 ? `Worn ${i.wears}×, that's ${fmt(i.price / i.wears)} per wear. "Investment piece" status: pending.`
   : `Worn ${i.wears}×, ${fmt(i.price / i.wears)} per wear. Okay, Jop respects this one.`;
 
-const det = $("#detail"); let detId = null;
+const det = $("#detail"); let detId = null, detEntry = null, restoreWardrobeFocus = null;
+const inventoryDetailActions = [$("#detDel"), $("#detEdit"), $("#detPhoto")];
+function detailHeading(i) {
+  return `<div class="detail-heading"><h3 id="detailTitle">${esc(i.name)}</h3>
+    <button type="button" class="btn ghost sm" id="detFavourite" aria-pressed="${i.favourite}">${LIKE_ICON} Like</button></div>
+    <p id="favouriteError" class="favourite-error" role="alert" hidden>Couldn’t save your like. Try again.</p>`;
+}
+function wardrobeControls(i, imported = false) {
+  const canConfirmOwnership = imported && (itemReturn(i) || orderReturn(i));
+  return `<div class="status-box">
+    <div class="wardrobe-actions" role="group" aria-label="Wardrobe">
+      <button type="button" class="btn ghost sm" id="detDislike" aria-pressed="${i.disliked}">Dislike</button>
+      ${canConfirmOwnership ? `<button type="button" class="btn ghost sm" id="detKept" aria-pressed="${i.ownershipConfirmed}">Still in my wardrobe</button>` : ""}
+      <button type="button" class="btn ghost sm" id="detRemoved" aria-pressed="${!i.inWardrobe}">No longer in my wardrobe</button>
+    </div>
+    ${imported ? "" : `
+      <label id="removalReasonLabel" class="lbl" for="removalReason" ${i.inWardrobe ? "hidden" : ""}>Removal reason (optional)</label>
+      <select id="removalReason" ${i.inWardrobe ? "hidden" : ""}>
+        <option value="disposed" ${i.status !== "unavailable" ? "selected" : ""}>Removed</option>
+        <option value="unavailable" ${i.status === "unavailable" ? "selected" : ""}>Lost, damaged, or no longer fits</option>
+      </select>
+      <input id="statusNote" aria-label="Status note (optional)" maxlength="120" placeholder="Status note (optional)" value="${esc(i.statusNote || "")}" ${!isGone(i) ? "hidden" : ""}>`}
+    <p id="wardrobeError" class="favourite-error" role="alert" hidden>Couldn’t save your wardrobe changes. Try again.</p>
+  </div>`;
+}
+function openPurchaseDetail(id) {
+  const p = purchases.find(x => x.id === id); if (!p) return;
+  detId = null;
+  detEntry = p;
+  inventoryDetailActions.forEach(b => { b.hidden = true; });
+  const flagged = itemReturn(p);
+  const orderFlag = orderReturn(p);
+  const date = purchaseDate(p.date);
+  const price = purchasePrice(p);
+  const facts = [
+    ["Merchant", p.merchant], ["Brand", p.brand], ["Category", p.cat],
+    ["Size", p.size], ["Color", p.color], ["Order", p.orderNumber],
+    [DATE_BASIS_LABEL[p.dateBasis] || "Date", date || "Unavailable"],
+    [p.priceBasis === "reported_line_price" ? "Reported line price" : "Price", price ? price + (p.currencyAssumed ? " · CAD assumed" : p.currency ? "" : " · currency not recorded") : "Unavailable"],
+    ["Quantity", p.quantity > 1 ? p.quantity : null],
+    ["Item status", flagged && (p.affectedQuantity && p.affectedQuantity < p.quantity
+      ? `${flagged} · ${p.affectedQuantity} of ${p.quantity}` : flagged)],
+    ["Return history", p.returnStatus === "refunded" && p.reportedReturned && "Return also recorded"],
+    ["Order status", orderFlag],
+  ].filter(([, value]) => value);
+  $("#detBody").innerHTML = `<div class="big purchase-picture" style="${picBg(p)}">${pic(p)}</div>
+    ${detailHeading(p)}
+    <dl class="purchase-facts">${facts.map(([label, value]) => `<dt>${esc(label)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>
+    ${orderFlag ? '<p class="purchase-meta">The order notice doesn’t identify which items were affected.</p>' : ""}
+    ${wardrobeControls(p, true)}`;
+  if (!det.open) det.showModal();
+}
 function openDetail(id) {
   const i = items.find(x => x.id === id); if (!i) return;
   detId = id;
-  const total = items.reduce((a,x) => a + x.price, 0);
-  const date = new Date(i.date+"T00:00").toLocaleDateString("en-US",{day:"numeric",month:"long",year:"numeric"});
+  detEntry = i;
+  inventoryDetailActions.forEach(b => { b.hidden = false; });
+  const total = items.reduce((a,x) => a + (x.price ?? 0), 0);
+  const date = purchaseDate(i.date) || "Purchase date unknown";
   const facts = [i.size && `Size ${i.size}`, i.material, i.store && `From ${i.store}`, `Worn ${i.wears}×`].filter(Boolean);
   $("#detBody").innerHTML = `<div class="big" style="${picBg(i)}">${pic(i)}</div>
-    <h3>${esc(i.name)}</h3><p class="dm">${esc(i.brand||"—")} · ${i.cat} · ${date}</p>
+    ${detailHeading(i)}<p class="dm">${esc(i.brand||"—")} · ${i.cat} · ${date}</p>
     <div class="facts">${facts.map(f => `<span>${esc(f)}</span>`).join("")}<button class="btn ghost sm" id="detWore">+1 wear</button></div>
-    <div class="drow"><b>${fmt(i.price)}</b><span>${(i.price/total*100).toFixed(1)}% of everything you've spent</span></div>
-    <div class="snark">${snark(i)}</div>
-    <div class="status-box"><span class="lbl">Still in your life?</span>
-      <div class="seg2">${STATUSES.map(([k,l]) => `<button class="${i.status===k?"on":""}" data-status="${k}">${l}</button>`).join("")}</div>
-      <input id="statusNote" maxlength="120" placeholder="What happened? (optional)" value="${esc(i.statusNote || "")}" ${i.status==="active" ? "hidden" : ""}></div>
+    ${Number.isFinite(i.price) ? `<div class="drow"><b>${fmt(i.price)}</b>${total ? `<span>${(i.price/total*100).toFixed(1)}% of everything you've spent</span>` : ""}</div>` : ""}
+    <div class="snark" id="detSnark">${snark(i)}</div>
+    ${wardrobeControls(i)}
     ${i.notes ? `<p class="dm" style="margin:-8px 0 20px">“${esc(i.notes)}”</p>` : ""}`;
   if (!det.open) det.showModal();
 }
+const savingWardrobe = new Map();
+function queueWardrobeAction(entry, control, action, reason = false) {
+  // Keep rapid taps in order; each toggle reads the state saved by the previous one.
+  const run = () => saveWardrobeState(entry, control, action, reason);
+  const pending = savingWardrobe.get(entry.id);
+  const save = (pending ? pending.then(run) : run()).finally(() => {
+    if (savingWardrobe.get(entry.id) === save) savingWardrobe.delete(entry.id);
+  });
+  savingWardrobe.set(entry.id, save);
+  return save;
+}
+function showWardrobeState(i) {
+  $("#detFavourite").setAttribute("aria-pressed", i.favourite);
+  $("#detDislike").setAttribute("aria-pressed", i.disliked);
+  $("#detRemoved").setAttribute("aria-pressed", !i.inWardrobe);
+  $("#detKept")?.setAttribute("aria-pressed", i.ownershipConfirmed);
+  const reason = $("#removalReason");
+  if (reason) {
+    $("#removalReasonLabel").hidden = reason.hidden = i.inWardrobe;
+    reason.value = i.status === "unavailable" ? "unavailable" : "disposed";
+    $("#statusNote").hidden = !isGone(i);
+    $("#detSnark").textContent = snark(i);
+  }
+}
+async function saveWardrobeState(entry, control, action, reason) {
+  const imported = typeof entry.id === "string", scope = imported ? "purchases" : "items";
+  const findCurrent = () => (imported ? purchases : items).find(i => i.id === entry.id);
+  const before = findCurrent() ?? entry;
+  const patch = reason ? {status: action}
+    : action === "favourite" ? {favourite: !before.favourite}
+    : action === "dislike" ? {disliked: !before.disliked}
+    : action === "kept" ? before.ownershipConfirmed ? {ownershipConfirmed: false} : {inWardrobe: true, ownershipConfirmed: true}
+    : {inWardrobe: !before.inWardrobe};
+  const selector = photoCardSelector(entry.id);
+  const errorSelector = action === "favourite" ? "#favouriteError" : "#wardrobeError";
+  const matchesDialog = () => det.open && detEntry?.id === entry.id;
+  if (matchesDialog()) for (const error of ["#favouriteError", "#wardrobeError"]) $(error).hidden = true;
+  control.setAttribute("aria-busy", "true");
+  try {
+    const {status, favourite, disliked, inWardrobe, ownershipConfirmed} = await api(`/${scope}/${entry.id}${reason ? "" : "/wardrobe"}`, {method:"PUT", json:patch});
+    const state = {favourite, disliked, inWardrobe, ...(imported ? {ownershipConfirmed} : {status})};
+    const goneChanged = isGone(before) !== isGone(state);
+    const likedChanged = favouritesOnly && before.favourite !== favourite;
+    const ownershipChanged = hideRemoved && before.inWardrobe !== inWardrobe;
+    const returnVisibilityChanged = imported && returnFilter === "hide" && hideFromPurchases(before) !== hideFromPurchases({...before, ...state});
+    const current = findCurrent();
+    if (current) Object.assign(current, state);
+    Object.assign(entry, state);
+    if (matchesDialog()) {
+      Object.assign(detEntry, state);
+      showWardrobeState(detEntry);
+    }
+    if (!imported && (action !== "favourite" || goneChanged)) {
+      renderSuggestions(); renderBF(); renderFlow();
+    }
+    if (timelineSource === (imported ? "purchases" : "inventory")) {
+      renderInsights();
+      if (likedChanged || ownershipChanged || returnVisibilityChanged || (!imported && (action !== "favourite" || goneChanged))) renderSpending();
+      const card = timeline.querySelector(selector);
+      if (likedChanged || ownershipChanged || returnVisibilityChanged || (!imported && goneChanged)) {
+        const fallback = likedChanged && !favourite ? "#timeline [data-favourites]"
+          : returnVisibilityChanged ? '#timeline [data-scope-filter="returns"]' : "#timeline [data-hide-removed]";
+        const focused = card?.parentElement.contains(document.activeElement) && document.activeElement;
+        renderPhotoTimeline();
+        if (matchesDialog()) restoreWardrobeFocus = {selector, fallback};
+        else if (focused) {
+          const updated = timeline.querySelector(selector);
+          const next = focused.dataset.cardAction ? getCardAction(updated, focused.dataset.cardAction) : updated;
+          (next || $(fallback)).focus({preventScroll:true});
+        }
+      } else if (card) syncTimelineCard(card, current ?? entry, imported);
+    }
+  } catch {
+    if (matchesDialog()) {
+      showWardrobeState(detEntry);
+      $(errorSelector).hidden = false;
+    } else toast(action === "favourite" ? "Couldn’t save your like. Try again." : "Couldn’t save your wardrobe changes. Try again.");
+  } finally {
+    control.removeAttribute("aria-busy");
+  }
+}
+det.addEventListener("click", e => {
+  const button = e.target.closest("#detFavourite, #detDislike, #detRemoved, #detKept");
+  if (!button || !detEntry) return;
+  const action = button.id === "detFavourite" ? "favourite" : button.id === "detDislike" ? "dislike" : button.id === "detKept" ? "kept" : "removed";
+  void queueWardrobeAction(detEntry, button, action);
+});
+det.addEventListener("change", guard(async e => {
+  const entry = detEntry, field = e.target;
+  if (!entry || !["removalReason", "statusNote"].includes(field.id)) return;
+  if (field.id === "removalReason") {
+    if (!entry.inWardrobe && !savingWardrobe.has(entry.id)) {
+      await queueWardrobeAction(entry, field, field.value, true);
+    } else showWardrobeState(entry);
+  } else {
+    const {statusNote} = await api(`/items/${entry.id}`, {method:"PUT", json:{statusNote:field.value}});
+    const current = items.find(i => i.id === entry.id);
+    if (current) current.statusNote = statusNote;
+    entry.statusNote = statusNote;
+  }
+}));
+det.addEventListener("close", () => {
+  if (restoreWardrobeFocus) {
+    const {selector, fallback} = restoreWardrobeFocus;
+    (timeline.querySelector(selector) || $(fallback)).focus({preventScroll:true});
+  }
+  restoreWardrobeFocus = null;
+});
 $("#detClose").onclick = () => det.close();
 $("#detDel").onclick = guard(async () => {
   if (!confirm("Deny it ever happened?")) return;
@@ -954,10 +1913,9 @@ let editId = null, pending = null;
 function openForm(it) {
   editId = it ? it.id : null; pending = null;
   form.reset();
-  $("#formTitle").textContent = it ? "Edit this “essential”" : "What did you buy this time?";
-  $("#formSave").textContent = it ? "Save changes" : "Add it. No judgment.";
+  $("#formTitle").textContent = it ? "Edit wardrobe item" : "Add a wardrobe item";
+  $("#formSave").textContent = it ? "Save changes" : "Save item";
   if (it) for (const k of ["name","brand","size","cat","price","date","store","material","notes","color"]) form.elements[k].value = it[k] ?? "";
-  else form.elements.date.value = today();
   dlg.showModal();
 }
 $("#openAdd").onclick = () => openForm();
@@ -967,59 +1925,94 @@ form.elements.photo.onchange = guard(async () => { const f = form.elements.photo
 form.addEventListener("submit", guard(async e => {
   e.preventDefault();
   const f = Object.fromEntries(new FormData(form));
-  const body = { name: f.name, brand: f.brand, size: f.size, cat: f.cat, price: +f.price, date: f.date,
+  const body = { name: f.name, brand: f.brand, size: f.size, cat: f.cat, price: f.price === "" ? null : +f.price, date: f.date || null,
     store: f.store, material: f.material, notes: f.notes, color: f.color };
   const saved = editId ? await api(`/items/${editId}`, { method: "PUT", json: body }) : await api("/items", { method: "POST", json: body });
   if (pending) await uploadPhoto(saved.id, pending);
+  timelineSource = "inventory";
   dlg.close(); await load();
   if (editId) openDetail(saved.id);
 }));
 
 // ---------- agent actions ----------
-$("#auto").onclick = () => {
-  auto = !auto;
-  $("#auto").classList.toggle("on", auto);
-  $("#autoNote").textContent = auto ? "ON · Jop may spend your money" : "OFF · Jop will ask first. How quaint.";
-};
-document.addEventListener("click", guard(async e => {
-  const b = e.target.closest("[data-buy]"), n = e.target.closest("[data-nah]");
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-compare]"), n = e.target.closest("[data-nah]");
   if (b) {
-    const s = sugs[+b.dataset.buy]; if (!s) return;
-    if (!auto && !confirm(`Jop Agent would like to spend ${fmt(s.price)} on "${s.idea}". Allow?`)) return;
-    await api("/items", { method: "POST", json: { name: s.idea, brand: "Picked by Jop Agent", cat: s.c, price: Math.round(s.price),
-      date: today(), color: PALETTE[+b.dataset.buy % PALETTE.length] } });
-    toast(auto ? `Jop bought "${s.idea}". You were not consulted.` : `Fine. Bought "${s.idea}". Receipt sent to future you.`);
-    await load();
+    const suggestion = sugs[+b.dataset.compare]; if (!suggestion) return;
+    filter = suggestion.c; year = "All"; brandFilter = "All";
+    favouritesOnly = false; hideRemoved = true;
+    selectTimeline("inventory");
+    renderWardrobeViews();
+    timeline.scrollIntoView({behavior: "smooth", block: "start"});
   }
   if (n) {
-    const s = sugs[+n.dataset.nah]; if (!s) return;
-    dismissed.add(s.key); toast("Noted. Jop will ask again in 3 weeks."); renderSuggestions();
+    const suggestion = sugs[+n.dataset.nah]; if (!suggestion) return;
+    dismissed.add(suggestion.key);
+    toast("Skipped for this session."); renderSuggestions();
   }
-}));
+});
 
-document.addEventListener("click", guard(async e => {
-  const b = e.target.closest("[data-status]");
-  if (!b) return;
-  const status = b.dataset.status, cur = items.find(i => i.id === detId);
-  await api(`/items/${detId}`, { method: "PUT", json: { status, statusNote: status === "active" ? "" : cur.statusNote } });
-  await load(); openDetail(detId);
-}));
-document.addEventListener("change", guard(async e => {
-  if (e.target.id !== "statusNote") return;
-  await api(`/items/${detId}`, { method: "PUT", json: { statusNote: e.target.value } });
-  await load(); openDetail(detId);
-}));
+function selectTimeline(source) {
+  if (timelineSource === source) return;
+  timelineSource = source;
+  tz = defaultTimelineZoom();
+  recenter = true;
+  renderWardrobeViews();
+}
+$("#chartCurrency").onchange = e => { chartCurrency = e.target.value; renderSpending(); };
+window.addEventListener("resize", () => {
+  if (timelineSource) renderYearOverview(spendingModel(scopedSelection(), timelineSource === "purchases"));
+});
+document.addEventListener("change", e => {
+  const { value, dataset: { scopeFilter } } = e.target;
+  if (!scopeFilter) return;
+  if (scopeFilter === "brand") brandFilter = value;
+  if (scopeFilter === "year") year = value;
+  if (scopeFilter === "type") filter = value;
+  if (scopeFilter === "returns") returnFilter = value;
+  recenter = true;
+  renderWardrobeViews();
+});
 document.addEventListener("click", e => {
-  const t = e.target;
-  if (t.dataset.gone) { showGone = !showGone; renderTimeline(); }
-  if (t.dataset.y) { year = t.dataset.y; renderChart(); }
-  if (t.dataset.c) { filter = t.dataset.c; renderTimeline(); }
+  const stack = e.target.closest("[data-year-stack]");
+  if (stack) {
+    yearStack = stack.dataset.yearStack;
+    renderYearOverview(spendingModel(scopedSelection(), timelineSource === "purchases"));
+    return;
+  }
+  if (e.target.closest("[data-review-returns]")) {
+    e.preventDefault();
+    returnFilter = "only";
+    recenter = true;
+    renderWardrobeViews();
+    $('#timeline [data-scope-filter="returns"]').focus({preventScroll:true});
+    if (location.hash === "#timeline") $("#timeline").scrollIntoView();
+    else location.hash = "timeline";
+    return;
+  }
+  const source = e.target.closest("[data-view-source]");
+  if (source) { selectTimeline(source.dataset.viewSource); return; }
+  const toggle = e.target.closest("[data-hide-removed], [data-favourites]");
+  if (!toggle) return;
+  if (toggle.hasAttribute("data-hide-removed")) hideRemoved = !hideRemoved;
+  else { favouritesOnly = !favouritesOnly; recenter = true; }
+  renderWardrobeViews();
+});
+scroller.addEventListener("click", async e => {
+  if (e.target.id !== "retryPurchases") return;
+  e.target.disabled = true;
+  await loadPurchases();
+  if (timelineSource === "purchases") {
+    recenter = true;
+    renderWardrobeViews();
+    ($("#retryPurchases") || scroller).focus();
+  }
 });
 $("#reset").onclick = guard(async e => {
   e.preventDefault();
-  if (!confirm("Wipe everything and restore the sample wardrobe?")) return;
+  if (!confirm("Replace editable inventory with fictional sample items? Imported purchase history is kept.")) return;
   await api("/reset", { method: "POST", json: {} });
-  year = filter = "All"; await load();
+  year = brandFilter = filter = "All"; await load();
 });
 
 // ---------- black friday (client-side only, mock deals) ----------
@@ -1060,7 +2053,7 @@ function analyseDeals() {
     const goneCat = items.filter(i => i.cat === d.cat && i.status !== "active").length;
     const dupes = d.match ? act.filter(i => d.match.test(i.name)).length : 0;
     const need = Math.max(0, (TARGET[d.cat] - ownedCat) / TARGET[d.cat]);
-    const prices = items.filter(i => i.cat === d.cat).map(i => i.price);
+    const prices = items.filter(i => i.cat === d.cat && Number.isFinite(i.price)).map(i => i.price);
     const avg = prices.length ? prices.reduce((a,b) => a + b) / prices.length : d.now;
     const disc = 1 - d.now / d.was;
     // gaps matter most, then replacing what you gave up on, then the actual discount
@@ -1123,7 +2116,7 @@ function renderBF() {
   $("#deals").innerHTML = picks.map(d => {
     const on = cart.has(d.id), over = d.verdict === "buy" && !on && !bfManual;
     return `<div class="deal ${on ? "in" : ""}">
-      <div class="sug-pic" style="background:color-mix(in srgb, ${d.color} 16%, #EDF8F3)">${art(d.cat, d.color)}<span class="hot ${over ? "over" : d.verdict}">${over ? "Over budget" : d.verdict === "buy" ? "Jop approves" : "Jop is thinking"}</span></div>
+      <div class="sug-pic" style="background:color-mix(in srgb, ${d.color} 16%, #EDF8F3)">${art(d.cat, d.color)}<span class="hot ${over ? "over" : d.verdict}">${over ? "Over budget" : d.verdict === "buy" ? "Worth reviewing" : "Jop is thinking"}</span></div>
       <div class="body">
         <div class="store">${d.store}</div><h4>${d.name}</h4><div class="brand">${d.brand} · ${d.cat}</div>
         <div class="price-row"><b>${fmt(d.now)}</b><s>${fmt(d.was)}</s><span class="off">−${Math.round(d.disc * 100)}%</span></div>
@@ -1152,8 +2145,7 @@ $("#bfQueue").onclick = () => {
   const cart = bfManual ?? bfAuto, chosen = DEALS.filter(d => cart.has(d.id));
   if (!chosen.length) return toast("Empty basket. Jop is genuinely proud of you.");
   const sum = chosen.reduce((a, d) => a + d.now, 0);
-  toast(auto ? `Queued ${plural(chosen.length, "item")} (${fmt(sum)}). Jop checks out at 00:00 on Friday. You'll be told afterwards.`
-             : `Queued ${plural(chosen.length, "item")} (${fmt(sum)}). Jop will ask before every purchase. How quaint.`);
+  toast(`Example basket: ${plural(chosen.length, "item")} for ${fmt(sum)}. Compare it with what you own before buying.`);
 };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-deal]"); if (!b) return;
@@ -1163,39 +2155,21 @@ document.addEventListener("click", e => {
   bfManual = next; renderBF();
 });
 
-// ---------- hero: 30 black tees you can discard ----------
-const rackEl = $("#rack"), TEE_ICON = '<svg viewBox="0 0 60 76"><use href="#teeShape"/></svg>';
-rackEl.innerHTML = Array.from({ length: 30 }, (_, i) =>
-  `<button class="tee black" tabindex="-1" aria-label="Discard black tee ${i + 1}" style="--r:${Math.round(Math.random() * 50 - 25)}deg;--d:${(Math.random() * .18).toFixed(2)}s">${TEE_ICON}</button>`).join("")
-  + `<div class="tee white" aria-hidden="true">${TEE_ICON}</div>`;
-const TEE_MSG = [[30, "black tees. Normal."], [25, "black tees. Still normal."], [15, "black tees. Getting somewhere."], [6, "black tees. Now we're talking."], [1, "black tees. Almost a capsule wardrobe."], [0, "black tees. Jop is proud. The white one is thriving."]];
-function updateTees() {
-  const n = rackEl.querySelectorAll(".tee.black:not(.gone)").length;
-  $("#teeN").textContent = n;
-  $("#teeMsg").textContent = TEE_MSG.find(([min]) => n >= min)[1].replace(/^black tees/, n === 1 ? "black tee" : "black tees");
-  $("#teeSub").textContent = n === 30 ? "Click one to discard it." : `${30 - n} discarded.`;
-  $("#teeReset").hidden = n === 30;
-  $("#teeOne").disabled = n === 0;
-}
-rackEl.addEventListener("click", e => { const t = e.target.closest(".tee.black:not(.gone)"); if (t) { t.classList.add("gone"); updateTees(); } });
-$("#teeOne").onclick = () => { const left = [...rackEl.querySelectorAll(".tee.black:not(.gone)")]; if (left.length) { left[Math.floor(Math.random() * left.length)].classList.add("gone"); updateTees(); } };
-$("#teeReset").onclick = () => { rackEl.querySelectorAll(".tee.gone").forEach(t => t.classList.remove("gone")); updateTees(); };
-
 // ---------- hero: how jop works (vendors, receipts and taste come from your data) ----------
 function renderFlow() {
   const counts = {}; items.forEach(i => { if (i.brand) counts[i.brand] = (counts[i.brand] || 0) + 1; });
   const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
   $("#fVendors").innerHTML = top.map(b => `<span class="vm">${esc(b)}</span>`).join("");
-  $("#fRcpt").textContent = `${items.length} receipts`;
+  $("#fRcpt").textContent = `${items.length} items`;
 
   // what step 3 learned about you
   const mode = list => Object.entries(list.filter(Boolean).reduce((c, v) => (c[v] = (c[v] || 0) + 1, c), {})).sort((a, b) => b[1] - a[1])[0]?.[0];
   const kept = items.filter(i => !isGone(i)), size = cat => mode(kept.filter(i => i.cat === cat).map(i => i.size));
-  $("#fTaste").textContent = [...["Tops", "Shoes"].map(c => size(c) && `${c} ${size(c)}`), top[0] && `loyal to ${top[0]}`].filter(Boolean).join(" · ");
+  $("#fTaste").textContent = [["Tops", "Shoes"].map(c => size(c) && `${c} ${size(c)}`).filter(Boolean).join(" · "), top[0] && `loyal to ${top[0]}`].filter(Boolean).join("\n");
 
   // order emails (step 1) turning into wardrobe items (step 2): one per recent vendor, from your real items
   const SUBJECTS = ["Your order is confirmed", "Order confirmation", "Thanks for your order"], seen = new Set(), feed = [];
-  for (const i of [...items].sort((a, b) => b.date.localeCompare(a.date))) {
+  for (const i of items.filter(i => i.date && Number.isFinite(i.price)).sort((a, b) => b.date.localeCompare(a.date))) {
     const k = i.store || i.brand; if (!k || seen.has(k)) continue;
     seen.add(k); feed.push(i); if (feed.length === 3) break;
   }
@@ -1213,11 +2187,24 @@ function drawFlow() {
   let d = `M${pts[0]}`;
   pts.slice(1).forEach(([x, y], k) => { const [px, py] = pts[k], h = (x - px) / 2; d += ` C${px + h},${py} ${x - h},${y} ${x},${y}`; });
   $("#fpath").setAttribute("d", d);
+  // an arrowhead where each segment meets the next step's circle, so the direction reads at a glance
+  const ns = "http://www.w3.org/2000/svg", seg = document.createElementNS(ns, "path"), gap = map.querySelector(".fic").offsetWidth / 2 + 7;
+  $("#farrs").replaceChildren(...pts.slice(1).map(([x, y], k) => {
+    const [px, py] = pts[k], h = (x - px) / 2;
+    seg.setAttribute("d", `M${px},${py} C${px + h},${py} ${x - h},${y} ${x},${y}`);
+    let lo = 0, hi = seg.getTotalLength();
+    while (hi - lo > .5) { const m = (lo + hi) / 2, q = seg.getPointAtLength(m); Math.hypot(q.x - x, q.y - y) > gap ? lo = m : hi = m; }
+    const a = seg.getPointAtLength(lo), b = seg.getPointAtLength(lo - 2), ang = Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI;
+    const arr = document.createElementNS(ns, "path");
+    arr.setAttribute("class", "farr"); arr.setAttribute("d", "M2 0 -7 -6.5 -4.5 0 -7 6.5Z");
+    arr.setAttribute("transform", `translate(${a.x},${a.y}) rotate(${ang})`);
+    return arr;
+  }));
   map.querySelectorAll(".fedge").forEach((e, k) => { e.style.left = (pts[k][0] + pts[k + 1][0]) / 2 + "px"; e.style.top = (pts[k][1] + pts[k + 1][1]) / 2 + "px"; });
 }
 new ResizeObserver(drawFlow).observe($("#fmap"));
 
-function render() { renderHero(); renderChart(); renderTimeline(); renderSuggestions(); renderBF(); renderFlow(); }
+function render() { renderWardrobeViews(); renderSuggestions(); renderBF(); renderFlow(); }
 load().catch(() => { $("#offline").hidden = false; });
 </script>
 </body>
